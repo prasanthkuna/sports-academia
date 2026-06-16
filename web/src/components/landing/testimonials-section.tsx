@@ -1,34 +1,19 @@
+"use client";
+
+import { Star } from "lucide-react";
 import { AssetImage } from "@/components/landing/asset-image";
-import { assets } from "@/lib/assets";
+import { AnimateOnScroll, MotionCard } from "@/components/landing/motion/animate-on-scroll";
+import { landingConfig } from "@/lib/landing-config";
 
-const testimonials = [
-  {
-    quote:
-      "We stopped losing fee follow-ups. Collect on the ground, receipt goes to WhatsApp — parents trust us more.",
-    name: "Ramesh K.",
-    role: "Owner, Kohinoor Cricket Academy",
-    initials: "RK",
-    image: assets.testimonials.owner1,
-  },
-  {
-    quote:
-      "Attendance used to be a notebook nightmare. Now my coach marks it before the next batch walks in.",
-    name: "Anita S.",
-    role: "Director, Velocity Football Club",
-    initials: "AS",
-    image: assets.testimonials.owner2,
-  },
-  {
-    quote:
-      "The public enquiry page alone brought us 12 leads last month. Parents find us and we call back same day.",
-    name: "Vikram P.",
-    role: "Head Coach, Smash Badminton",
-    initials: "VP",
-    image: assets.testimonials.owner3,
-  },
-];
-
-function Avatar({ name, initials, image }: { name: string; initials: string; image: string }) {
+function Avatar({
+  name,
+  initials,
+  image,
+}: {
+  name: string;
+  initials: string;
+  image: string;
+}) {
   return (
     <AssetImage
       src={image}
@@ -45,28 +30,46 @@ function Avatar({ name, initials, image }: { name: string; initials: string; ima
   );
 }
 
+function StarRating({ count }: { count: number }) {
+  return (
+    <div className="flex gap-0.5" aria-label={`${count} out of 5 stars`}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} className="h-4 w-4 fill-warning text-warning" />
+      ))}
+    </div>
+  );
+}
+
 export function TestimonialsSection() {
   return (
     <section className="border-y border-hairline bg-surface-soft py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Trusted by academy owners
-        </h2>
+        <AnimateOnScroll>
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+            Trusted by academy owners
+          </h2>
+        </AnimateOnScroll>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {testimonials.map((item) => (
-            <blockquote
+          {landingConfig.testimonials.map((item, i) => (
+            <MotionCard
               key={item.name}
+              delay={i * 0.1}
               className="flex flex-col rounded-xl border border-hairline bg-canvas p-6"
             >
-              <p className="flex-1 text-sm leading-relaxed text-body">&ldquo;{item.quote}&rdquo;</p>
+              <StarRating count={item.rating} />
+              <p className="mt-4 flex-1 text-sm leading-relaxed text-body">
+                &ldquo;{item.quote}&rdquo;
+              </p>
+              <p className="mt-3 text-xs font-medium text-brand">{item.metric}</p>
               <footer className="mt-6 flex items-center gap-3">
                 <Avatar name={item.name} initials={item.initials} image={item.image} />
                 <div>
                   <p className="text-sm font-semibold text-ink">{item.name}</p>
                   <p className="text-xs text-muted">{item.role}</p>
+                  <p className="text-xs text-muted">{item.city}</p>
                 </div>
               </footer>
-            </blockquote>
+            </MotionCard>
           ))}
         </div>
       </div>

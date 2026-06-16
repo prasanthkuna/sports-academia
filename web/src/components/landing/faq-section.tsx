@@ -1,41 +1,57 @@
-const faqs = [
-  {
-    q: "Do I need a computer to run the academy?",
-    a: "No. The core loop — attendance, fees, receipts, WhatsApp — is built for phones and tablets. Use a laptop for reports and bulk imports when you need them.",
-  },
-  {
-    q: "Can parents pay online?",
-    a: "You record cash or UPI payments in the app and send a receipt. Online payment gateway integration is on the roadmap; today the focus is fast on-ground collection.",
-  },
-  {
-    q: "Is my academy data separate from others?",
-    a: "Yes. Each academy is isolated. Your students, fees, and staff only see your data.",
-  },
-  {
-    q: "Do I get a public page for enquiries?",
-    a: "Every academy gets a shareable page at /a/your-slug with an enquiry form — perfect for WhatsApp bio links and Google Maps.",
-  },
-  {
-    q: "Can I import students from Excel?",
-    a: "Yes. Bulk student import from spreadsheet is part of core scope so you are not re-typing hundreds of names.",
-  },
-];
+"use client";
+
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { landingConfig } from "@/lib/landing-config";
+import { AnimateOnScroll } from "@/components/landing/motion/animate-on-scroll";
 
 export function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
     <section id="faq" className="py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-          Frequently asked questions
-        </h2>
-        <dl className="mt-10 divide-y divide-hairline">
-          {faqs.map((faq) => (
-            <div key={faq.q} className="py-5">
-              <dt className="font-display text-base font-semibold text-ink">{faq.q}</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-body">{faq.a}</dd>
-            </div>
-          ))}
-        </dl>
+        <AnimateOnScroll>
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+            Frequently asked questions
+          </h2>
+        </AnimateOnScroll>
+        <div className="mt-10 divide-y divide-hairline">
+          {landingConfig.faqs.map((faq, i) => {
+            const open = openIndex === i;
+            return (
+              <AnimateOnScroll key={faq.q} delay={i * 0.05}>
+                <div className="py-1">
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between gap-4 py-4 text-left"
+                    aria-expanded={open}
+                    onClick={() => setOpenIndex(open ? null : i)}
+                  >
+                    <span className="font-display text-base font-semibold text-ink">{faq.q}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 shrink-0 text-muted transition-transform duration-200",
+                        open && "rotate-180",
+                      )}
+                    />
+                  </button>
+                  <div
+                    className={cn(
+                      "grid transition-all duration-200 ease-out",
+                      open ? "grid-rows-[1fr] opacity-100 pb-4" : "grid-rows-[0fr] opacity-0",
+                    )}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="text-sm leading-relaxed text-body">{faq.a}</p>
+                    </div>
+                  </div>
+                </div>
+              </AnimateOnScroll>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

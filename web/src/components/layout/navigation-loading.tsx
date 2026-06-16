@@ -31,7 +31,8 @@ export function NavigationLoadingProvider({ children }: { children: ReactNode })
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    setPending(false);
+    const frame = requestAnimationFrame(() => setPending(false));
+    return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
   return (

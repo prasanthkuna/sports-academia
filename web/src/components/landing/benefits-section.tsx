@@ -1,4 +1,7 @@
+"use client";
+
 import { AssetImage } from "@/components/landing/asset-image";
+import { AnimateOnScroll, MotionCard } from "@/components/landing/motion/animate-on-scroll";
 import { assets } from "@/lib/assets";
 
 type FeatureCardProps = {
@@ -6,11 +9,15 @@ type FeatureCardProps = {
   description: string;
   imageSrc: string;
   fallback: React.ReactNode;
+  delay: number;
 };
 
-function FeatureCard({ title, description, imageSrc, fallback }: FeatureCardProps) {
+function FeatureCard({ title, description, imageSrc, fallback, delay }: FeatureCardProps) {
   return (
-    <article className="overflow-hidden rounded-xl border border-hairline bg-canvas">
+    <MotionCard
+      delay={delay}
+      className="overflow-hidden rounded-xl border border-hairline bg-canvas transition-shadow hover:shadow-md"
+    >
       <div className="aspect-[4/3] bg-surface-soft">
         <AssetImage
           src={imageSrc}
@@ -25,7 +32,7 @@ function FeatureCard({ title, description, imageSrc, fallback }: FeatureCardProp
         <h3 className="font-display text-lg font-semibold text-ink">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-body">{description}</p>
       </div>
-    </article>
+    </MotionCard>
   );
 }
 
@@ -101,15 +108,15 @@ export function BenefitsSection() {
   return (
     <section id="features" className="py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="max-w-2xl">
+        <AnimateOnScroll className="max-w-2xl">
           <p className="text-sm font-medium uppercase tracking-wider text-brand">Features</p>
           <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             Everything your front desk needs
           </h2>
-        </div>
+        </AnimateOnScroll>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
+          {features.map((feature, i) => (
+            <FeatureCard key={feature.title} {...feature} delay={i * 0.12} />
           ))}
         </div>
       </div>

@@ -83,6 +83,25 @@
   animation: brand-loader-pulse 1.4s ease-in-out infinite;
 }
 
+@keyframes sport-marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.sport-marquee {
+  animation: sport-marquee-scroll 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-loader-ring,
+  .brand-loader-orbit,
+  .brand-loader-logo,
+  .sport-marquee {
+    animation: none !important;
+  }
+}
+
 body {
   background: var(--color-canvas);
   color: var(--color-body);
