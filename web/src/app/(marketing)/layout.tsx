@@ -1,6 +1,5 @@
 import { Bricolage_Grotesque } from "next/font/google";
 import type { Metadata } from "next";
-import { assets } from "@/lib/assets";
 import { landingConfig } from "@/lib/landing-config";
 import { StructuredData } from "./structured-data";
 
@@ -30,14 +29,12 @@ export const metadata: Metadata = {
     description:
       "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
     url: landingConfig.siteUrl,
-    images: [{ url: assets.og.platform, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Academy Ops — QR attendance & academy operations",
     description:
       "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
-    images: [assets.og.platform],
   },
 };
 

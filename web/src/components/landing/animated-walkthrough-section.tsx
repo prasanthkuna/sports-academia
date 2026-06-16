@@ -1,4 +1,4 @@
-import { AnimatedWalkthrough } from "@/components/landing/animated-walkthrough";
+import { HeroPhoneMock } from "@/components/landing/ui-mocks";
 import { AnimateOnScroll } from "@/components/landing/motion/animate-on-scroll";
 import { landingConfig } from "@/lib/landing-config";
 
@@ -26,7 +26,7 @@ export function AnimatedWalkthroughSection() {
           </ol>
         </AnimateOnScroll>
         <AnimateOnScroll delay={0.2} className="flex justify-center lg:justify-end">
-          <AnimatedWalkthrough />
+          <HeroPhoneMock />
         </AnimateOnScroll>
       </div>
     </section>

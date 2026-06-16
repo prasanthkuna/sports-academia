@@ -1,10 +1,9 @@
 import os
 import sys
 import glob
-import random
 from PIL import Image
 
-# Config for all assets matching docs/landing-assets.md
+# Academy + brand assets only — landing page uses CSS UI mocks (see docs/landing-assets-pro.md)
 ASSETS_CONFIG = {
     "brand_logo_icon_512": {
         "src_pattern": "brand_logo_icon_512*.png",
@@ -12,41 +11,6 @@ ASSETS_CONFIG = {
         "size": (512, 512),
         "format": "PNG",
         "quality": 85
-    },
-    "hero_product_mockup": {
-        "src_pattern": "hero_product_mockup*.png",
-        "dest_path": "public/assets/landing/hero-product-mockup.webp",
-        "size": (1200, 1440),
-        "format": "WEBP",
-        "quality": 82
-    },
-    "feature_attendance": {
-        "src_pattern": "feature_attendance*.png",
-        "dest_path": "public/assets/landing/feature-attendance.webp",
-        "size": (800, 600),
-        "format": "WEBP",
-        "quality": 82
-    },
-    "feature_fees": {
-        "src_pattern": "feature_fees*.png",
-        "dest_path": "public/assets/landing/feature-fees.webp",
-        "size": (800, 600),
-        "format": "WEBP",
-        "quality": 82
-    },
-    "feature_whatsapp": {
-        "src_pattern": "feature_whatsapp*.png",
-        "dest_path": "public/assets/landing/feature-whatsapp.webp",
-        "size": (800, 600),
-        "format": "WEBP",
-        "quality": 82
-    },
-    "platform_og": {
-        "src_pattern": "platform_og*.png",
-        "dest_path": "public/assets/og/platform-og.jpg",
-        "size": (1200, 630),
-        "format": "JPEG",
-        "quality": 90
     },
     "hero_fallback_cricket": {
         "src_pattern": "hero_fallback_cricket*.png",
@@ -62,40 +26,12 @@ ASSETS_CONFIG = {
         "format": "JPEG",
         "quality": 90
     },
-    "texture_grain": {
-        "src_pattern": "texture_grain*.png",
-        "dest_path": "public/assets/landing/texture-grain.webp",
-        "size": (400, 400),
-        "format": "WEBP",
-        "quality": 80
-    },
     "hero_fallback_football": {
         "src_pattern": "hero_fallback_football*.png",
         "dest_path": "public/assets/academy/hero-fallback-football.webp",
         "size": (1600, 900),
         "format": "WEBP",
         "quality": 82
-    },
-    "owner_1": {
-        "src_pattern": "owner_1*.png",
-        "dest_path": "public/assets/testimonials/owner-1.webp",
-        "size": (400, 400),
-        "format": "WEBP",
-        "quality": 85
-    },
-    "owner_2": {
-        "src_pattern": "owner_2*.png",
-        "dest_path": "public/assets/testimonials/owner-2.webp",
-        "size": (400, 400),
-        "format": "WEBP",
-        "quality": 85
-    },
-    "owner_3": {
-        "src_pattern": "owner_3*.png",
-        "dest_path": "public/assets/testimonials/owner-3.webp",
-        "size": (400, 400),
-        "format": "WEBP",
-        "quality": 85
     }
 }
 
@@ -131,22 +67,6 @@ def main(artifacts_dir):
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
         
         if not matching_files:
-            # Generate texture_grain programmatically if not found
-            if key == "texture_grain":
-                print("[+] Generating texture_grain programmatically...")
-                width, height = config["size"]
-                img = Image.new("RGB", (width, height), "#ffffff")
-                pixels = img.load()
-                for x in range(width):
-                    for y in range(height):
-                        noise = int(random.gauss(0, 3)) # extremely soft stipple
-                        val = min(255, max(0, 250 + noise))
-                        pixels[x, y] = (val, val, val)
-                
-                img.save(dest_path, format=config["format"], quality=config["quality"])
-                print(f"    Saved: size={config['size']}, format={config['format']}, file_size={os.path.getsize(dest_path)/1024:.1f} KB")
-                continue
-                
             print(f"[-] No matching files found for: {pattern} (Skipping...)")
             continue
             

@@ -1,35 +1,29 @@
-# Landing Assets — Pro Update
+# Landing Page — CSS-Only Visuals
 
-Minimal asset brief for the post-Pro landing page. Drop files into `web/public/assets/` — components fall back to HTML mocks if missing.
+The marketing landing page (`/`) uses **animated React UI mocks** — no image assets required.
 
-## New / updated (generate these)
+## What's rendered in code
 
-| File | Size | Format | Used on |
-|------|------|--------|---------|
-| `landing/feature-qr-checkin.webp` | **800 × 1000** (4:5) | WebP, ≤150 KB | QR section, benefits card |
-| `landing/hero-product-mockup.webp` | **1200 × 1440** (4:5) | WebP, ≤250 KB | Hero — show QR count + dashboard |
-| `og/platform-og.jpg` | **1200 × 630** | JPG, ≤200 KB | Social preview — headline: QR attendance |
+| Section | Component | `web/src/components/landing/ui-mocks.tsx` |
+|---------|-----------|---------------------------------------------|
+| Hero | `HeroPhoneMock` | Cycles QR → fee → dashboard → WhatsApp |
+| QR section | `QrCheckInPhoneMock` | Scan animation → success check-in |
+| Benefits | `BenefitMock` | 4 mini UI cards (attendance, fees, WhatsApp, QR) |
+| Walkthrough | `HeroPhoneMock` | Same product story, scroll reinforcement |
 
-## Existing (still used)
+## Social preview (OG)
 
-| File | Size | Used on |
-|------|------|---------|
-| `landing/feature-attendance.webp` | 800 × 600 | Benefits card |
-| `landing/feature-fees.webp` | 800 × 600 | Benefits card |
-| `landing/feature-whatsapp.webp` | 800 × 600 | Benefits card |
-| `landing/texture-grain.webp` | 400 × 400 tile | Hero background |
-| `brand/logo-icon.svg` | vector | Nav |
+Generated at runtime via `web/src/app/(marketing)/opengraph-image.tsx` — no static JPG to maintain.
 
-## Visual direction
+## Optional static assets
 
-- **Hero mockup:** Phone showing owner dashboard with "42 QR today" + fee row + WhatsApp receipt chip. Indian academy context (cricket nets or turf in soft blur).
-- **QR check-in:** Student phone scanning ID card QR at academy gate; success screen with name + "Mark present". Teal brand (#0F766E), clean UI — not stock-photo generic.
-- **OG image:** "Scan at the gate. Collect fees. Send receipts." + Academy Ops logo. No fake testimonials or inflated stats.
+Only needed for **academy public pages** (`/a/[slug]`), not the platform landing:
+
+- `academy/hero-fallback-cricket.webp`
+- `academy/hero-fallback-football.webp`
+- `og/academy-og-template.jpg`
+- `brand/logo-icon.svg`
 
 ## Removed from landing
 
-Testimonial portraits (`testimonials/owner-*.webp`) are no longer referenced. Safe to delete or keep for future use.
-
-## Code reference
-
-Paths live in `web/src/lib/assets.ts`. Copy and layout driven by `web/src/lib/landing-config.ts`.
+`landing/*.webp` and `og/platform-og.jpg` are no longer referenced. Safe to delete from `public/assets/landing/`.

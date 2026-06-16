@@ -1,29 +1,9 @@
 "use client";
 
-import { QrCode, MapPin, ShieldCheck } from "lucide-react";
-import { AssetImage } from "@/components/landing/asset-image";
+import { ShieldCheck } from "lucide-react";
 import { AnimateOnScroll, MotionCard } from "@/components/landing/motion/animate-on-scroll";
-import { assets } from "@/lib/assets";
+import { QrCheckInPhoneMock } from "@/components/landing/ui-mocks";
 import { landingConfig } from "@/lib/landing-config";
-
-function MiniQrCheckInUI() {
-  return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 p-6">
-      <div className="rounded-xl border-2 border-dashed border-brand/40 bg-canvas p-4">
-        <QrCode className="h-16 w-16 text-brand" strokeWidth={1.25} />
-      </div>
-      <p className="text-center text-sm font-semibold text-ink">Arjun Kumar</p>
-      <p className="text-center text-xs text-muted">U12 Morning Cricket</p>
-      <div className="w-full rounded-md bg-success py-2 text-center text-xs font-semibold text-white">
-        Mark present
-      </div>
-      <p className="flex items-center gap-1 text-[10px] text-muted">
-        <MapPin className="h-3 w-3" />
-        Within academy · PIN verified
-      </p>
-    </div>
-  );
-}
 
 export function QrAttendanceSection() {
   const { qrSection } = landingConfig;
@@ -56,24 +36,13 @@ export function QrAttendanceSection() {
           </p>
         </AnimateOnScroll>
 
-        <AnimateOnScroll delay={0.15} className="flex justify-center lg:justify-end">
-          <MotionCard className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-hairline bg-canvas shadow-lg">
-            <div className="aspect-[4/5] bg-surface-soft">
-              <AssetImage
-                src={assets.landing.featureQr}
-                alt="Student scanning QR code for academy check-in"
-                width={800}
-                height={1000}
-                className="h-full w-full object-cover object-top"
-                fallback={<MiniQrCheckInUI />}
-              />
-            </div>
-            <div className="border-t border-hairline bg-brand-soft/50 px-4 py-3">
-              <p className="text-center text-xs font-medium text-brand">
-                42 QR check-ins today · 8 manual by coaches
-              </p>
-            </div>
+        <AnimateOnScroll delay={0.15} className="flex flex-col items-center gap-4 lg:items-end">
+          <MotionCard className="w-full max-w-sm">
+            <QrCheckInPhoneMock />
           </MotionCard>
+          <p className="w-full max-w-sm rounded-lg border border-brand/20 bg-brand-soft/40 px-4 py-2.5 text-center text-xs font-medium text-brand">
+            42 QR check-ins today · 8 manual by coaches
+          </p>
         </AnimateOnScroll>
       </div>
     </section>
