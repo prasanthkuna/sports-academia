@@ -70,6 +70,7 @@ export function PricingSection() {
               )}
               <p className="font-display text-lg font-semibold text-ink">{plan.name}</p>
               <p className="mt-1 text-sm text-muted">{plan.description}</p>
+              <p className="mt-2 text-xs font-medium text-brand">{plan.idealFor}</p>
               <p className="mt-4 font-mono-amount text-3xl font-semibold text-ink">
                 {formatInr(plan.price)}
                 <span className="text-base font-normal text-muted"> / {plan.period}</span>
