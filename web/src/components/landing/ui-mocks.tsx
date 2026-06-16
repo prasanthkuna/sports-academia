@@ -21,35 +21,73 @@ import type {
 } from "@/lib/landing-config";
 import { cn } from "@/lib/utils";
 
-/* ── iPhone 16 Pro frame ───────────────────────────────────────── */
+/** Fixed iPhone 16 Pro mock dimensions — shell never resizes; only screen content crossfades. */
+export const PHONE_WIDTH_PX = 280;
+export const PHONE_SCREEN_HEIGHT_PX = 400;
+
+/* ── iPhone 16 Pro frame (fixed size) ──────────────────────────── */
+
+function PhoneScreen({
+  screenKey,
+  children,
+}: {
+  screenKey: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="relative overflow-hidden"
+      style={{ height: PHONE_SCREEN_HEIGHT_PX }}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={screenKey}
+          className="absolute inset-0 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export function PhoneFrame({
   children,
   className,
+  screenKey = "static",
 }: {
   children: React.ReactNode;
   className?: string;
+  /** When content swaps, pass a stable key so only the screen crossfades. */
+  screenKey?: string;
 }) {
   return (
-    <div className={cn("relative mx-auto w-full max-w-[300px]", className)}>
-      <div className="absolute -inset-4 rounded-[3.25rem] bg-gradient-to-br from-brand/20 via-transparent to-ink/8 blur-2xl" />
+    <div
+      className={cn("relative mx-auto shrink-0", className)}
+      style={{ width: PHONE_WIDTH_PX }}
+    >
+      <div className="pointer-events-none absolute -inset-4 rounded-[3.25rem] bg-gradient-to-br from-brand/20 via-transparent to-ink/8 blur-2xl" />
       <div className="relative rounded-[3rem] bg-gradient-to-b from-[#3a3a3c] via-[#1c1c1e] to-[#0a0a0a] p-[3px] shadow-2xl shadow-ink/25">
-        <div className="absolute -left-[2px] top-[22%] h-8 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
-        <div className="absolute -left-[2px] top-[34%] h-12 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
-        <div className="absolute -left-[2px] top-[48%] h-12 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
-        <div className="absolute -right-[2px] top-[32%] h-16 w-[3px] rounded-r-sm bg-[#3a3a3c]" />
+        <div className="absolute -left-[2px] top-[22%] z-10 h-8 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
+        <div className="absolute -left-[2px] top-[34%] z-10 h-12 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
+        <div className="absolute -left-[2px] top-[48%] z-10 h-12 w-[3px] rounded-l-sm bg-[#3a3a3c]" />
+        <div className="absolute -right-[2px] top-[32%] z-10 h-16 w-[3px] rounded-r-sm bg-[#3a3a3c]" />
         <div className="overflow-hidden rounded-[2.85rem] bg-[#0a0a0a]">
           <div className="relative bg-canvas">
-            <div className="flex items-center justify-between px-6 pb-1 pt-3">
+            <div className="relative flex h-10 shrink-0 items-center justify-between px-6 pt-2">
               <span className="text-[10px] font-semibold text-ink">9:41</span>
-              <div className="absolute left-1/2 top-2 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-ink" />
+              <div className="absolute left-1/2 top-1.5 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-ink" />
               <div className="flex items-center gap-1">
                 <span className="h-2 w-3 rounded-sm border border-ink/40" />
                 <span className="h-2.5 w-5 rounded-sm border border-ink/40" />
               </div>
             </div>
-            {children}
-            <div className="flex justify-center pb-2 pt-1">
+            <PhoneScreen screenKey={screenKey}>{children}</PhoneScreen>
+            <div className="flex h-6 shrink-0 items-center justify-center pb-1">
               <div className="h-1 w-24 rounded-full bg-ink/15" />
             </div>
           </div>
@@ -59,11 +97,23 @@ export function PhoneFrame({
   );
 }
 
+/** Wrapper for flow screen layouts — fills fixed viewport. */
+function ScreenBody({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn("flex h-full flex-col p-5", className)}
+      style={{ height: PHONE_SCREEN_HEIGHT_PX }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ── Product flow mocks (Flow Map) ─────────────────────────────── */
 
 function FlowQrContent() {
   return (
-    <div className="flex min-h-[320px] flex-col items-center justify-center gap-3 p-5 text-center">
+    <ScreenBody className="items-center justify-center gap-3 text-center">
       <div className="rounded-xl border border-brand/30 bg-brand-soft/40 p-4">
         <QrCode className="mx-auto h-14 w-14 text-brand" strokeWidth={1.25} />
       </div>
@@ -76,18 +126,18 @@ function FlowQrContent() {
         <MapPin className="h-3 w-3 text-brand" />
         Geofence OK · PIN verified
       </p>
-    </div>
+    </ScreenBody>
   );
 }
 
 function FlowFeesContent() {
   return (
-    <div className="min-h-[320px] p-5">
+    <ScreenBody>
       <p className="text-xs text-muted">Collect fee</p>
       <p className="mt-1 text-sm font-medium text-ink">Arjun Kumar</p>
-      <p className="font-mono-amount mt-3 text-3xl font-semibold text-ink">₹2,500</p>
+      <p className="font-mono-amount mt-2 text-3xl font-semibold text-ink">₹2,500</p>
       <p className="text-xs text-body">Monthly · U12 Morning</p>
-      <div className="mt-4 space-y-2">
+      <div className="mt-3 space-y-2">
         <div className="flex justify-between rounded-lg bg-surface-soft px-3 py-2 text-xs">
           <span className="text-muted">Paid now</span>
           <span className="font-semibold text-ink">₹1,500</span>
@@ -97,17 +147,17 @@ function FlowFeesContent() {
           <span className="font-semibold text-warning">₹1,000</span>
         </div>
       </div>
-      <div className="mt-4 rounded-lg bg-ink py-2.5 text-center text-xs font-semibold text-white">
+      <div className="mt-auto rounded-lg bg-ink py-2.5 text-center text-xs font-semibold text-white">
         Collect &amp; Receipt
       </div>
       <p className="mt-2 text-center text-[10px] text-muted">RCP-2026-0042</p>
-    </div>
+    </ScreenBody>
   );
 }
 
 function FlowWhatsappContent() {
   return (
-    <div className="flex min-h-[320px] flex-col justify-center gap-3 p-5">
+    <ScreenBody className="justify-center gap-3">
       <div className="rounded-lg border border-hairline bg-canvas p-3 text-xs">
         <p className="font-semibold text-ink">Receipt RCP-2026-0042</p>
         <p className="mt-0.5 text-body">₹2,500 · Arjun Kumar</p>
@@ -119,7 +169,7 @@ function FlowWhatsappContent() {
         Open WhatsApp to send
       </div>
       <p className="text-center text-[10px] text-muted">Logged · no duplicate sends</p>
-    </div>
+    </ScreenBody>
   );
 }
 
@@ -131,11 +181,11 @@ function FlowLeadsContent() {
     { label: "Converted", done: false },
   ];
   return (
-    <div className="min-h-[320px] p-5">
+    <ScreenBody>
       <p className="text-xs font-medium text-muted">Lead pipeline</p>
       <p className="mt-1 text-sm font-semibold text-ink">Ayaan Khan</p>
       <p className="text-xs text-body">Football U10 · via public page</p>
-      <div className="mt-5 space-y-2">
+      <div className="mt-4 space-y-2">
         {stages.map((s) => (
           <div
             key={s.label}
@@ -144,30 +194,34 @@ function FlowLeadsContent() {
               s.done ? "bg-success-soft text-success" : "border border-hairline text-muted",
             )}
           >
-            {s.done ? <Check className="h-3.5 w-3.5" /> : <span className="h-3.5 w-3.5 rounded-full border border-hairline" />}
+            {s.done ? (
+              <Check className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-hairline" />
+            )}
             {s.label}
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[10px] text-brand">Trial QR checked in today</p>
-    </div>
+      <p className="mt-auto text-center text-[10px] text-brand">Trial QR checked in today</p>
+    </ScreenBody>
   );
 }
 
 function FlowDashboardContent() {
   return (
-    <div className="min-h-[320px] space-y-3 p-5">
+    <ScreenBody className="gap-3">
       <p className="text-xs font-semibold text-ink">Today&apos;s snapshot</p>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg bg-success-soft p-3">
           <p className="text-[9px] text-muted">QR check-ins</p>
-          <p className="font-mono-amount text-xl font-semibold text-ink">
+          <p className="font-mono-amount text-xl font-semibold tabular-nums text-ink">
             <CountUp value={42} duration={0.8} />
           </p>
         </div>
         <div className="rounded-lg bg-brand-soft p-3">
           <p className="text-[9px] text-muted">Collected</p>
-          <p className="font-mono-amount text-xl font-semibold text-brand">
+          <p className="font-mono-amount text-xl font-semibold tabular-nums text-brand">
             ₹<CountUp value={8240} duration={1} />
           </p>
         </div>
@@ -175,17 +229,17 @@ function FlowDashboardContent() {
       <div className="rounded-lg border border-hairline px-3 py-2 text-center text-[10px] text-body">
         8 manual · 3 absent · 2 trials today
       </div>
-      <div className="rounded-lg bg-error-soft/50 px-3 py-2">
+      <div className="mt-auto rounded-lg bg-error-soft/50 px-3 py-2">
         <p className="text-[10px] font-medium text-error">Overdue</p>
         <p className="text-xs text-ink">Rohan S. · ₹2,500</p>
       </div>
-    </div>
+    </ScreenBody>
   );
 }
 
 function FlowIdCardsContent() {
   return (
-    <div className="flex min-h-[320px] flex-col items-center justify-center gap-3 p-5">
+    <ScreenBody className="items-center justify-center gap-3">
       <div className="w-full max-w-[200px] rounded-lg border border-hairline bg-canvas p-3 shadow-sm">
         <p className="text-[9px] font-bold uppercase tracking-wider text-brand">KCA Hyderabad</p>
         <div className="mt-2 flex gap-2">
@@ -203,13 +257,13 @@ function FlowIdCardsContent() {
       </div>
       <p className="text-xs font-medium text-ink">Bulk PDF · all students</p>
       <p className="text-[10px] text-muted">Same QR powers gate check-in</p>
-    </div>
+    </ScreenBody>
   );
 }
 
 function FlowReportsContent() {
   return (
-    <div className="min-h-[320px] p-5">
+    <ScreenBody>
       <p className="text-xs font-medium text-muted">Reports · Jun 2026</p>
       <div className="mt-3 space-y-2">
         {["Financial", "Attendance", "Leads"].map((r) => (
@@ -222,18 +276,22 @@ function FlowReportsContent() {
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-lg bg-brand py-2.5 text-center text-xs font-semibold text-white">
+      <div className="mt-auto rounded-lg bg-brand py-2.5 text-center text-xs font-semibold text-white">
         Export Excel
       </div>
       <p className="mt-2 text-center text-[10px] text-muted">Pro · date range picker</p>
-    </div>
+    </ScreenBody>
   );
 }
 
 function FlowRemindersContent() {
-  const items = ["Priya M. · ₹2,500 overdue", "Rohan S. · session tomorrow", "Vikram T. · ₹1,200 due"];
+  const items = [
+    "Priya M. · ₹2,500 overdue",
+    "Rohan S. · session tomorrow",
+    "Vikram T. · ₹1,200 due",
+  ];
   return (
-    <div className="min-h-[320px] p-5">
+    <ScreenBody>
       <div className="flex items-center gap-2">
         <Bell className="h-4 w-4 text-brand" />
         <p className="text-xs font-semibold text-ink">Reminder queue</p>
@@ -242,17 +300,19 @@ function FlowRemindersContent() {
         {items.map((item) => (
           <div
             key={item}
-            className="flex items-center justify-between rounded-lg border border-hairline px-3 py-2.5"
+            className="flex items-center justify-between gap-2 rounded-lg border border-hairline px-3 py-2.5"
           >
             <span className="text-[10px] text-body">{item}</span>
-            <span className="rounded-md bg-[#25D366]/15 px-2 py-1 text-[9px] font-semibold text-[#128C7E]">
+            <span className="shrink-0 rounded-md bg-[#25D366]/15 px-2 py-1 text-[9px] font-semibold text-[#128C7E]">
               Send
             </span>
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[10px] text-muted">Tap-to-send · you control every message</p>
-    </div>
+      <p className="mt-auto text-center text-[10px] text-muted">
+        Tap-to-send · you control every message
+      </p>
+    </ScreenBody>
   );
 }
 
@@ -270,48 +330,76 @@ const flowContent: Record<ProductFlowId, React.ComponentType> = {
 export function ProductFlowPhone({ flowId }: { flowId: ProductFlowId }) {
   const Content = flowContent[flowId];
   return (
-    <PhoneFrame>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={flowId}
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.25 }}
-        >
-          <Content />
-        </motion.div>
-      </AnimatePresence>
+    <PhoneFrame screenKey={flowId}>
+      <Content />
     </PhoneFrame>
   );
 }
 
-/* ── Hero phone (auto-cycle) ───────────────────────────────────── */
+/* ── Hero phone (auto-cycle, fixed shell) ──────────────────────── */
+
+const HERO_FLOWS: ProductFlowId[] = ["qr", "dashboard", "fees", "whatsapp"];
 
 export function HeroPhoneMock() {
   const reduced = useReducedMotion();
-  const flows: ProductFlowId[] = ["qr", "dashboard", "fees", "whatsapp"];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     if (reduced) return;
-    const timer = setInterval(() => setIndex((i) => (i + 1) % flows.length), 3200);
+    const timer = setInterval(() => setIndex((i) => (i + 1) % HERO_FLOWS.length), 3200);
     return () => clearInterval(timer);
-  }, [reduced, flows.length]);
+  }, [reduced]);
 
-  const flowId = reduced ? "dashboard" : flows[index]!;
+  const flowId = reduced ? "dashboard" : HERO_FLOWS[index]!;
 
   return (
-    <motion.div
-      animate={reduced ? undefined : { y: [0, -8, 0] }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    >
+    <div className="relative shrink-0" style={{ width: PHONE_WIDTH_PX }}>
+      <div className="pointer-events-none absolute -inset-6 animate-pulse rounded-full bg-brand/10 blur-2xl" />
       <ProductFlowPhone flowId={flowId} />
-    </motion.div>
+    </div>
   );
 }
 
 /* ── QR check-in animated mock ───────────────────────────────── */
+
+function QrScanContent() {
+  const reduced = useReducedMotion();
+  return (
+    <ScreenBody className="items-center justify-center gap-4">
+      <div className="relative overflow-hidden rounded-xl border-2 border-dashed border-brand/40 bg-brand-soft/20 p-5">
+        <QrCode className="h-20 w-20 text-brand" strokeWidth={1.25} />
+        {!reduced && (
+          <motion.div
+            className="absolute inset-x-2 h-0.5 bg-brand/60"
+            animate={{ top: ["10%", "85%", "10%"] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+          />
+        )}
+      </div>
+      <p className="text-sm font-semibold text-ink">Scanning ID…</p>
+      <p className="text-xs text-muted">U12 Morning Cricket</p>
+    </ScreenBody>
+  );
+}
+
+function QrSuccessContent() {
+  return (
+    <ScreenBody className="items-center justify-center gap-3">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success text-white">
+        <Check className="h-7 w-7" strokeWidth={2.5} />
+      </div>
+      <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
+      <p className="text-xs text-muted">Present · QR scan</p>
+      <div className="w-full max-w-[220px] rounded-lg bg-success py-2.5 text-center text-xs font-semibold text-white">
+        Check-in complete
+      </div>
+      <p className="flex items-center gap-1 text-[10px] text-muted">
+        <MapPin className="h-3 w-3 text-brand" />
+        Within academy · PIN verified
+      </p>
+    </ScreenBody>
+  );
+}
 
 export function QrCheckInPhoneMock() {
   const reduced = useReducedMotion();
@@ -326,49 +414,8 @@ export function QrCheckInPhoneMock() {
   const active = reduced ? "success" : phase;
 
   return (
-    <PhoneFrame>
-      <div className="relative min-h-[320px] p-5">
-        <AnimatePresence mode="wait">
-          {active === "scan" ? (
-            <motion.div
-              key="scan"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center gap-4 pt-6"
-            >
-              <div className="relative overflow-hidden rounded-xl border-2 border-dashed border-brand/40 bg-brand-soft/20 p-5">
-                <QrCode className="h-20 w-20 text-brand" strokeWidth={1.25} />
-                {!reduced && (
-                  <motion.div
-                    className="absolute inset-x-2 h-0.5 bg-brand/60"
-                    animate={{ top: ["10%", "85%", "10%"] }}
-                    transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
-                  />
-                )}
-              </div>
-              <p className="text-sm font-semibold text-ink">Scanning ID…</p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center gap-3 pt-8"
-            >
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success text-white">
-                <Check className="h-7 w-7" strokeWidth={2.5} />
-              </div>
-              <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
-              <p className="text-xs text-muted">Present · QR scan</p>
-              <div className="w-full rounded-lg bg-success py-2.5 text-center text-xs font-semibold text-white">
-                Check-in complete
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+    <PhoneFrame screenKey={active}>
+      {active === "scan" ? <QrScanContent /> : <QrSuccessContent />}
     </PhoneFrame>
   );
 }
@@ -381,7 +428,7 @@ function RoleOwnerContent() {
 
 function RoleStaffContent() {
   return (
-    <div className="min-h-[320px] space-y-3 p-5">
+    <ScreenBody className="gap-3">
       <p className="text-xs font-semibold text-ink">Front desk</p>
       <div className="grid grid-cols-2 gap-2">
         {[
@@ -396,39 +443,41 @@ function RoleStaffContent() {
           </div>
         ))}
       </div>
-      <div className="rounded-lg border border-hairline p-3">
+      <div className="mt-auto rounded-lg border border-hairline p-3">
         <p className="text-xs font-medium text-ink">Arjun Kumar · ₹2,500 due</p>
         <div className="mt-2 rounded-md bg-ink py-2 text-center text-[10px] font-semibold text-white">
           Collect &amp; Receipt
         </div>
       </div>
-    </div>
+    </ScreenBody>
   );
 }
 
 function RoleCoachContent() {
   return (
-    <div className="min-h-[320px] p-5">
+    <ScreenBody>
       <p className="text-xs font-medium text-muted">My batches only</p>
       <p className="mt-1 text-sm font-semibold text-ink">U12 Morning Cricket</p>
-      {["Arjun K.", "Priya M.", "Rohan S.", "Sneha V."].map((name, i) => (
-        <div
-          key={name}
-          className="mt-2 flex items-center justify-between rounded-lg border border-hairline/60 px-3 py-2"
-        >
-          <span className="text-xs text-ink">{name}</span>
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 text-[9px] font-semibold",
-              i === 2 ? "bg-error-soft text-error" : "bg-success-soft text-success",
-            )}
+      <div className="mt-3 space-y-2">
+        {["Arjun K.", "Priya M.", "Rohan S.", "Sneha V."].map((name, i) => (
+          <div
+            key={name}
+            className="flex items-center justify-between rounded-lg border border-hairline/60 px-3 py-2"
           >
-            {i === 2 ? "Absent" : "Present"}
-          </span>
-        </div>
-      ))}
-      <p className="mt-4 text-center text-[10px] text-muted">No fees · no academy-wide data</p>
-    </div>
+            <span className="text-xs text-ink">{name}</span>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 text-[9px] font-semibold",
+                i === 2 ? "bg-error-soft text-error" : "bg-success-soft text-success",
+              )}
+            >
+              {i === 2 ? "Absent" : "Present"}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-auto text-center text-[10px] text-muted">No fees · no academy-wide data</p>
+    </ScreenBody>
   );
 }
 
@@ -441,50 +490,93 @@ const roleContent: Record<RoleLaneId, React.ComponentType> = {
 export function RolePhoneMock({ roleId }: { roleId: RoleLaneId }) {
   const Content = roleContent[roleId];
   return (
-    <PhoneFrame>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={roleId}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25 }}
-        >
-          <Content />
-        </motion.div>
-      </AnimatePresence>
+    <PhoneFrame screenKey={roleId}>
+      <Content />
     </PhoneFrame>
   );
 }
 
-/* ── Day timeline mini mocks ─────────────────────────────────── */
+/* ── Day timeline mini mocks (separate small frame) ────────────── */
 
-const dayMocks: Record<DayTimelineMockId, React.ComponentType> = {
-  qr: FlowQrContent,
-  attendance: RoleCoachContent,
-  fees: FlowFeesContent,
-  whatsapp: FlowWhatsappContent,
-  digest: () => (
-    <div className="flex min-h-[200px] flex-col justify-center gap-2 p-4">
-      <p className="text-xs font-semibold text-ink">Daily digest</p>
-      <div className="rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-3 text-[10px] leading-relaxed text-body">
-        KCA today: 42 present (34 QR, 8 manual), ₹8,240 collected, ₹5,000 overdue across 2 students.
+const MINI_SCREEN_H = 200;
+
+function MiniScreenBody({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("flex flex-col p-3", className)} style={{ height: MINI_SCREEN_H }}>
+      {children}
+    </div>
+  );
+}
+
+function MiniFlowQr() {
+  return (
+    <MiniScreenBody className="items-center justify-center gap-1 text-center">
+      <QrCode className="h-8 w-8 text-brand" strokeWidth={1.25} />
+      <p className="text-[10px] font-semibold text-ink">Arjun Kumar</p>
+      <span className="rounded-full bg-success-soft px-2 py-0.5 text-[8px] font-semibold text-success">
+        Present · QR
+      </span>
+    </MiniScreenBody>
+  );
+}
+
+function MiniDigest() {
+  return (
+    <MiniScreenBody className="justify-center gap-2">
+      <p className="text-[10px] font-semibold text-ink">Daily digest</p>
+      <div className="rounded border border-[#25D366]/30 bg-[#25D366]/5 p-2 text-[8px] leading-relaxed text-body">
+        42 present · ₹8,240 collected · ₹5,000 overdue
       </div>
-      <div className="rounded-lg bg-[#128C7E] py-2 text-center text-[10px] font-semibold text-white">
+      <div className="rounded bg-[#128C7E] py-1.5 text-center text-[8px] font-semibold text-white">
         Send on WhatsApp
       </div>
-    </div>
+    </MiniScreenBody>
+  );
+}
+
+const dayMocks: Record<DayTimelineMockId, React.ComponentType> = {
+  qr: MiniFlowQr,
+  attendance: () => (
+    <MiniScreenBody>
+      <p className="text-[9px] text-muted">U12 Morning</p>
+      {["Arjun K.", "Rohan S."].map((n, i) => (
+        <div key={n} className="mt-1 flex justify-between text-[9px]">
+          <span>{n}</span>
+          <span className={i === 1 ? "text-error" : "text-success"}>{i === 1 ? "Absent" : "Present"}</span>
+        </div>
+      ))}
+    </MiniScreenBody>
   ),
+  fees: () => (
+    <MiniScreenBody className="justify-center">
+      <p className="font-mono-amount text-lg font-semibold text-ink">₹2,500</p>
+      <p className="text-[9px] text-muted">RCP-2026-0042</p>
+    </MiniScreenBody>
+  ),
+  whatsapp: () => (
+    <MiniScreenBody className="justify-center">
+      <div className="rounded rounded-tr-none bg-[#DCF8C6] p-2 text-[8px]">Fee received. Thank you!</div>
+    </MiniScreenBody>
+  ),
+  digest: MiniDigest,
 };
 
 export function DayTimelineMiniMock({ mockId }: { mockId: DayTimelineMockId }) {
   const Content = dayMocks[mockId];
   return (
-    <div className="w-full max-w-[200px] overflow-hidden rounded-2xl border border-hairline bg-canvas shadow-sm">
-      <div className="border-b border-hairline bg-surface-soft px-3 py-1.5">
-        <div className="mx-auto h-3 w-12 rounded-full bg-ink/80" />
+    <div
+      className="shrink-0 overflow-hidden rounded-2xl border border-hairline bg-canvas shadow-sm"
+      style={{ width: 160 }}
+    >
+      <div className="flex h-6 items-center justify-center border-b border-hairline bg-surface-soft">
+        <div className="h-2.5 w-10 rounded-full bg-ink/80" />
       </div>
-      <Content />
+      <div style={{ height: MINI_SCREEN_H }}>
+        <Content />
+      </div>
+      <div className="flex h-4 items-center justify-center">
+        <div className="h-0.5 w-10 rounded-full bg-ink/15" />
+      </div>
     </div>
   );
 }

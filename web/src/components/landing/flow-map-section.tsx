@@ -46,8 +46,10 @@ export function FlowMapSection() {
             <h3 className="font-display text-2xl font-semibold text-ink">{flow.title}</h3>
             <p className="mt-3 text-body">{flow.description}</p>
           </AnimateOnScroll>
-          <AnimateOnScroll delay={0.1} className="flex justify-center lg:justify-end">
-            <ProductFlowPhone flowId={active} />
+          <AnimateOnScroll delay={0.1} className="flex shrink-0 justify-center lg:justify-end">
+            <div className="w-[280px] shrink-0">
+              <ProductFlowPhone flowId={active} />
+            </div>
           </AnimateOnScroll>
         </div>
       </div>

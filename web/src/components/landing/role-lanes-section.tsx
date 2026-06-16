@@ -55,8 +55,10 @@ export function RoleLanesSection() {
               ))}
             </ul>
           </MotionCard>
-          <div className="flex justify-center lg:justify-end">
-            <RolePhoneMock roleId={active} />
+          <div className="flex shrink-0 justify-center lg:justify-end">
+            <div className="w-[280px] shrink-0">
+              <RolePhoneMock roleId={active} />
+            </div>
           </div>
         </div>
       </div>

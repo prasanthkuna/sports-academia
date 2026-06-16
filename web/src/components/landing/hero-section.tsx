@@ -60,7 +60,7 @@ export function HeroSection() {
             <p className="mt-4 text-sm text-muted">{hero.trustLine}</p>
           </AnimateOnMount>
         </div>
-        <AnimateOnMount delay={0.25} className="relative flex items-center justify-center lg:justify-end">
+        <AnimateOnMount delay={0.25} className="flex shrink-0 items-center justify-center lg:justify-end">
           <HeroPhoneMock />
         </AnimateOnMount>
       </div>

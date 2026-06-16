@@ -20,8 +20,10 @@ export function QrPlatformSection() {
               QR is not just ID cards. It powers gate attendance, trial check-ins, receipt trust, and
               coach shortcuts — all academy-scoped and auditable.
             </p>
-            <div className="mt-8 flex justify-center lg:justify-start">
-              <QrCheckInPhoneMock />
+            <div className="mt-8 flex shrink-0 justify-center lg:justify-start">
+              <div className="w-[280px] shrink-0">
+                <QrCheckInPhoneMock />
+              </div>
             </div>
           </AnimateOnScroll>
 
