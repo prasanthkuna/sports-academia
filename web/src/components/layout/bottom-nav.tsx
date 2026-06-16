@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AppNavLink } from "@/components/layout/navigation-loading";
 import {
   ClipboardCheck,
   Home,
@@ -28,7 +28,7 @@ export function BottomNav() {
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
-            <Link
+            <AppNavLink
               key={href}
               href={href}
               className={cn(
@@ -38,7 +38,7 @@ export function BottomNav() {
             >
               <Icon className="h-5 w-5" />
               {label}
-            </Link>
+            </AppNavLink>
           );
         })}
       </div>

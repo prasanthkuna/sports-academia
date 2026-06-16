@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getAcademyContext } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AppLinkGrid } from "@/components/layout/app-link-grid";
+import type { AppLinkItem } from "@/lib/app-icons";
 import { formatCurrency, rel } from "@/lib/utils";
-import { ClipboardCheck, IndianRupee, UserPlus, Users } from "lucide-react";
 
 export default async function DashboardPage() {
   const ctx = await getAcademyContext();
@@ -43,11 +44,11 @@ export default async function DashboardPage() {
     paymentsToday?.reduce((s, p) => s + Number(p.amount), 0) ?? 0;
   const totalPending = pendingFees?.reduce((s, f) => s + Number(f.pending_amount), 0) ?? 0;
 
-  const quick = [
-    { href: "/attendance", label: "Mark Attend", icon: ClipboardCheck },
-    { href: "/fees", label: "Collect Fee", icon: IndianRupee },
-    { href: "/students", label: "Add Student", icon: UserPlus },
-    { href: "/leads", label: "Leads", icon: Users },
+  const quick: AppLinkItem[] = [
+    { href: "/attendance", label: "Mark Attend", icon: "attendance" },
+    { href: "/fees", label: "Collect Fee", icon: "fees" },
+    { href: "/students", label: "Add Student", icon: "userPlus" },
+    { href: "/leads", label: "Leads", icon: "users" },
   ];
 
   return (
@@ -57,18 +58,11 @@ export default async function DashboardPage() {
         <p className="text-sm text-muted">Today&apos;s academy snapshot</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {quick.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-lg bg-surface-card p-3 text-center text-xs font-medium text-ink"
-          >
-            <Icon className="h-5 w-5" />
-            {label}
-          </Link>
-        ))}
-      </div>
+      <AppLinkGrid
+        items={quick}
+        className="grid grid-cols-2 gap-3 md:grid-cols-4"
+        itemClassName="p-3 text-center text-xs"
+      />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Card>

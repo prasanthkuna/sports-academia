@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { AppNavLink } from "@/components/layout/navigation-loading";
 import {
   ClipboardCheck,
   Home,
@@ -42,7 +42,7 @@ export function Sidebar({ academyName }: { academyName: string }) {
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
-            <Link
+            <AppNavLink
               key={href}
               href={href}
               className={cn(
@@ -54,7 +54,7 @@ export function Sidebar({ academyName }: { academyName: string }) {
             >
               <Icon className="h-4 w-4" />
               {label}
-            </Link>
+            </AppNavLink>
           );
         })}
       </nav>
