@@ -2,6 +2,16 @@
 
 Monorepo for the sports academy ops product.
 
+## Live
+
+| | URL |
+|---|---|
+| **App** | https://sports-academia.vercel.app |
+| **GitHub** | https://github.com/prasanthkuna/sports-academia |
+| **Public demo** | https://sports-academia.vercel.app/a/kca-hyderabad |
+
+> In Vercel project settings, set **Root Directory** to `web` for GitHub auto-deploys.
+
 ## Quick start
 
 ```powershell
