@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getAcademyContext } from "@/lib/auth";
 import { rel } from "@/lib/utils";
+import { batchKioskUrl, coachAttendanceUrl } from "@/lib/qr-urls";
 
 export default async function BatchDetailPage({
   params,
@@ -18,6 +20,10 @@ export default async function BatchDetailPage({
     .single();
 
   if (!batch) notFound();
+
+  const ctx = await getAcademyContext();
+  const slug = ctx?.academySlug ?? "";
+  const kioskUrl = slug ? batchKioskUrl(slug, id) : "";
 
   const { data: roster } = await supabase
     .from("batch_students")
@@ -55,12 +61,24 @@ export default async function BatchDetailPage({
           );
         })}
       </div>
-      <Link
-        href={`/attendance`}
-        className="inline-flex rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white"
-      >
-        Mark attendance
-      </Link>
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href={coachAttendanceUrl(id)}
+          className="inline-flex rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white"
+        >
+          Mark attendance
+        </Link>
+        {ctx?.plan === "pro" && kioskUrl && (
+          <a
+            href={kioskUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex rounded-md border border-brand px-4 py-2 text-sm font-semibold text-brand"
+          >
+            Batch kiosk QR page
+          </a>
+        )}
+      </div>
     </div>
   );
 }

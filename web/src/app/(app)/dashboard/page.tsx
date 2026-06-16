@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppLinkGrid } from "@/components/layout/app-link-grid";
 import type { AppLinkItem } from "@/lib/app-icons";
-import { formatCurrency, rel } from "@/lib/utils";
+import { formatCurrency, rel, waLink } from "@/lib/utils";
+import { DigestBanner } from "@/components/dashboard/digest-banner";
 
 export default async function DashboardPage() {
   const ctx = await getAcademyContext();
@@ -20,12 +21,14 @@ export default async function DashboardPage() {
     { data: paymentsToday },
     { data: overdueFees },
     { data: pendingFees },
+    { data: digest },
+    { count: trialToday },
   ] = await Promise.all([
     supabase
       .from("students")
       .select("*", { count: "exact", head: true })
       .eq("status", "active"),
-    supabase.from("attendance").select("status").eq("attendance_date", today),
+    supabase.from("attendance").select("status, source").eq("attendance_date", today),
     supabase.from("payments").select("amount").eq("payment_date", today).eq("status", "active"),
     supabase
       .from("student_fees")
@@ -36,20 +39,36 @@ export default async function DashboardPage() {
       .from("student_fees")
       .select("pending_amount")
       .in("status", ["pending", "partially_paid", "overdue"]),
+    supabase
+      .from("owner_digest_snapshots")
+      .select("whatsapp_body, sent_at")
+      .eq("digest_date", today)
+      .maybeSingle(),
+    supabase
+      .from("leads")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "trial_attended")
+      .eq("trial_date", today),
   ]);
 
   const present = attendanceToday?.filter((a) => a.status === "present").length ?? 0;
-  const absent = attendanceToday?.filter((a) => a.status === "absent").length ?? 0;
+  const qrCheckIns =
+    attendanceToday?.filter((a) => a.status === "present" && a.source === "qr_scan").length ?? 0;
+  const manualCheckIns = present - qrCheckIns;
   const todayCollection =
     paymentsToday?.reduce((s, p) => s + Number(p.amount), 0) ?? 0;
   const totalPending = pendingFees?.reduce((s, f) => s + Number(f.pending_amount), 0) ?? 0;
 
   const quick: AppLinkItem[] = [
     { href: "/attendance", label: "Mark Attend", icon: "attendance" },
-    { href: "/fees", label: "Collect Fee", icon: "fees" },
-    { href: "/students", label: "Add Student", icon: "userPlus" },
-    { href: "/leads", label: "Leads", icon: "users" },
+    ...(ctx?.role !== "coach"
+      ? [{ href: "/fees", label: "Collect Fee", icon: "fees" as const }]
+      : []),
+    { href: "/students", label: "Students", icon: "userPlus" },
+    ...(ctx?.role !== "coach" ? [{ href: "/leads", label: "Leads", icon: "users" as const }] : []),
   ];
+
+  const whatsapp = ctx?.settings?.whatsapp_number;
 
   return (
     <div className="space-y-6">
@@ -57,6 +76,14 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-ink">Dashboard</h1>
         <p className="text-sm text-muted">Today&apos;s academy snapshot</p>
       </div>
+
+      {digest?.whatsapp_body && whatsapp && (ctx?.role === "admin" || ctx?.role === "owner") && (
+        <DigestBanner
+          body={digest.whatsapp_body}
+          whatsappUrl={waLink(whatsapp, digest.whatsapp_body)}
+          sent={!!digest.sent_at}
+        />
+      )}
 
       <AppLinkGrid
         items={quick}
@@ -72,16 +99,21 @@ export default async function DashboardPage() {
         <Card>
           <p className="text-xs font-medium uppercase text-muted">Present today</p>
           <p className="mt-2 font-mono-amount text-2xl font-semibold text-success">{present}</p>
-        </Card>
-        <Card>
-          <p className="text-xs font-medium uppercase text-muted">Absent today</p>
-          <p className="mt-2 font-mono-amount text-2xl font-semibold text-error">{absent}</p>
+          {ctx?.plan === "pro" && (
+            <p className="mt-1 text-xs text-muted">
+              {qrCheckIns} QR · {manualCheckIns} manual
+            </p>
+          )}
         </Card>
         <Card>
           <p className="text-xs font-medium uppercase text-muted">Today&apos;s collection</p>
           <p className="mt-2 font-mono-amount text-2xl font-semibold text-ink">
             {formatCurrency(todayCollection)}
           </p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium uppercase text-muted">Trials today</p>
+          <p className="mt-2 font-mono-amount text-2xl font-semibold text-ink">{trialToday ?? 0}</p>
         </Card>
       </div>
 
@@ -112,9 +144,11 @@ export default async function DashboardPage() {
             ))
           )}
         </div>
-        <Link href="/fees" className="mt-3 inline-block text-sm font-medium text-ink underline">
-          View all fees →
-        </Link>
+        {ctx?.role !== "coach" && (
+          <Link href="/fees" className="mt-3 inline-block text-sm font-medium text-ink underline">
+            View all fees →
+          </Link>
+        )}
       </Card>
     </div>
   );

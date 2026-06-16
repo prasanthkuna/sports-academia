@@ -3,20 +3,69 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { collectPayment } from "@/app/actions";
+import { collectPayment, logWhatsApp } from "@/app/actions";
+import { WhatsAppButton } from "@/components/whatsapp-button";
+import { receiptMessage, reviewBoosterMessage } from "@/lib/whatsapp-messages";
+import { rel } from "@/lib/utils";
 
 export function CollectFeeRow({
   fee,
+  academyName,
+  reviewLink,
 }: {
-  fee: { id: string; pending_amount: number };
+  fee: {
+    id: string;
+    pending_amount: number;
+    students?: { name: string; mobile: string; whatsapp: string | null } | { name: string; mobile: string; whatsapp: string | null }[] | null;
+    fee_types?: { name: string } | { name: string }[] | null;
+  };
+  academyName: string;
+  reviewLink: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const [receipt, setReceipt] = useState<{ receipt_number: string; verify_token?: string } | null>(null);
+
+  const student = rel(fee.students);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await collectPayment(new FormData(e.currentTarget));
+    const amount = Number(new FormData(e.currentTarget).get("amount"));
+    const res = await collectPayment(new FormData(e.currentTarget));
+    setReceipt(res);
     setOpen(false);
-    window.location.reload();
+
+    if (student) {
+      const body = receiptMessage({
+        academyName,
+        studentName: student.name,
+        amount,
+        receiptNumber: res.receipt_number,
+        paymentDate: new Date().toISOString().slice(0, 10),
+      });
+      await logWhatsApp(null, student.whatsapp || student.mobile, "receipt", body);
+    }
+  }
+
+  if (receipt && student) {
+    const body = receiptMessage({
+      academyName,
+      studentName: student.name,
+      amount: Number(fee.pending_amount),
+      receiptNumber: receipt.receipt_number,
+      paymentDate: new Date().toISOString().slice(0, 10),
+    });
+    return (
+      <div className="flex flex-wrap gap-2">
+        <WhatsAppButton phone={student.whatsapp || student.mobile} message={body} label="Send receipt" />
+        {reviewLink && (
+          <WhatsAppButton
+            phone={student.whatsapp || student.mobile}
+            message={reviewBoosterMessage({ academyName, reviewLink })}
+            label="Review ask"
+          />
+        )}
+      </div>
+    );
   }
 
   if (!open) {

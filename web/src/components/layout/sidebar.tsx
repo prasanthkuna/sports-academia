@@ -2,6 +2,9 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { AppNavLink } from "@/components/layout/navigation-loading";
+import { navItemsForRole } from "@/lib/permissions";
+import type { UserRole } from "@/types";
+import { createClient } from "@/lib/supabase/client";
 import {
   ClipboardCheck,
   Home,
@@ -11,19 +14,27 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 
-const items = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/students", label: "Students", icon: Users },
-  { href: "/attendance", label: "Attendance", icon: ClipboardCheck },
-  { href: "/fees", label: "Fees", icon: IndianRupee },
-  { href: "/more", label: "More", icon: LayoutGrid },
-];
+const iconMap = {
+  Dashboard: Home,
+  Students: Users,
+  Attendance: ClipboardCheck,
+  Fees: IndianRupee,
+  More: LayoutGrid,
+};
 
-export function Sidebar({ academyName }: { academyName: string }) {
+export function Sidebar({
+  academyName,
+  role,
+  plan,
+}: {
+  academyName: string;
+  role: UserRole;
+  plan: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
+  const items = navItemsForRole(role);
 
   async function logout() {
     const supabase = createClient();
@@ -37,9 +48,11 @@ export function Sidebar({ academyName }: { academyName: string }) {
       <div className="border-b border-hairline-soft px-5 py-5">
         <p className="text-xs font-medium uppercase tracking-wide text-muted">Academy</p>
         <p className="mt-1 truncate text-sm font-semibold text-ink">{academyName}</p>
+        <p className="mt-0.5 text-xs text-brand">{plan === "pro" ? "Pro" : "Starter"}</p>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
-        {items.map(({ href, label, icon: Icon }) => {
+        {items.map(({ href, label }) => {
+          const Icon = iconMap[label as keyof typeof iconMap] ?? Home;
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <AppNavLink

@@ -4,8 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatCurrency, formatDate, rel } from "@/lib/utils";
+import { getAcademyContext } from "@/lib/auth";
+import { studentCheckInUrl } from "@/lib/qr-urls";
 import { CollectFeeButton } from "@/components/fees/collect-fee-button";
 import { WhatsAppButton } from "@/components/whatsapp-button";
+import { RegenerateQrButton } from "@/components/students/regenerate-qr-button";
 
 export default async function StudentProfilePage({
   params,
@@ -22,6 +25,12 @@ export default async function StudentProfilePage({
     .single();
 
   if (!student) notFound();
+
+  const ctx = await getAcademyContext();
+  const checkInUrl =
+    student.qr_token && ctx?.academySlug
+      ? studentCheckInUrl(ctx.academySlug, student.qr_token)
+      : null;
 
   const [{ data: fees }, { data: receipts }, { data: attendance }] = await Promise.all([
     supabase
@@ -71,7 +80,7 @@ export default async function StudentProfilePage({
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <CollectFeeButton studentId={id} fees={fees ?? []} />
           <WhatsAppButton
             studentId={id}
@@ -79,6 +88,19 @@ export default async function StudentProfilePage({
             parentName={student.parent_name}
             studentName={student.name}
           />
+          {ctx?.plan === "pro" && checkInUrl && (
+            <>
+              <a
+                href={checkInUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-11 items-center rounded-md border border-brand px-4 text-sm font-semibold text-brand"
+              >
+                QR check-in link
+              </a>
+              {ctx.role === "admin" && <RegenerateQrButton studentId={id} />}
+            </>
+          )}
         </div>
       </div>
 

@@ -1,14 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
+import { getAcademyContext } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatCurrency, formatDate, rel } from "@/lib/utils";
 import { CollectFeeRow } from "@/components/fees/collect-fee-row";
+import { redirect } from "next/navigation";
+import { canMutateFees } from "@/lib/permissions";
 
 export default async function FeesPage({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
+  const ctx = await getAcademyContext();
+  if (!ctx || !canMutateFees(ctx.role)) redirect("/dashboard");
+
   const { status = "pending" } = await searchParams;
   const supabase = await createClient();
   await supabase.rpc("mark_overdue_fees");
@@ -73,7 +79,13 @@ export default async function FeesPage({
                 <p className="font-mono-amount text-lg font-semibold text-ink">
                   {formatCurrency(Number(fee.pending_amount))}
                 </p>
-                {Number(fee.pending_amount) > 0 && <CollectFeeRow fee={fee} />}
+                {Number(fee.pending_amount) > 0 && (
+                  <CollectFeeRow
+                    fee={fee}
+                    academyName={ctx.academyUser.academies.name}
+                    reviewLink={ctx.settings?.google_review_link ?? null}
+                  />
+                )}
               </div>
             </div>
           </Card>

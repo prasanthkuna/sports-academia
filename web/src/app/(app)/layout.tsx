@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <Sidebar academyName={academyName} />
+      <Sidebar academyName={academyName} role={ctx.role} plan={ctx.plan} />
       <div className="flex min-h-screen flex-1 flex-col pb-20 md:pb-0">
         <header className="sticky top-0 z-30 flex h-14 items-center border-b border-hairline-soft bg-canvas px-4 md:hidden">
           <div>
@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">
           <NavigationLoadingProvider>{children}</NavigationLoadingProvider>
         </main>
-        <BottomNav />
+        <BottomNav role={ctx.role} />
       </div>
     </div>
   );

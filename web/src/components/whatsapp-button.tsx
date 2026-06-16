@@ -5,27 +5,33 @@ import { logWhatsApp } from "@/app/actions";
 export function WhatsAppButton({
   studentId,
   phone,
+  message,
+  label = "WhatsApp",
   parentName,
   studentName,
 }: {
-  studentId: string;
+  studentId?: string | null;
   phone: string;
-  parentName: string;
-  studentName: string;
+  message?: string;
+  label?: string;
+  parentName?: string;
+  studentName?: string;
 }) {
-  const message = `Hello ${parentName}, this is regarding ${studentName} at our academy.`;
+  const body =
+    message ??
+    `Hello ${parentName ?? "there"}, this is regarding ${studentName ?? "your ward"} at our academy.`;
   const num = phone.replace(/\D/g, "").replace(/^0/, "91");
-  const url = `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(body)}`;
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noreferrer"
-      onClick={() => logWhatsApp(studentId, phone, "general", message)}
+      onClick={() => logWhatsApp(studentId ?? null, phone, "general", body)}
       className="inline-flex h-11 items-center rounded-md bg-[#25D366] px-4 text-sm font-semibold text-white"
     >
-      WhatsApp
+      {label}
     </a>
   );
 }

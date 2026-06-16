@@ -1,68 +1,44 @@
-import { createClient } from "@/lib/supabase/server";
 import { getAcademyContext } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { canManageTeam } from "@/lib/permissions";
+import { SettingsForm } from "@/components/settings/settings-form";
+import { SportsManager } from "@/components/settings/sports-manager";
+import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
+import { planLabel } from "@/lib/plans";
 
 export default async function SettingsPage() {
   const ctx = await getAcademyContext();
-  const supabase = await createClient();
+  if (!ctx || !canManageTeam(ctx.role)) redirect("/dashboard");
 
+  const supabase = await createClient();
   const { data: settings } = await supabase
     .from("academy_settings")
     .select("*")
-    .eq("academy_id", ctx?.academyId)
+    .eq("academy_id", ctx.academyId)
     .single();
 
-  const { data: feeTypes } = await supabase.from("fee_types").select("*");
+  const { data: sports } = await supabase.from("sports").select("*").eq("is_active", true);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-ink">Settings</h1>
-        <p className="text-sm text-muted">Academy profile and configuration</p>
+        <p className="text-sm text-muted">
+          Academy profile · {planLabel(ctx.plan)} plan
+        </p>
       </div>
 
-      <Card>
-        <h2 className="mb-3 font-semibold text-ink">Academy</h2>
-        <dl className="grid gap-2 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-muted">Name</dt>
-            <dd className="font-medium">{ctx?.academyUser.academies?.name}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">Receipt prefix</dt>
-            <dd className="font-mono-amount">{settings?.receipt_prefix}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">Contact</dt>
-            <dd>{settings?.contact_number ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">WhatsApp</dt>
-            <dd>{settings?.whatsapp_number ?? "—"}</dd>
-          </div>
-          <div className="sm:col-span-2">
-            <dt className="text-muted">Address</dt>
-            <dd>{settings?.address ?? "—"}</dd>
-          </div>
-        </dl>
+      <SettingsForm settings={settings} academyName={ctx.academyUser.academies.name} slug={ctx.academySlug} />
+
+      <Card className="p-6">
+        <SportsManager sports={sports ?? []} plan={ctx.plan} />
       </Card>
 
-      <Card>
-        <h2 className="mb-3 font-semibold text-ink">Fee types</h2>
-        <ul className="space-y-1 text-sm">
-          {(feeTypes ?? []).map((ft) => (
-            <li key={ft.id}>{ft.name}</li>
-          ))}
-        </ul>
-      </Card>
-
-      <Card>
+      <Card className="p-6">
         <h2 className="mb-3 font-semibold text-ink">Public links</h2>
         <p className="text-sm text-muted">
-          Enquiry form:{" "}
-          <code className="rounded bg-canvas px-1">
-            /a/{ctx?.academyUser.academies?.slug}/enquire
-          </code>
+          Enquiry: <code className="rounded bg-canvas px-1">/a/{ctx.academySlug}/enquire</code>
         </p>
       </Card>
     </div>

@@ -16,13 +16,15 @@ export function AttendanceMark({
   roster,
   existing,
   defaultDate,
+  defaultBatchId,
 }: {
   batches: { id: string; name: string }[];
   roster: RosterRow[];
   existing: { batch_id: string; student_id: string; status: string }[];
   defaultDate: string;
+  defaultBatchId?: string;
 }) {
-  const [batchId, setBatchId] = useState(batches[0]?.id ?? "");
+  const [batchId, setBatchId] = useState(defaultBatchId ?? batches[0]?.id ?? "");
   const [date, setDate] = useState(defaultDate);
   const [saving, setSaving] = useState(false);
   const [statusMap, setStatusMap] = useState<Record<string, string>>(() => {
