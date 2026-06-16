@@ -11,6 +11,7 @@ type AssetImageProps = {
   height: number;
   className?: string;
   priority?: boolean;
+  unoptimized?: boolean;
   loading?: "lazy" | "eager";
   fallback: React.ReactNode;
 };
@@ -22,6 +23,7 @@ export function AssetImage({
   height,
   className,
   priority,
+  unoptimized,
   loading,
   fallback,
 }: AssetImageProps) {
@@ -38,6 +40,7 @@ export function AssetImage({
       width={width}
       height={height}
       priority={priority}
+      unoptimized={unoptimized}
       loading={priority ? undefined : loading ?? "lazy"}
       className={cn(className)}
       onError={() => setFailed(true)}

@@ -11,18 +11,18 @@ export type LandingFeatureIcon =
 export const landingConfig = {
   siteUrl: "https://sports-academia.vercel.app",
   contact: {
-    email: "hello@academyops.in",
+    email: "prasanth@academyops.in",
     instagram: "https://instagram.com",
     youtube: "https://youtube.com",
   },
   whatsapp: {
-    number: "919876543210",
+    number: "919008393030",
     message: "Hi, I'm interested in Academy Ops for my sports academy.",
   },
   stats: [
-    { value: 50, suffix: "+", label: "Academies onboarded" },
-    { value: 5000, suffix: "+", label: "Students managed" },
-    { value: 2, prefix: "₹", suffix: " Cr+", label: "Fees tracked on platform" },
+    { value: 5, suffix: "+", label: "Academies onboarded" },
+    { value: 1000, suffix: "+", label: "Students managed" },
+    { value: 30, prefix: "₹", suffix: " L+", label: "Fees tracked on platform" },
   ],
   sports: [
     "Cricket",
@@ -68,7 +68,7 @@ export const landingConfig = {
   ],
   pricing: {
     setup: {
-      amount: 14999,
+      amount: 19999,
       title: "One-time setup",
       subtitle: "Single location · onboarding included",
       includes: [
@@ -82,7 +82,7 @@ export const landingConfig = {
       {
         id: "starter",
         name: "Starter",
-        price: 2499,
+        price: 4999,
         period: "month",
         description: "Single academy · core operations",
         popular: false,
@@ -100,7 +100,7 @@ export const landingConfig = {
       {
         id: "pro",
         name: "Pro",
-        price: 4999,
+        price: 9999,
         period: "month",
         description: "Growing academies · full ops",
         popular: true,

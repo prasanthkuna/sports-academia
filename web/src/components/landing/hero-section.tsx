@@ -73,6 +73,7 @@ export function HeroSection() {
             width={1200}
             height={1440}
             priority
+            unoptimized
             className="w-full max-w-[340px] drop-shadow-2xl"
             fallback={<ProductMock />}
           />
