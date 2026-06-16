@@ -17,7 +17,7 @@ export function HeroSection() {
           backgroundSize: "400px 400px",
         }}
       />
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-24">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-6 lg:py-20 xl:py-24">
         <div className="max-w-xl">
           <AnimateOnMount delay={0}>
             <p className="mb-4 inline-flex items-center rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-xs font-medium text-brand">
@@ -66,17 +66,25 @@ export function HeroSection() {
             </p>
           </AnimateOnMount>
         </div>
-        <AnimateOnMount delay={0.25} className="flex justify-center lg:justify-end">
-          <AssetImage
-            src={assets.landing.heroProductMockup}
-            alt="Academy Ops mobile app showing fee collection and attendance"
-            width={1200}
-            height={1440}
-            priority
-            unoptimized
-            className="w-full max-w-[340px] drop-shadow-2xl"
-            fallback={<ProductMock />}
-          />
+        <AnimateOnMount
+          delay={0.25}
+          className="relative flex justify-center lg:col-span-1 lg:justify-end lg:self-stretch"
+        >
+          <div className="pointer-events-none absolute right-0 top-1/2 h-[min(420px,70vw)] w-[min(420px,70vw)] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(15,118,110,0.14)_0%,transparent_68%)] lg:h-[min(480px,42vw)] lg:w-[min(480px,42vw)]" />
+          <div className="relative w-full max-w-[min(100%,20rem)] sm:max-w-[24rem] lg:max-w-none lg:h-full lg:min-h-[28rem] lg:w-full xl:min-h-[32rem]">
+            <div className="relative mx-auto aspect-[4/5] w-full overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
+              <AssetImage
+                src={assets.landing.heroProductMockup}
+                alt="Academy Ops mobile app showing fee collection and attendance"
+                width={1200}
+                height={1440}
+                priority
+                unoptimized
+                className="hero-phone-shot absolute left-1/2 top-[46%] h-[138%] w-[138%] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_28px_56px_rgba(17,17,17,0.14)] lg:h-[155%] lg:w-[155%]"
+                fallback={<ProductMock />}
+              />
+            </div>
+          </div>
         </AnimateOnMount>
       </div>
     </section>

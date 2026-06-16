@@ -102,6 +102,12 @@
   }
 }
 
+/* Hero phone: transparent asset sits on page gradient */
+.hero-phone-shot {
+  -webkit-mask-image: radial-gradient(ellipse 88% 92% at 50% 48%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 88% 92% at 50% 48%, #000 62%, transparent 100%);
+}
+
 body {
   background: var(--color-canvas);
   color: var(--color-body);
