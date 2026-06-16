@@ -1,12 +1,48 @@
+import { Bricolage_Grotesque } from "next/font/google";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { AcademyHero } from "@/components/landing/academy/academy-hero";
+import {
+  AcademyCtaBar,
+  AcademyFooter,
+  AcademyInfo,
+} from "@/components/landing/academy/academy-sections";
+import { assets } from "@/lib/assets";
 
-export default async function PublicAcademyPage({
-  params,
-}: {
+const display = Bricolage_Grotesque({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+type PageProps = {
   params: Promise<{ slug: string }>;
-}) {
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: academy } = await supabase
+    .from("academies")
+    .select("name")
+    .eq("slug", slug)
+    .single();
+
+  if (!academy) return { title: "Academy not found" };
+
+  return {
+    title: `${academy.name} — Enquire & join`,
+    description: `Training, batches, and enquiries at ${academy.name}. Contact us on WhatsApp or submit an enquiry form.`,
+    openGraph: {
+      title: academy.name,
+      description: "Sports academy — enquire for batch timings and fees",
+      images: [{ url: assets.og.academy, width: 1200, height: 630 }],
+    },
+  };
+}
+
+export default async function PublicAcademyPage({ params }: PageProps) {
   const { slug } = await params;
   const supabase = await createClient();
 
@@ -18,38 +54,46 @@ export default async function PublicAcademyPage({
 
   if (!academy) notFound();
 
-  const { data: settings } = await supabase
-    .from("academy_settings")
-    .select("address, contact_number, whatsapp_number")
-    .eq("academy_id", academy.id)
-    .single();
+  const [{ data: settings }, { data: batches }] = await Promise.all([
+    supabase
+      .from("academy_settings")
+      .select("address, contact_number, whatsapp_number, brand_color, logo_url")
+      .eq("academy_id", academy.id)
+      .single(),
+    supabase
+      .from("batches")
+      .select("name, session_type, start_time, end_time")
+      .eq("academy_id", academy.id)
+      .eq("is_active", true)
+      .order("name"),
+  ]);
+
+  const brandStyle = settings?.brand_color
+    ? ({ "--academy-brand": settings.brand_color } as React.CSSProperties)
+    : undefined;
 
   return (
-    <main className="min-h-screen bg-canvas">
-      <section className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-ink">{academy.name}</h1>
-        <p className="mt-2 text-muted">Sports training · Hyderabad</p>
-        {settings?.address && <p className="mt-4 text-sm text-body">{settings.address}</p>}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href={`/a/${slug}/enquire`}
-            className="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-white"
-          >
-            Enquire now
-          </Link>
-          {settings?.whatsapp_number && (
-            <a
-              href={`https://wa.me/91${settings.whatsapp_number.replace(/\D/g, "")}`}
-              className="rounded-md bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white"
-            >
-              WhatsApp
-            </a>
-          )}
-        </div>
-      </section>
-      <footer className="bg-[#101010] px-4 py-12 text-center text-sm text-[#a1a1aa]">
-        {academy.name} · Powered by Sports Academy Ops
-      </footer>
-    </main>
+    <div className={`${display.variable} min-h-screen bg-canvas font-sans`} style={brandStyle}>
+      <AcademyHero
+        name={academy.name}
+        tagline="Structured coaching · Professional batches · Hyderabad"
+      />
+      <AcademyCtaBar
+        slug={slug}
+        whatsappNumber={settings?.whatsapp_number}
+        contactNumber={settings?.contact_number}
+      />
+      <AcademyInfo
+        address={settings?.address}
+        batches={batches?.map((b) => ({
+          name: b.name,
+          schedule:
+            b.start_time && b.end_time
+              ? `${b.session_type} · ${b.start_time.slice(0, 5)}–${b.end_time.slice(0, 5)}`
+              : b.session_type,
+        }))}
+      />
+      <AcademyFooter name={academy.name} />
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { assets } from "@/lib/assets";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sports Academy Ops",
   description: "Fee recovery, attendance, and WhatsApp for sports academies",
+  icons: {
+    icon: [{ url: assets.brand.logoIconPng, sizes: "512x512", type: "image/png" }],
+    apple: assets.brand.logoIconPng,
+  },
 };
 
 export default function RootLayout({
