@@ -68,22 +68,20 @@ export function HeroSection() {
         </div>
         <AnimateOnMount
           delay={0.25}
-          className="relative flex justify-center lg:col-span-1 lg:justify-end lg:self-stretch"
+          className="relative flex items-center justify-center lg:justify-end"
         >
-          <div className="pointer-events-none absolute right-0 top-1/2 h-[min(420px,70vw)] w-[min(420px,70vw)] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(15,118,110,0.14)_0%,transparent_68%)] lg:h-[min(480px,42vw)] lg:w-[min(480px,42vw)]" />
-          <div className="relative w-full max-w-[min(100%,20rem)] sm:max-w-[24rem] lg:max-w-none lg:h-full lg:min-h-[28rem] lg:w-full xl:min-h-[32rem]">
-            <div className="relative mx-auto aspect-[4/5] w-full overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
-              <AssetImage
-                src={assets.landing.heroProductMockup}
-                alt="Academy Ops mobile app showing fee collection and attendance"
-                width={1200}
-                height={1440}
-                priority
-                unoptimized
-                className="hero-phone-shot absolute left-1/2 top-[46%] h-[138%] w-[138%] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_28px_56px_rgba(17,17,17,0.14)] lg:h-[155%] lg:w-[155%]"
-                fallback={<ProductMock />}
-              />
-            </div>
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(380px,88vw)] w-[min(380px,88vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(15,118,110,0.12)_0%,transparent_70%)] lg:left-auto lg:right-0 lg:translate-x-[8%]" />
+          <div className="relative w-full max-w-[min(100%,19rem)] sm:max-w-[22rem] lg:max-w-[26rem] xl:max-w-[30rem]">
+            <AssetImage
+              src={assets.landing.heroProductMockup}
+              alt="Academy Ops mobile app showing fee collection and attendance"
+              width={1200}
+              height={1440}
+              priority
+              unoptimized
+              className="h-auto w-full object-contain drop-shadow-[0_24px_48px_rgba(17,17,17,0.12)]"
+              fallback={<ProductMock />}
+            />
           </div>
         </AnimateOnMount>
       </div>
