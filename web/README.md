@@ -1,0 +1,56 @@
+# Sports Academy Ops
+
+Mobile-first academy operations app — students, attendance, fees, receipts, WhatsApp.
+
+**Stack:** Next.js 16 · Supabase · Bun
+
+## Setup
+
+```powershell
+cd web
+bun install
+```
+
+Copy env and add your Supabase keys from [Dashboard → Settings → API](https://supabase.com/dashboard/project/iqedvkdrccrsnwurwntq/settings/api):
+
+```powershell
+copy .env.local.example .env.local
+```
+
+Required in `.env.local`:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (seed only — never expose in client)
+
+## Seed demo data
+
+```powershell
+bun run seed
+```
+
+**Demo login**
+- Email: `admin@demo.academy`
+- Password: `Demo@123456`
+
+## Run dev server
+
+```powershell
+bun run dev
+```
+
+Open http://localhost:3000
+
+## Public pages
+
+- Academy page: `/a/kca-hyderabad`
+- Enquiry form: `/a/kca-hyderabad/enquire`
+
+## Package manager
+
+This project uses **Bun** (`bun.lock`). Use `bun install`, `bun run dev`, `bun run build` — not npm.
+
+## Docs
+
+- `docs/prd.md` — client scope
+- `docs/build-prd.md` — execution spec
+- `docs/ui-doc.md` — UI system

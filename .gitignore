@@ -1,0 +1,88 @@
+# =============================================================================
+# Sports Academia — root .gitignore
+# =============================================================================
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors / IDEs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.swp
+*.swo
+*~
+
+# Environment & secrets (never commit)
+.env
+.env.*
+!.env.example
+!.env.local.example
+**/.env.local
+**/secrets/
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Bun
+# Keep bun.lock committed for reproducible installs
+
+# Next.js (web/)
+web/.next/
+web/out/
+web/build/
+web/.turbo/
+web/.vercel/
+
+# Logs & debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
+
+# Test / coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# TypeScript
+*.tsbuildinfo
+# next-env.d.ts is generated but often committed in Next projects — ignore at root
+web/next-env.d.ts
+
+# Supabase local / CLI cache (never commit)
+supabase/.branches/
+supabase/.temp/
+supabase/snippets/
+
+# Misc build artifacts
+dist/
+.cache/
+*.tsbuildinfo
+
+# Package manager lockfiles we don't use
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Cursor / agent (optional local)
+.cursor/
+!.cursor/rules/
+
+# OS generated in web
+web/.DS_Store
