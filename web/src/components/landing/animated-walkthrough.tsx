@@ -4,15 +4,15 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CountUp } from "@/components/landing/motion/count-up";
 
-type Step = "dashboard" | "fee" | "whatsapp";
+type Step = "qr" | "fee" | "dashboard" | "whatsapp";
 
 export function AnimatedWalkthrough() {
   const reduced = useReducedMotion();
-  const [step, setStep] = useState<Step>("dashboard");
+  const [step, setStep] = useState<Step>("qr");
 
   useEffect(() => {
     if (reduced) return;
-    const sequence: Step[] = ["dashboard", "fee", "whatsapp"];
+    const sequence: Step[] = ["qr", "fee", "dashboard", "whatsapp"];
     let i = 0;
     const timer = setInterval(() => {
       i = (i + 1) % sequence.length;
@@ -34,35 +34,29 @@ export function AnimatedWalkthrough() {
         <div className="overflow-hidden rounded-[1.75rem] bg-canvas">
           <div className="flex items-center justify-between bg-surface-soft px-4 py-2">
             <span className="text-[10px] font-medium text-muted">9:41</span>
-            <span className="text-[10px] font-semibold text-ink">KCA Dashboard</span>
+            <span className="text-[10px] font-semibold text-ink">KCA Check-in</span>
             <span className="h-2 w-6 rounded-full bg-hairline" />
           </div>
           <div className="min-h-[280px] space-y-3 p-4">
             <AnimatePresence mode="wait">
-              {active === "dashboard" && (
+              {active === "qr" && (
                 <motion.div
-                  key="dashboard"
+                  key="qr"
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -12 }}
                   transition={{ duration: 0.35 }}
                   className="space-y-3"
                 >
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-lg bg-success-soft p-3">
-                      <p className="text-[10px] text-muted">Present today</p>
-                      <p className="font-mono-amount text-lg font-semibold text-ink">
-                        <CountUp value={142} duration={1} />
-                      </p>
-                    </div>
-                    <div className="rounded-lg bg-brand-soft p-3">
-                      <p className="text-[10px] text-muted">Collected</p>
-                      <p className="font-mono-amount text-lg font-semibold text-brand">
-                        ₹<CountUp value={8240} duration={1.2} />
-                      </p>
+                  <div className="rounded-lg border border-brand/30 bg-brand-soft/40 p-4 text-center">
+                    <div className="mx-auto mb-3 h-16 w-16 rounded-lg border-2 border-dashed border-brand bg-canvas" />
+                    <p className="text-xs font-semibold text-ink">Arjun Kumar</p>
+                    <p className="text-[10px] text-muted">U12 Morning Cricket</p>
+                    <div className="mt-3 rounded-md bg-success py-2 text-xs font-semibold text-white">
+                      Present · QR scan
                     </div>
                   </div>
-                  <p className="text-center text-[10px] text-muted">Step 1 · Mark attendance</p>
+                  <p className="text-center text-[10px] text-muted">Step 1 · QR check-in at gate</p>
                 </motion.div>
               )}
               {active === "fee" && (
@@ -85,6 +79,35 @@ export function AnimatedWalkthrough() {
                   <p className="text-center text-[10px] text-muted">Step 2 · Collect fee on ground</p>
                 </motion.div>
               )}
+              {active === "dashboard" && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.35 }}
+                  className="space-y-3"
+                >
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg bg-success-soft p-3">
+                      <p className="text-[10px] text-muted">QR today</p>
+                      <p className="font-mono-amount text-lg font-semibold text-ink">
+                        <CountUp value={42} duration={1} />
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-brand-soft p-3">
+                      <p className="text-[10px] text-muted">Collected</p>
+                      <p className="font-mono-amount text-lg font-semibold text-brand">
+                        ₹<CountUp value={8240} duration={1.2} />
+                      </p>
+                    </div>
+                  </div>
+                  <p className="rounded-lg border border-hairline px-3 py-2 text-center text-[10px] text-body">
+                    8 manual · 3 absent · 2 overdue fees
+                  </p>
+                  <p className="text-center text-[10px] text-muted">Step 3 · Owner dashboard</p>
+                </motion.div>
+              )}
               {active === "whatsapp" && (
                 <motion.div
                   key="whatsapp"
@@ -95,14 +118,14 @@ export function AnimatedWalkthrough() {
                   className="space-y-3"
                 >
                   <div className="rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-4">
-                    <p className="text-[10px] font-medium text-[#128C7E]">Receipt sent on WhatsApp</p>
+                    <p className="text-[10px] font-medium text-[#128C7E]">Tap to send on WhatsApp</p>
                     <p className="mt-2 text-xs font-semibold text-ink">RCP-2026-0042</p>
                     <p className="text-[10px] text-body">₹2,500 paid · Arjun Reddy</p>
                     <p className="mt-3 rounded-lg bg-[#DCF8C6] p-2 text-[10px] text-body">
                       Fee received. Thank you!
                     </p>
                   </div>
-                  <p className="text-center text-[10px] text-muted">Step 3 · WhatsApp receipt to parent</p>
+                  <p className="text-center text-[10px] text-muted">Step 4 · WhatsApp receipt to parent</p>
                 </motion.div>
               )}
             </AnimatePresence>

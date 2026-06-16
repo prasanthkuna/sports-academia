@@ -1,8 +1,9 @@
 "use client";
 
+import { QrCode } from "lucide-react";
 import { AssetImage } from "@/components/landing/asset-image";
 import { AnimateOnScroll, MotionCard } from "@/components/landing/motion/animate-on-scroll";
-import { assets } from "@/lib/assets";
+import { landingConfig } from "@/lib/landing-config";
 
 type FeatureCardProps = {
   title: string;
@@ -83,41 +84,40 @@ function MiniWhatsappUI() {
   );
 }
 
-const features = [
-  {
-    title: "Batch attendance",
-    description: "Daily roll call per batch with clear present/absent status and history.",
-    imageSrc: assets.landing.featureAttendance,
-    fallback: <MiniAttendanceUI />,
-  },
-  {
-    title: "Fee collection & receipts",
-    description: "Sequential receipt numbers, partial payments, and overdue tracking built in.",
-    imageSrc: assets.landing.featureFees,
-    fallback: <MiniFeesUI />,
-  },
-  {
-    title: "WhatsApp receipts",
-    description: "Log WhatsApp sends so staff know parents were notified — no duplicate messages.",
-    imageSrc: assets.landing.featureWhatsapp,
-    fallback: <MiniWhatsappUI />,
-  },
-];
+function MiniQrUI() {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-2 p-6">
+      <QrCode className="h-14 w-14 text-brand" strokeWidth={1.25} />
+      <p className="text-sm font-semibold text-ink">Scan to check in</p>
+      <p className="text-xs text-muted">U12 Morning · Arjun K.</p>
+    </div>
+  );
+}
+
+const fallbacks = [MiniAttendanceUI, MiniFeesUI, MiniWhatsappUI, MiniQrUI];
 
 export function BenefitsSection() {
   return (
-    <section id="features" className="py-20">
+    <section id="benefits" className="py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <AnimateOnScroll className="max-w-2xl">
-          <p className="text-sm font-medium uppercase tracking-wider text-brand">Features</p>
+          <p className="text-sm font-medium uppercase tracking-wider text-brand">Daily ops</p>
           <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             Everything your front desk needs
           </h2>
         </AnimateOnScroll>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {features.map((feature, i) => (
-            <FeatureCard key={feature.title} {...feature} delay={i * 0.12} />
-          ))}
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {landingConfig.benefitCards.map((feature, i) => {
+            const Fallback = fallbacks[i] ?? MiniAttendanceUI;
+            return (
+              <FeatureCard
+                key={feature.title}
+                {...feature}
+                fallback={<Fallback />}
+                delay={i * 0.1}
+              />
+            );
+          })}
         </div>
       </div>
     </section>

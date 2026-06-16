@@ -10,10 +10,9 @@ import { HowItWorksSection } from "@/components/landing/how-it-works";
 import { MarketingFooter } from "@/components/landing/marketing-footer";
 import { MarketingNav } from "@/components/landing/marketing-nav";
 import { PricingSection } from "@/components/landing/pricing-section";
+import { QrAttendanceSection } from "@/components/landing/qr-attendance-section";
 import { SportMarquee } from "@/components/landing/sport-marquee";
-import { StatsBar } from "@/components/landing/stats-bar";
 import { StickyMobileCta } from "@/components/landing/sticky-mobile-cta";
-import { TestimonialsSection } from "@/components/landing/testimonials-section";
 
 export default function HomePage() {
   return (
@@ -21,13 +20,12 @@ export default function HomePage() {
       <MarketingNav />
       <main>
         <HeroSection />
-        <StatsBar />
         <SportMarquee />
         <HowItWorksSection />
+        <QrAttendanceSection />
         <BenefitsSection />
         <FeaturesGrid />
         <AnimatedWalkthroughSection />
-        <TestimonialsSection />
         <PricingSection />
         <BeforeAfterSection />
         <FaqSection />

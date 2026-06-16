@@ -12,8 +12,8 @@ export function ProductMock() {
           <div className="space-y-3 p-4">
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-success-soft p-3">
-                <p className="text-[10px] text-muted">Present today</p>
-                <p className="font-mono-amount text-lg font-semibold text-ink">142</p>
+                <p className="text-[10px] text-muted">QR today</p>
+                <p className="font-mono-amount text-lg font-semibold text-ink">42</p>
               </div>
               <div className="rounded-lg bg-brand-soft p-3">
                 <p className="text-[10px] text-muted">Collected</p>
@@ -32,7 +32,7 @@ export function ProductMock() {
               </div>
             </div>
             <div className="rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-3">
-              <p className="text-[10px] font-medium text-[#128C7E]">Receipt sent on WhatsApp</p>
+              <p className="text-[10px] font-medium text-[#128C7E]">Tap to send on WhatsApp</p>
               <p className="mt-1 text-[10px] text-body">RCP-2026-0042 · ₹2,500 paid</p>
             </div>
             <div className="flex gap-1.5">
@@ -40,7 +40,7 @@ export function ProductMock() {
                 <div
                   key={tab}
                   className={`flex-1 rounded-md py-1.5 text-center text-[9px] font-medium ${
-                    i === 1 ? "bg-ink text-white" : "bg-surface-soft text-muted"
+                    i === 0 ? "bg-ink text-white" : "bg-surface-soft text-muted"
                   }`}
                 >
                   {tab}

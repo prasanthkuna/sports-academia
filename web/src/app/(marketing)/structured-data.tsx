@@ -1,6 +1,8 @@
 import { landingConfig } from "@/lib/landing-config";
 
 export function StructuredData() {
+  const { pricing } = landingConfig;
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -17,7 +19,7 @@ export function StructuredData() {
     name: "Academy Ops",
     url: landingConfig.siteUrl,
     description:
-      "Fee recovery, attendance, and WhatsApp receipts for Indian sports academies.",
+      "QR attendance, fee collection, coach logins, and WhatsApp receipts for Indian sports academies.",
   };
 
   const appSchema = {
@@ -26,11 +28,13 @@ export function StructuredData() {
     name: "Academy Ops",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
-    offers: {
+    offers: pricing.plans.map((plan) => ({
       "@type": "Offer",
-      price: "2499",
+      name: plan.name,
+      price: String(plan.price),
       priceCurrency: "INR",
-    },
+      description: plan.description,
+    })),
   };
 
   return (

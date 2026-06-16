@@ -12,27 +12,31 @@ const display = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   metadataBase: new URL(landingConfig.siteUrl),
-  title: "Academy Ops — Fees, attendance & WhatsApp for sports academies",
+  title: "Academy Ops — QR attendance, fees & WhatsApp for sports academies",
   description:
-    "Collect fees on the ground, mark batch attendance, and send receipts on WhatsApp. Built for Indian cricket, football, and multi-sport academies.",
+    "QR gate check-in, fee collection, coach logins, and WhatsApp receipts for Indian cricket, football, and multi-sport academies. Phone-first ops for owners and staff.",
   keywords: [
     "sports academy software",
+    "QR attendance",
     "fee collection",
-    "attendance app",
+    "coach login",
     "WhatsApp receipts",
     "India cricket academy",
+    "academy management",
   ],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Academy Ops — Sports academy operations",
-    description: "Fee recovery, attendance, and WhatsApp receipts in one phone-first app.",
+    title: "Academy Ops — QR attendance & academy operations",
+    description:
+      "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
     url: landingConfig.siteUrl,
     images: [{ url: assets.og.platform, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Academy Ops — Sports academy operations",
-    description: "Fee recovery, attendance, and WhatsApp receipts in one phone-first app.",
+    title: "Academy Ops — QR attendance & academy operations",
+    description:
+      "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
     images: [assets.og.platform],
   },
 };

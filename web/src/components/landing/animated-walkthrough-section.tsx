@@ -1,11 +1,6 @@
 import { AnimatedWalkthrough } from "@/components/landing/animated-walkthrough";
 import { AnimateOnScroll } from "@/components/landing/motion/animate-on-scroll";
-
-const steps = [
-  { title: "Mark attendance", body: "Open your batch and tap present or absent." },
-  { title: "Collect fee", body: "Record cash or UPI — receipt number generated instantly." },
-  { title: "WhatsApp receipt", body: "One tap sends a clean PDF to the parent." },
-];
+import { landingConfig } from "@/lib/landing-config";
 
 export function AnimatedWalkthroughSection() {
   return (
@@ -14,10 +9,10 @@ export function AnimatedWalkthroughSection() {
         <AnimateOnScroll>
           <p className="text-sm font-medium uppercase tracking-wider text-brand">See it in action</p>
           <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Three taps between practice and peace of mind
+            Gate to parent proof — on one phone
           </h2>
           <ol className="mt-8 space-y-4">
-            {steps.map((step, i) => (
+            {landingConfig.walkthroughSteps.map((step, i) => (
               <li key={step.title} className="flex gap-4">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white">
                   {i + 1}
