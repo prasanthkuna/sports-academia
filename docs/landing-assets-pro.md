@@ -1,29 +1,27 @@
-# Landing Page — CSS-Only Visuals
+# Landing Page — CSS UI Mocks (10x layout)
 
-The marketing landing page (`/`) uses **animated React UI mocks** — no image assets required.
+The marketing landing (`/`) uses **iPhone 16 Pro-style frames** and **animated React UI mocks** — no landing image assets.
 
-## What's rendered in code
+## Page sections
 
-| Section | Component | `web/src/components/landing/ui-mocks.tsx` |
-|---------|-----------|---------------------------------------------|
-| Hero | `HeroPhoneMock` | Cycles QR → fee → dashboard → WhatsApp |
-| QR section | `QrCheckInPhoneMock` | Scan animation → success check-in |
-| Benefits | `BenefitMock` | 4 mini UI cards (attendance, fees, WhatsApp, QR) |
-| Walkthrough | `HeroPhoneMock` | Same product story, scroll reinforcement |
+| Section | ID | Component |
+|---------|-----|-----------|
+| Hero | — | `hero-section.tsx` + `HeroPhoneMock` |
+| Product flow map | `#product` | `flow-map-section.tsx` — 8 interactive tabs |
+| QR platform | `#qr-platform` | `qr-platform-section.tsx` — 5 QR use cases |
+| Role lanes | `#roles` | `role-lanes-section.tsx` — owner / staff / coach |
+| Day timeline | `#day-timeline` | `day-timeline-section.tsx` |
+| Live demo | `#demo` | `demo-playground-section.tsx` |
+| Plan matrix | — | `plan-comparison-section.tsx` |
+| Pricing | `#pricing` | `pricing-section.tsx` |
+| FAQ | `#faq` | `faq-section.tsx` |
 
-## Social preview (OG)
+## Code locations
 
-Generated at runtime via `web/src/app/(marketing)/opengraph-image.tsx` — no static JPG to maintain.
+- Copy & config: `web/src/lib/landing-config.ts`
+- Phone mocks: `web/src/components/landing/ui-mocks.tsx`
+- OG image: `web/src/app/(marketing)/opengraph-image.tsx`
 
-## Optional static assets
+## Academy pages only (static assets)
 
-Only needed for **academy public pages** (`/a/[slug]`), not the platform landing:
-
-- `academy/hero-fallback-cricket.webp`
-- `academy/hero-fallback-football.webp`
-- `og/academy-og-template.jpg`
-- `brand/logo-icon.svg`
-
-## Removed from landing
-
-`landing/*.webp` and `og/platform-og.jpg` are no longer referenced. Safe to delete from `public/assets/landing/`.
+`academy/hero-fallback-*.webp`, `brand/logo-icon.svg` — see `web/src/lib/assets.ts`

@@ -55,7 +55,7 @@ export default function OgImage() {
             maxWidth: 900,
           }}
         >
-          Scan at the gate. Collect fees. Send receipts.
+          Scan at the gate. Collect fees. Run your academy.
         </div>
         <p
           style={{

@@ -36,10 +36,10 @@ export function HeroSection() {
                 Start free demo
               </Link>
               <a
-                href="#qr-attendance"
+                href="#demo"
                 className="rounded-md border border-hairline bg-canvas px-6 py-3 text-sm font-semibold text-ink hover:bg-surface-soft"
               >
-                See QR check-in
+                Try live flows
               </a>
             </div>
           </AnimateOnMount>
@@ -61,7 +61,6 @@ export function HeroSection() {
           </AnimateOnMount>
         </div>
         <AnimateOnMount delay={0.25} className="relative flex items-center justify-center lg:justify-end">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(380px,88vw)] w-[min(380px,88vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(15,118,110,0.12)_0%,transparent_70%)] lg:left-auto lg:right-0 lg:translate-x-[8%]" />
           <HeroPhoneMock />
         </AnimateOnMount>
       </div>

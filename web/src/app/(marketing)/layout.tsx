@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(landingConfig.siteUrl),
   title: "Academy Ops — QR attendance, fees & WhatsApp for sports academies",
   description:
-    "QR gate check-in, fee collection, coach logins, and WhatsApp receipts for Indian cricket, football, and multi-sport academies. Phone-first ops for owners and staff.",
+    "QR gate check-in, fee collection, coach logins, leads, reports, and WhatsApp receipts for Indian sports academies. Try the live demo with real flows.",
   keywords: [
     "sports academy software",
     "QR attendance",
@@ -22,19 +22,20 @@ export const metadata: Metadata = {
     "WhatsApp receipts",
     "India cricket academy",
     "academy management",
+    "trial check-in",
   ],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Academy Ops — QR attendance & academy operations",
+    title: "Academy Ops — Your academy gate, fees, and parents",
     description:
-      "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
+      "QR check-in, on-ground fees, coach roles, and owner digest — one platform for Indian sports academies. Live demo included.",
     url: landingConfig.siteUrl,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Academy Ops — QR attendance & academy operations",
+    title: "Academy Ops — Your academy gate, fees, and parents",
     description:
-      "Students scan at the gate. Collect fees, export reports, and send WhatsApp receipts — one platform for Indian sports academies.",
+      "QR check-in, on-ground fees, coach roles, and owner digest — one platform for Indian sports academies.",
   },
 };
 

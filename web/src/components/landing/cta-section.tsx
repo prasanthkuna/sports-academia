@@ -15,8 +15,8 @@ export function CtaSection() {
                 Run your academy like a pro
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#a1a1aa] sm:text-base">
-                Join academy owners across Hyderabad, Pune &amp; Bangalore. Try the live demo with
-                sample data today.
+                Log in with demo credentials, scan a live QR check-in, or explore the full product
+                tour above.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
@@ -25,12 +25,12 @@ export function CtaSection() {
                 >
                   Open demo academy
                 </Link>
-                <Link
-                  href="/a/kca-hyderabad"
+                <a
+                  href="#demo"
                   className="rounded-md border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
                 >
-                  See sample public page
-                </Link>
+                  Try live flows
+                </a>
               </div>
             </div>
           </div>

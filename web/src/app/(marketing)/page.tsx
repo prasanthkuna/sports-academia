@@ -1,17 +1,16 @@
-import { AnimatedWalkthroughSection } from "@/components/landing/animated-walkthrough-section";
-import { BeforeAfterSection } from "@/components/landing/before-after-section";
-import { BenefitsSection } from "@/components/landing/benefits-section";
 import { CtaSection } from "@/components/landing/cta-section";
+import { DayTimelineSection } from "@/components/landing/day-timeline-section";
+import { DemoPlaygroundSection } from "@/components/landing/demo-playground-section";
 import { FaqSection } from "@/components/landing/faq-section";
-import { FeaturesGrid } from "@/components/landing/features-grid";
+import { FlowMapSection } from "@/components/landing/flow-map-section";
 import { FloatingWhatsApp } from "@/components/landing/floating-whatsapp";
 import { HeroSection } from "@/components/landing/hero-section";
-import { HowItWorksSection } from "@/components/landing/how-it-works";
 import { MarketingFooter } from "@/components/landing/marketing-footer";
 import { MarketingNav } from "@/components/landing/marketing-nav";
+import { PlanComparisonSection } from "@/components/landing/plan-comparison-section";
 import { PricingSection } from "@/components/landing/pricing-section";
-import { QrAttendanceSection } from "@/components/landing/qr-attendance-section";
-import { SportMarquee } from "@/components/landing/sport-marquee";
+import { QrPlatformSection } from "@/components/landing/qr-platform-section";
+import { RoleLanesSection } from "@/components/landing/role-lanes-section";
 import { StickyMobileCta } from "@/components/landing/sticky-mobile-cta";
 
 export default function HomePage() {
@@ -20,14 +19,13 @@ export default function HomePage() {
       <MarketingNav />
       <main>
         <HeroSection />
-        <SportMarquee />
-        <HowItWorksSection />
-        <QrAttendanceSection />
-        <BenefitsSection />
-        <FeaturesGrid />
-        <AnimatedWalkthroughSection />
+        <FlowMapSection />
+        <QrPlatformSection />
+        <RoleLanesSection />
+        <DayTimelineSection />
+        <DemoPlaygroundSection />
+        <PlanComparisonSection />
         <PricingSection />
-        <BeforeAfterSection />
         <FaqSection />
         <CtaSection />
       </main>
