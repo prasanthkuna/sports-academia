@@ -84,7 +84,7 @@ export function PricingSection() {
                 ))}
               </ul>
               <Link
-                href="/login"
+                href="/login?role=owner"
                 className={`mt-8 block rounded-md py-3 text-center text-sm font-semibold ${
                   plan.popular
                     ? "bg-ink text-white hover:bg-ink-active"

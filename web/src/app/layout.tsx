@@ -14,8 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sports Academy Ops",
-  description: "Fee recovery, attendance, and WhatsApp for sports academies",
+  title: {
+    default: "Academy Ops",
+    template: "%s · Academy Ops",
+  },
+  description: "Renewal control, fee plans, attendance proof, and WhatsApp follow-up for sports academies",
   icons: {
     icon: [{ url: assets.brand.logoIconPng, sizes: "512x512", type: "image/png" }],
     apple: assets.brand.logoIconPng,

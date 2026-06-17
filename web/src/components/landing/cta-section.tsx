@@ -20,7 +20,7 @@ export function CtaSection() {
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/login"
+                  href="/login?role=owner"
                   className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-ink hover:bg-surface-soft"
                 >
                   Open demo academy

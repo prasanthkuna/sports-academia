@@ -18,7 +18,7 @@ export function StickyMobileCta() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-canvas/95 p-3 backdrop-blur-md md:hidden">
       <Link
-        href="/login"
+        href="/login?role=owner"
         className="flex h-12 w-full items-center justify-center rounded-md bg-ink text-sm font-semibold text-white"
       >
         Try free demo

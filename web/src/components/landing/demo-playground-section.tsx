@@ -63,7 +63,7 @@ export function DemoPlaygroundSection() {
               ))}
             </ul>
             <Link
-              href="/login"
+              href="/login?role=owner"
               className="mt-4 inline-flex w-full items-center justify-center rounded-md bg-ink py-2.5 text-sm font-semibold text-white hover:bg-ink-active"
             >
               Open login

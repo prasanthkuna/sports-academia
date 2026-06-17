@@ -65,12 +65,12 @@ export const landingConfig = {
     tryLinks: [
       {
         label: "Owner renewal dashboard",
-        href: "/login",
+        href: "/login?role=owner",
         hint: "owner@demo.academy — overdue, sessions left, expired-but-attended",
       },
       {
         label: "Open demo dashboard",
-        href: "/login",
+        href: "/login?role=staff",
         hint: "staff@demo.academy — fee plans, collect fees, reminders",
       },
       {

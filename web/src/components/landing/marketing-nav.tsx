@@ -59,13 +59,13 @@ export function MarketingNav() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/login"
+            href="/login?role=owner"
             className="hidden rounded-md px-3 py-2 text-sm font-medium text-body hover:text-ink sm:inline"
           >
             Sign in
           </Link>
           <Link
-            href="/login"
+            href="/login?role=owner"
             className="hidden rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink-active sm:inline"
           >
             Get started
@@ -95,7 +95,7 @@ export function MarketingNav() {
               </a>
             ))}
             <Link
-              href="/login"
+              href="/login?role=owner"
               className="mt-2 rounded-md bg-ink px-3 py-2.5 text-center text-sm font-semibold text-white"
               onClick={() => setOpen(false)}
             >

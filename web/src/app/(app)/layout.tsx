@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen flex-1 flex-col pb-20 md:pb-0">
         <header className="sticky top-0 z-30 flex h-14 items-center border-b border-hairline-soft bg-canvas px-4 md:hidden">
           <div>
-            <p className="text-xs text-muted">Sports Academy</p>
+            <p className="text-xs text-muted">Academy Ops</p>
             <p className="text-sm font-semibold text-ink">{academyName}</p>
           </div>
         </header>

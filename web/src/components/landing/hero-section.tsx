@@ -30,7 +30,7 @@ export function HeroSection() {
           <AnimateOnMount delay={0.3}>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/login"
+                href="/login?role=owner"
                 className="rounded-md bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-ink-active"
               >
                 Start free demo
