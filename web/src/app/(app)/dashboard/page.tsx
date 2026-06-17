@@ -7,7 +7,7 @@ import { AppLinkGrid } from "@/components/layout/app-link-grid";
 import type { AppLinkItem } from "@/lib/app-icons";
 import { formatCurrency, rel, waLink } from "@/lib/utils";
 import { DigestBanner } from "@/components/dashboard/digest-banner";
-import { canMutateFees, canViewRenewals } from "@/lib/permissions";
+import { canMutateFees, canViewOwnerDigest, canViewRenewals } from "@/lib/permissions";
 
 export default async function DashboardPage() {
   const ctx = await getAcademyContext();
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {digest?.whatsapp_body && whatsapp && (ctx?.role === "admin" || ctx?.role === "owner") && (
+      {digest?.whatsapp_body && whatsapp && canViewOwnerDigest(ctx?.role ?? "staff") && (
         <DigestBanner
           body={digest.whatsapp_body}
           whatsappUrl={waLink(whatsapp, digest.whatsapp_body)}

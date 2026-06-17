@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { writeAuditLog } from "@/lib/audit";
 import { requireAcademyContext } from "@/lib/auth";
-import { canManageFeePlans, canManageTeam, canMutateFees } from "@/lib/permissions";
+import { canExport, canManageFeePlans, canManageTeam, canMutateFees } from "@/lib/permissions";
 import {
   computeEndDate,
   defaultBillingCycleMonths,
@@ -178,7 +178,6 @@ export async function saveAttendance(
   records: { student_id: string; status: string }[],
 ) {
   const ctx = await requireAcademyContext();
-  if (ctx.role === "owner") throw new Error("Forbidden");
 
   const supabase = await createClient();
   const { data: academyUser } = await supabase
@@ -244,7 +243,7 @@ export async function saveAttendance(
 
 export async function createStudent(formData: FormData) {
   const ctx = await requireAcademyContext();
-  if (ctx.role === "coach" || ctx.role === "owner") throw new Error("Forbidden");
+  if (ctx.role === "coach") throw new Error("Forbidden");
 
   const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "students");
   if (!limit.ok) throw new Error(limit.message);
@@ -820,8 +819,7 @@ export async function generateIdCards(batchId: string) {
 
 export async function exportReportExcel(reportType: string, from: string, to: string) {
   const ctx = await requireAcademyContext();
-  if (ctx.plan !== "pro") throw new Error("Export requires Pro");
-  if (ctx.role !== "admin" && ctx.role !== "owner") throw new Error("Forbidden");
+  if (!canExport(ctx.role, ctx.plan)) throw new Error("Forbidden");
 
   const supabase = await createClient();
   let rows: Record<string, unknown>[] = [];

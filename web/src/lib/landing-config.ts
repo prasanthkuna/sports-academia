@@ -57,7 +57,6 @@ export const landingConfig = {
     slug: "kca-hyderabad",
     logins: [
       { role: "Owner", email: "owner@demo.academy" },
-      { role: "Admin", email: "admin@demo.academy" },
       { role: "Staff", email: "staff@demo.academy" },
       { role: "Coach", email: "coach@demo.academy" },
     ],

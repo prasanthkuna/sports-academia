@@ -20,24 +20,30 @@ export type AppModule =
   | "reminders"
   | "whatsapp";
 
+/** Owner + legacy admin — full academy configuration. */
+const ACADEMY_MANAGER_ROLES: UserRole[] = ["owner", "admin"];
+
+/** Owner, admin, or staff — day-to-day fee and attendance ops. */
+const OPS_ROLES: UserRole[] = ["owner", "admin", "staff"];
+
 const ROLE_ACCESS: Record<AppModule, UserRole[]> = {
   dashboard: ["admin", "staff", "coach", "owner"],
   students: ["admin", "staff", "coach", "owner"],
   attendance: ["admin", "staff", "coach", "owner"],
-  fees: ["admin", "staff", "owner"],
-  fee_plans: ["admin", "staff"],
-  renewals: ["admin", "staff", "owner"],
-  leads: ["admin", "staff", "owner"],
+  fees: OPS_ROLES,
+  fee_plans: OPS_ROLES,
+  renewals: OPS_ROLES,
+  leads: OPS_ROLES,
   batches: ["admin", "staff", "coach", "owner"],
-  receipts: ["admin", "staff", "owner"],
-  reports: ["admin", "staff", "owner"],
-  settings: ["admin"],
-  team: ["admin"],
-  import: ["admin"],
-  id_cards: ["admin", "staff"],
-  audit: ["admin", "owner"],
-  reminders: ["admin", "staff"],
-  whatsapp: ["admin", "staff", "coach"],
+  receipts: OPS_ROLES,
+  reports: OPS_ROLES,
+  settings: ACADEMY_MANAGER_ROLES,
+  team: ACADEMY_MANAGER_ROLES,
+  import: ACADEMY_MANAGER_ROLES,
+  id_cards: OPS_ROLES,
+  audit: ACADEMY_MANAGER_ROLES,
+  reminders: OPS_ROLES,
+  whatsapp: ["admin", "staff", "coach", "owner"],
 };
 
 export function canAccess(role: UserRole, module: AppModule) {
@@ -49,19 +55,24 @@ export function canViewRenewals(role: UserRole) {
 }
 
 export function canManageFeePlans(role: UserRole) {
-  return role === "admin" || role === "staff";
+  return OPS_ROLES.includes(role);
 }
 
 export function canMutateFees(role: UserRole) {
-  return role === "admin" || role === "staff";
+  return OPS_ROLES.includes(role);
 }
 
+/** Settings, team, import, QR regen — owner is the academy principal. */
 export function canManageTeam(role: UserRole) {
-  return role === "admin";
+  return ACADEMY_MANAGER_ROLES.includes(role);
+}
+
+export function canViewOwnerDigest(role: UserRole) {
+  return ACADEMY_MANAGER_ROLES.includes(role);
 }
 
 export function canExport(role: UserRole, plan: AcademyPlan) {
-  return (role === "admin" || role === "owner") && plan === "pro";
+  return ACADEMY_MANAGER_ROLES.includes(role) && plan === "pro";
 }
 
 export function navItemsForRole(role: UserRole) {
@@ -75,7 +86,5 @@ export function navItemsForRole(role: UserRole) {
   const more = { href: "/more", label: "More", module: "dashboard" as const };
 
   if (role === "coach") return [...base, more];
-  if (role === "owner") return [...base, renewals, more];
-  if (role === "staff") return [...base, renewals, fees, more];
   return [...base, renewals, fees, more];
 }

@@ -28,9 +28,11 @@ Required in `.env.local`:
 bun run seed
 ```
 
-**Demo login**
-- Email: `admin@demo.academy`
+**Demo login (owner — full academy access)**
+- Email: `owner@demo.academy`
 - Password: `Demo@123456`
+
+Also try `staff@demo.academy` (front desk) or `coach@demo.academy` (batches only).
 
 ## Run dev server
 

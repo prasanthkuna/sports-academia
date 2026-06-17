@@ -1,6 +1,7 @@
 export type { AcademyPlan } from "@/lib/plans";
 
 export type UserRole = "admin" | "staff" | "coach" | "owner";
+/** @deprecated `admin` is legacy — same permissions as `owner` in app code. */
 export type FeeStatus = "pending" | "partially_paid" | "paid" | "overdue" | "cancelled";
 export type FeePlanType =
   | "monthly"

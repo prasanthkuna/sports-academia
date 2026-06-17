@@ -10,7 +10,7 @@ import { CollectFeeButton } from "@/components/fees/collect-fee-button";
 import { AssignFeePlanForm } from "@/components/fees/assign-fee-plan-form";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { RegenerateQrButton } from "@/components/students/regenerate-qr-button";
-import { canManageFeePlans } from "@/lib/permissions";
+import { canManageFeePlans, canManageTeam } from "@/lib/permissions";
 import { FEE_PLAN_TYPE_LABELS } from "@/lib/fee-plans";
 import type { FeePlanType, FeePlan } from "@/types";
 
@@ -109,7 +109,7 @@ export default async function StudentProfilePage({
               >
                 QR check-in link
               </a>
-              {ctx.role === "admin" && <RegenerateQrButton studentId={id} />}
+              {ctx && canManageTeam(ctx.role) && <RegenerateQrButton studentId={id} />}
             </>
           )}
         </div>

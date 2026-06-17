@@ -33,7 +33,6 @@ const DAY = hyderabadDemoDay;
 const fmt = formatHyderabadInr;
 
 const USERS = {
-  admin: { email: "admin@demo.academy", role: "admin" as const, name: "Demo Admin" },
   owner: { email: "owner@demo.academy", role: "owner" as const, name: "Ramesh Owner" },
   staff: { email: "staff@demo.academy", role: "staff" as const, name: "Anita Staff" },
   coach: { email: "coach@demo.academy", role: "coach" as const, name: "Coach Arjun" },
@@ -348,38 +347,32 @@ async function main() {
   const planMonthly = feePlans!.find((p) => p.plan_type === "monthly")!;
   const planSwimmingSession = feePlans!.find((p) => p.name === "8-Session Swimming")!;
 
-  const { data: adminUser } = await admin
+  const { data: academyUsers } = await admin
     .from("academy_users")
-    .insert({
-      academy_id: academy.id,
-      user_id: authIds.admin,
-      role: "admin",
-      display_name: USERS.admin.name,
-    })
-    .select()
-    .single();
+    .insert([
+      {
+        academy_id: academy.id,
+        user_id: authIds.owner,
+        role: "owner",
+        display_name: USERS.owner.name,
+      },
+      {
+        academy_id: academy.id,
+        user_id: authIds.staff,
+        role: "staff",
+        display_name: USERS.staff.name,
+      },
+      {
+        academy_id: academy.id,
+        user_id: authIds.coach,
+        role: "coach",
+        display_name: USERS.coach.name,
+        coach_id: coachArjun.id,
+      },
+    ])
+    .select();
 
-  await admin.from("academy_users").insert([
-    {
-      academy_id: academy.id,
-      user_id: authIds.owner,
-      role: "owner",
-      display_name: USERS.owner.name,
-    },
-    {
-      academy_id: academy.id,
-      user_id: authIds.staff,
-      role: "staff",
-      display_name: USERS.staff.name,
-    },
-    {
-      academy_id: academy.id,
-      user_id: authIds.coach,
-      role: "coach",
-      display_name: USERS.coach.name,
-      coach_id: coachArjun.id,
-    },
-  ]);
+  const ownerUser = academyUsers!.find((u) => u.role === "owner")!;
 
   const studentsData = [
     { name: "Arjun Kumar", parent: "Ravi Kumar", mobile: "9988776655", batch: "Morning Cricket U12", sport: "Cricket" },
@@ -466,7 +459,7 @@ async function main() {
         amount: FEES.cricketMonthly,
         mode: "upi",
         paymentDate: todayStr,
-        collectedBy: adminUser!.id,
+        collectedBy: ownerUser.id,
         receiptNumber: `KCA-2026-${String(receiptSeq).padStart(4, "0")}`,
         verifyToken: "demo_receipt_verify_0001",
       });
@@ -516,7 +509,7 @@ async function main() {
         amount: FEES.partialBalance,
         mode: "cash",
         paymentDate: todayStr,
-        collectedBy: adminUser!.id,
+        collectedBy: ownerUser.id,
         receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
       });
     } else if (i === 4) {
@@ -552,7 +545,7 @@ async function main() {
         amount: FEES.admission,
         mode: "cash",
         paymentDate: isoDate(daysAgo(5)),
-        collectedBy: adminUser!.id,
+        collectedBy: ownerUser.id,
         receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
         verifyToken: "demo_receipt_verify_0002",
       });
@@ -579,7 +572,7 @@ async function main() {
         amount: FEES.cricketMonthly,
         mode: "upi",
         paymentDate: todayStr,
-        collectedBy: adminUser!.id,
+        collectedBy: ownerUser.id,
         receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
       });
     } else if (i === 10) {
@@ -605,7 +598,7 @@ async function main() {
         amount: FEES.cricketMonthly,
         mode: "cash",
         paymentDate: todayStr,
-        collectedBy: adminUser!.id,
+        collectedBy: ownerUser.id,
         receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
       });
     } else {
@@ -630,7 +623,7 @@ async function main() {
       attendance_date: todayStr,
       status: isAbsent ? "absent" : "present",
       source: attSource,
-      marked_by: attSource === "coach" ? adminUser!.id : null,
+      marked_by: attSource === "coach" ? ownerUser.id : null,
     });
 
     if (attSource === "qr_scan" && !isAbsent) {
@@ -771,7 +764,7 @@ async function main() {
       academy_id: academy.id,
       lead_id: ayaanLead.id,
       note: "Called parent — interested in morning batch trial",
-      created_by: authIds.admin,
+      created_by: authIds.owner,
     },
     {
       academy_id: academy.id,
@@ -794,7 +787,7 @@ async function main() {
       body: `Receipt KCA-2026-0001 — ${fmt(FEES.cricketMonthly)} collected via UPI`,
       channel: "click_to_send",
       status: "manual_sent",
-      triggered_by: authIds.admin,
+      triggered_by: authIds.owner,
     },
     {
       academy_id: academy.id,
@@ -895,14 +888,14 @@ New leads: ${DAY.leadsAwaitingFollowUp} | Trials attended: ${DAY.trialsToday}`;
   await admin.from("audit_logs").insert([
     {
       academy_id: academy.id,
-      user_id: authIds.admin,
+      user_id: authIds.owner,
       action: "payment_collected",
       entity_type: "payment",
       new_value: { amount: FEES.cricketMonthly, receipt_number: "KCA-2026-0001" },
     },
     {
       academy_id: academy.id,
-      user_id: authIds.admin,
+      user_id: authIds.owner,
       action: "settings_updated",
       entity_type: "academy_settings",
       entity_id: academy.id,
@@ -919,7 +912,7 @@ New leads: ${DAY.leadsAwaitingFollowUp} | Trials attended: ${DAY.trialsToday}`;
 
   await admin.from("import_logs").insert({
     academy_id: academy.id,
-    user_id: authIds.admin,
+    user_id: authIds.owner,
     file_name: "kca-students-march.xlsx",
     entity_types: ["students", "batches"],
     success_count: 48,
