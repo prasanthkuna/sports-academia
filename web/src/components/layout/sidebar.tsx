@@ -14,6 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { subscriptionLabel, type SubscriptionStatus } from "@/lib/subscription";
 
 const iconMap = {
   Dashboard: Home,
@@ -28,10 +29,14 @@ export function Sidebar({
   academyName,
   role,
   plan,
+  subscriptionStatus,
+  trialEndsAt,
 }: {
   academyName: string;
   role: UserRole;
   plan: string;
+  subscriptionStatus?: SubscriptionStatus;
+  trialEndsAt?: string | null;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -49,7 +54,13 @@ export function Sidebar({
       <div className="border-b border-hairline-soft px-5 py-5">
         <p className="text-xs font-medium uppercase tracking-wide text-muted">Academy</p>
         <p className="mt-1 truncate text-sm font-semibold text-ink">{academyName}</p>
-        <p className="mt-0.5 text-xs text-brand">{plan === "pro" ? "Pro" : "Starter"}</p>
+        <p className="mt-0.5 text-xs text-brand">
+          {subscriptionStatus && trialEndsAt
+            ? subscriptionLabel(subscriptionStatus, trialEndsAt) || (plan === "pro" ? "Pro" : "Starter")
+            : plan === "pro"
+              ? "Pro"
+              : "Starter"}
+        </p>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3">
         {items.map(({ href, label }) => {

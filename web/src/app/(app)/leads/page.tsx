@@ -43,7 +43,7 @@ export default async function LeadsPage() {
                 <div className="flex flex-wrap gap-2">
                   {lead.status !== "converted" && lead.status !== "lost" && (
                     <>
-                      <LeadActions leadId={lead.id} status={lead.status} plan={ctx.plan} slug={ctx.academySlug} />
+                      <LeadActions leadId={lead.id} status={lead.status} plan={ctx.effectivePlan} slug={ctx.academySlug} />
                       <ConvertLeadButton leadId={lead.id} batches={batches ?? []} />
                     </>
                   )}

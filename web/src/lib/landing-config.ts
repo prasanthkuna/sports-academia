@@ -461,7 +461,7 @@ export const landingConfig = {
       },
     ],
     footnote:
-      "All plans include fee plans, renewal dashboard, and secure cloud hosting per academy. WhatsApp is tap-to-send — you stay in control. Online payment gateway coming next.",
+      "All plans include fee plans, renewal dashboard, and secure cloud hosting per academy. New academies get a 7-day Pro trial with full Excel import. WhatsApp is tap-to-send — you stay in control. Online payment gateway coming next.",
   },
   faqs: [
     {

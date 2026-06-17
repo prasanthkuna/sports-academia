@@ -7,7 +7,7 @@ import { IdCardsGenerator } from "@/components/id-cards/id-cards-generator";
 export default async function IdCardsPage() {
   const ctx = await getAcademyContext();
   if (!ctx || !canAccess(ctx.role, "id_cards")) redirect("/dashboard");
-  if (ctx.plan !== "pro") {
+  if (!ctx.proAccess) {
     return (
       <div className="p-6 text-muted">ID cards with QR check-in require Pro plan.</div>
     );

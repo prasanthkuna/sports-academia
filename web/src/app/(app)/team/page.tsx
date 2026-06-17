@@ -20,7 +20,7 @@ export default async function TeamPage() {
         <h1 className="text-2xl font-semibold text-ink">Team</h1>
         <p className="text-sm text-muted">Coaches, staff logins · Pro enables coach accounts</p>
       </div>
-      <TeamManager coaches={coaches ?? []} users={users ?? []} plan={ctx.plan} />
+      <TeamManager coaches={coaches ?? []} users={users ?? []} plan={ctx.effectivePlan} />
     </div>
   );
 }

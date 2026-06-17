@@ -63,7 +63,7 @@ export default async function ReportsPage({
             {ctx?.plan === "pro" ? " · Export available" : " · Upgrade to Pro for export"}
           </p>
         </div>
-        {ctx && <ReportsExport plan={ctx.plan} role={ctx.role} from={from} to={to} />}
+        {ctx && <ReportsExport plan={ctx.effectivePlan} role={ctx.role} from={from} to={to} />}
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">

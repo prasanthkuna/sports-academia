@@ -65,10 +65,10 @@ export function MarketingNav() {
             Sign in
           </Link>
           <Link
-            href="/login?role=owner"
+            href="/signup"
             className="hidden rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-ink-active sm:inline"
           >
-            Get started
+            Start free trial
           </Link>
           <button
             type="button"
@@ -95,11 +95,11 @@ export function MarketingNav() {
               </a>
             ))}
             <Link
-              href="/login?role=owner"
+              href="/signup"
               className="mt-2 rounded-md bg-ink px-3 py-2.5 text-center text-sm font-semibold text-white"
               onClick={() => setOpen(false)}
             >
-              Get started
+              Start free trial
             </Link>
           </nav>
         </div>

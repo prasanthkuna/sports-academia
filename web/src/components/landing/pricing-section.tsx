@@ -84,14 +84,14 @@ export function PricingSection() {
                 ))}
               </ul>
               <Link
-                href="/login?role=owner"
+                href="/signup"
                 className={`mt-8 block rounded-md py-3 text-center text-sm font-semibold ${
                   plan.popular
                     ? "bg-ink text-white hover:bg-ink-active"
                     : "border border-hairline bg-canvas text-ink hover:bg-surface-soft"
                 }`}
               >
-                Start free demo
+                {plan.popular ? "Start 7-day Pro trial" : "Start free trial"}
               </Link>
             </MotionCard>
           ))}

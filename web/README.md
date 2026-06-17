@@ -42,6 +42,21 @@ bun run dev
 
 Open http://localhost:3000
 
+## Self-serve signup (7-day Pro trial)
+
+1. Go to `/signup` — create owner account + academy
+2. Complete onboarding (contact details → Excel import)
+3. Full Pro access for 7 days (import, QR, reports)
+4. After trial: `/upgrade` — activate via WhatsApp or email
+
+**Activate after payment (ops):**
+
+```powershell
+bun --env-file=.env.local scripts/activate-academy.ts <slug> pro
+```
+
+Apply DB migration `supabase/migrations/20260617150000_signup_trial_provisioning.sql` before signup works in production.
+
 ## Public pages
 
 - Academy page: `/a/kca-hyderabad`

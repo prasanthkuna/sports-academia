@@ -20,10 +20,10 @@ export function CtaSection() {
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/login?role=owner"
+                  href="/signup"
                   className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-ink hover:bg-surface-soft"
                 >
-                  Open demo academy
+                  Start 7-day Pro trial
                 </Link>
                 <a
                   href="#demo"

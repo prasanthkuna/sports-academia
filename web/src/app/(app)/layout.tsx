@@ -1,18 +1,27 @@
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { NavigationLoadingProvider } from "@/components/layout/navigation-loading";
 import { Sidebar } from "@/components/layout/sidebar";
+import { TrialBanner } from "@/components/billing/trial-banner";
 import { getAcademyContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getAcademyContext();
   if (!ctx) redirect("/login");
+  if (ctx.subscriptionExpired) redirect("/upgrade");
+  if (!ctx.onboardingCompleted) redirect("/onboarding");
 
   const academyName = ctx.academyUser.academies?.name ?? "Academy";
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <Sidebar academyName={academyName} role={ctx.role} plan={ctx.plan} />
+      <Sidebar
+        academyName={academyName}
+        role={ctx.role}
+        plan={ctx.effectivePlan}
+        subscriptionStatus={ctx.subscriptionStatus}
+        trialEndsAt={ctx.trialEndsAt}
+      />
       <div className="flex min-h-screen flex-1 flex-col pb-20 md:pb-0">
         <header className="sticky top-0 z-30 flex h-14 items-center border-b border-hairline-soft bg-canvas px-4 md:hidden">
           <div>
@@ -21,6 +30,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">
+          <TrialBanner
+            subscriptionStatus={ctx.subscriptionStatus}
+            trialEndsAt={ctx.trialEndsAt}
+          />
           <NavigationLoadingProvider>{children}</NavigationLoadingProvider>
         </main>
         <BottomNav role={ctx.role} />

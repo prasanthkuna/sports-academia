@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { runSmartImport } from "@/app/actions";
 import type { AcademyPlan } from "@/lib/plans";
-import { canSelfServeImport } from "@/lib/plans";
 
-export function ImportWizard({ plan }: { plan: AcademyPlan }) {
+export function ImportWizard({ plan, proAccess }: { plan: AcademyPlan; proAccess: boolean }) {
   const [result, setResult] = useState<{
     successCount: number;
     errorCount: number;
@@ -16,7 +15,7 @@ export function ImportWizard({ plan }: { plan: AcademyPlan }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!canSelfServeImport(plan)) {
+  if (!proAccess) {
     return (
       <Card className="p-6 text-center text-muted">
         Upgrade to Pro for unlimited smart Excel import.
@@ -62,7 +61,10 @@ export function ImportWizard({ plan }: { plan: AcademyPlan }) {
         </div>
         <p className="text-xs text-muted">
           We auto-detect sheets for students, batches, fees, leads, and coaches. Column names like Name,
-          Mobile, Batch are mapped automatically.
+          Mobile, Batch are mapped automatically.{" "}
+          <a href="/api/import-template" className="font-medium text-brand hover:underline">
+            Download template
+          </a>
         </p>
         <Button type="submit" disabled={loading}>
           {loading ? "Importing…" : "Upload & import"}

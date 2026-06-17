@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -129,6 +130,12 @@ export function LoginForm({ defaultRoleKey }: { defaultRoleKey: string }) {
       <p className="mt-6 text-center text-xs text-muted lg:text-left">
         Demo password for all roles:{" "}
         <code className="rounded bg-surface-soft px-1.5 py-0.5 font-mono text-ink">{demo.password}</code>
+      </p>
+      <p className="mt-4 text-center text-sm text-muted lg:text-left">
+        New academy?{" "}
+        <Link href="/signup" className="font-semibold text-brand hover:underline">
+          Start free trial
+        </Link>
       </p>
     </AuthCard>
   );

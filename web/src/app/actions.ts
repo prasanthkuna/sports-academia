@@ -23,9 +23,8 @@ import {
   rowToObject,
   exportErrorsWorkbook,
 } from "@/lib/import/excel";
-import { canSelfServeImport } from "@/lib/plans";
-import type { FeePlanType, LeadStatus } from "@/types";
 import * as XLSX from "xlsx";
+import type { FeePlanType, LeadStatus } from "@/types";
 import { rel } from "@/lib/utils";
 
 export async function collectPayment(formData: FormData) {
@@ -245,7 +244,7 @@ export async function createStudent(formData: FormData) {
   const ctx = await requireAcademyContext();
   if (ctx.role === "coach") throw new Error("Forbidden");
 
-  const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "students");
+  const limit = await checkPlanLimit(ctx.academyId, ctx.effectivePlan, "students");
   if (!limit.ok) throw new Error(limit.message);
 
   const supabase = await createClient();
@@ -416,7 +415,7 @@ export async function saveAcademySettings(formData: FormData) {
 export async function createSport(name: string) {
   const ctx = await requireAcademyContext();
   if (!canManageTeam(ctx.role)) throw new Error("Forbidden");
-  const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "sports");
+  const limit = await checkPlanLimit(ctx.academyId, ctx.effectivePlan, "sports");
   if (!limit.ok) throw new Error(limit.message);
 
   const supabase = await createClient();
@@ -449,9 +448,9 @@ export async function createCoach(formData: FormData) {
 export async function inviteCoachUser(coachId: string, email: string, displayName: string) {
   const ctx = await requireAcademyContext();
   if (!canManageTeam(ctx.role)) throw new Error("Forbidden");
-  if (ctx.plan !== "pro") throw new Error("Coach logins require Pro plan");
+  if (!ctx.proAccess) throw new Error("Coach logins require Pro plan");
 
-  const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "users");
+  const limit = await checkPlanLimit(ctx.academyId, ctx.effectivePlan, "users");
   if (!limit.ok) throw new Error(limit.message);
 
   const supabase = await createClient();
@@ -505,7 +504,7 @@ export async function regenerateStudentQr(studentId: string) {
 export async function runSmartImport(formData: FormData) {
   const ctx = await requireAcademyContext();
   if (!canManageTeam(ctx.role)) throw new Error("Forbidden");
-  if (!canSelfServeImport(ctx.plan)) throw new Error("Excel import requires Pro plan");
+  if (!ctx.proAccess) throw new Error("Excel import requires Pro plan");
 
   const file = formData.get("file") as File;
   if (!file) throw new Error("No file");
@@ -534,7 +533,7 @@ export async function runSmartImport(formData: FormData) {
             errors.push({ row: rowNum, reason: "Missing name or mobile", data: row });
             continue;
           }
-          const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "students");
+          const limit = await checkPlanLimit(ctx.academyId, ctx.effectivePlan, "students");
           if (!limit.ok) throw new Error(limit.message);
 
           const { data: code } = await supabase.rpc("next_student_code", {
@@ -583,7 +582,7 @@ export async function runSmartImport(formData: FormData) {
             errors.push({ row: rowNum, reason: "Missing batch name", data: row });
             continue;
           }
-          const limit = await checkPlanLimit(ctx.academyId, ctx.plan, "batches");
+          const limit = await checkPlanLimit(ctx.academyId, ctx.effectivePlan, "batches");
           if (!limit.ok) throw new Error(limit.message);
 
           const { error } = await supabase.from("batches").insert({
@@ -819,7 +818,7 @@ export async function generateIdCards(batchId: string) {
 
 export async function exportReportExcel(reportType: string, from: string, to: string) {
   const ctx = await requireAcademyContext();
-  if (!canExport(ctx.role, ctx.plan)) throw new Error("Forbidden");
+  if (!canExport(ctx.role, ctx.effectivePlan)) throw new Error("Forbidden");
 
   const supabase = await createClient();
   let rows: Record<string, unknown>[] = [];

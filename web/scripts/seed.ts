@@ -125,7 +125,7 @@ async function main() {
 
   const { data: academy, error: acErr } = await admin
     .from("academies")
-    .insert({ name: "Kohinoor Cricket Academy", slug: SLUG, plan: "pro" })
+    .insert({ name: "Kohinoor Cricket Academy", slug: SLUG, plan: "pro", subscription_status: "active", onboarding_completed_at: new Date().toISOString() })
     .select()
     .single();
   if (acErr) throw acErr;
