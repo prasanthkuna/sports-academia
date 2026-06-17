@@ -402,8 +402,10 @@ export const landingConfig = {
   pricing: {
     setup: {
       amount: 19999,
+      starterAmount: 14999,
+      proAmount: 19999,
       title: "One-time setup",
-      subtitle: "Single location · go-live in about a week",
+      subtitle: "Starter ₹14,999 · Pro ₹19,999 — includes first month",
       includes: [
         "Academy configuration & go-live support",
         "First Excel student import",
@@ -417,6 +419,7 @@ export const landingConfig = {
         id: "starter",
         name: "Starter",
         price: 4999,
+        activationAmount: 14999,
         period: "month",
         description: "Renewal tracking for a single-location academy",
         idealFor: "Owner on the ground · up to 150 students",
@@ -440,6 +443,7 @@ export const landingConfig = {
         id: "pro",
         name: "Pro",
         price: 9999,
+        activationAmount: 19999,
         period: "month",
         description: "Full renewal control for growing academies",
         idealFor: "3+ staff · QR attendance proof · month-end reporting",

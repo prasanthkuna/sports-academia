@@ -30,7 +30,7 @@ export function PricingSection() {
                   {setup.title}
                 </p>
                 <p className="mt-1 font-mono-amount text-3xl font-semibold text-ink sm:text-4xl">
-                  {formatInr(setup.amount)}
+                  From {formatInr(setup.starterAmount)}
                 </p>
                 <p className="mt-1 text-sm text-body">{setup.subtitle}</p>
               </div>

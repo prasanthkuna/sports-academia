@@ -64,18 +64,15 @@ export function PlansContent({
 
       <div className="rounded-xl border border-brand/25 bg-brand-soft/40 p-4">
         <p className="text-sm font-semibold text-ink">{pricing.setup.title}</p>
-        <p className="mt-1 font-mono-amount text-2xl font-semibold text-ink">
-          {formatInr(pricing.setup.amount)}
-        </p>
-        <p className="mt-1 text-xs text-body">
-          Includes go-live support, first Excel import, training — and{" "}
-          <strong>your first month</strong> on the plan you choose.
+        <p className="mt-1 text-sm text-body">
+          <strong>Starter {formatInr(pricing.setup.starterAmount)}</strong> ·{" "}
+          <strong>Pro {formatInr(pricing.setup.proAmount)}</strong>
+          {" — "}includes go-live support, first Excel import, training, and your first month.
         </p>
         <ul className="mt-3 space-y-1 text-xs text-muted">
           {pricing.setup.includes.map((item) => (
             <li key={item}>· {item}</li>
           ))}
-          <li>· First month subscription included</li>
         </ul>
       </div>
 
