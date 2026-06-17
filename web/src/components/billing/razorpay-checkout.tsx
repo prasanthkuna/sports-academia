@@ -128,7 +128,7 @@ export function RazorpayCheckoutButton({
       >
         {loading
           ? "Opening checkout…"
-          : `Pay ₹${total.toLocaleString("en-IN")} — ${planName} (setup + month 1)`}
+          : `Pay ₹${total.toLocaleString("en-IN")} — ${planName} setup (month 1 included)`}
       </Button>
       {error && <p className="mt-2 text-sm text-error">{error}</p>}
       {!razorpayEnabled && (

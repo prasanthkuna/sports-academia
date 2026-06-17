@@ -409,6 +409,7 @@ export const landingConfig = {
         "First Excel student import",
         "Staff training session",
         "Public academy page configured",
+        "First month subscription on your chosen plan",
       ],
     },
     plans: [

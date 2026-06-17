@@ -13,9 +13,9 @@ export function setupFeeInr(): number {
   return landingConfig.pricing.setup.amount;
 }
 
-/** First checkout: one-time setup + first month. */
-export function activationTotalInr(plan: BillingPlanId): number {
-  return setupFeeInr() + monthlyPriceInr(plan);
+/** One-time setup fee — includes first month on the chosen plan. */
+export function activationTotalInr(_plan: BillingPlanId): number {
+  return setupFeeInr();
 }
 
 export function activationTotalPaise(plan: BillingPlanId): number {
@@ -24,5 +24,5 @@ export function activationTotalPaise(plan: BillingPlanId): number {
 
 export function activationLabel(plan: BillingPlanId): string {
   const name = plan === "pro" ? "Pro" : "Starter";
-  return `Academy Ops — Setup + first month (${name})`;
+  return `Academy Ops — Setup (${name}, month 1 included)`;
 }

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { completeOnboarding } from "@/app/auth-actions";
 import { saveAcademySettings } from "@/app/actions";
 import { AuthCard } from "@/components/auth/auth-shell";
+import { DownloadTemplateButton } from "@/components/import/download-template-button";
+import { PhoneWhatsappFields } from "@/components/settings/phone-whatsapp-fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -96,24 +98,10 @@ export function OnboardingWizard({
             Public page: <code className="rounded bg-surface-soft px-1">/a/{slug}/enquire</code>
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium uppercase text-muted">Phone</label>
-              <Input
-                name="contact_number"
-                defaultValue={settings?.contact_number ?? ""}
-                className="mt-1"
-                placeholder="9876543210"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium uppercase text-muted">WhatsApp</label>
-              <Input
-                name="whatsapp_number"
-                defaultValue={settings?.whatsapp_number ?? ""}
-                className="mt-1"
-                placeholder="919876543210"
-              />
-            </div>
+            <PhoneWhatsappFields
+              defaultPhone={settings?.contact_number ?? ""}
+              defaultWhatsapp={settings?.whatsapp_number ?? ""}
+            />
             <div className="sm:col-span-2">
               <label className="text-xs font-medium uppercase text-muted">Address</label>
               <Input name="address" defaultValue={settings?.address ?? ""} className="mt-1" />
@@ -159,13 +147,7 @@ export function OnboardingWizard({
               <li>Review imported students on the dashboard</li>
             </ol>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href="/api/import-template"
-                download="academy-import-template.xlsx"
-                className="inline-flex h-11 items-center justify-center rounded-md border border-hairline bg-canvas px-5 text-sm font-semibold text-ink hover:bg-surface-soft"
-              >
-                Download template
-              </a>
+              <DownloadTemplateButton variant="secondary" />
               <Button type="button" onClick={() => finish(false)} disabled={loading}>
                 Go to import
               </Button>
@@ -191,7 +173,7 @@ export function OnboardingWizard({
 
       <p className="mt-6 text-center text-xs text-muted">
         Need help?{" "}
-        <Link href="/upgrade" className="text-brand hover:underline">
+        <Link href="/plans" className="text-brand hover:underline">
           Contact support
         </Link>
       </p>

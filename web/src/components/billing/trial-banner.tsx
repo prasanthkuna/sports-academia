@@ -20,7 +20,7 @@ export function TrialBanner({
         {" — "}
         {days === 1 ? "1 day left" : `${days} days left`} with full import, QR, and reports.
       </p>
-      <Link href="/upgrade" className="shrink-0 font-semibold text-brand hover:underline">
+      <Link href="/plans" className="shrink-0 font-semibold text-brand hover:underline">
         View plans
       </Link>
     </div>

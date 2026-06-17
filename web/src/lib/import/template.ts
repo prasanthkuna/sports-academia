@@ -38,5 +38,5 @@ export function buildImportTemplateWorkbook() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(batches), "Batches");
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(students), "Students");
-  return XLSX.write(wb, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
+  return XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as Buffer;
 }

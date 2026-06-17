@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DownloadTemplateButton } from "@/components/import/download-template-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { runSmartImport } from "@/app/actions";
@@ -61,11 +62,11 @@ export function ImportWizard({ plan, proAccess }: { plan: AcademyPlan; proAccess
         </div>
         <p className="text-xs text-muted">
           We auto-detect sheets for students, batches, fees, leads, and coaches. Column names like Name,
-          Mobile, Batch are mapped automatically.{" "}
-          <a href="/api/import-template" className="font-medium text-brand hover:underline">
-            Download template
-          </a>
+          Mobile, Batch are mapped automatically.
         </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <DownloadTemplateButton variant="secondary" />
+        </div>
         <Button type="submit" disabled={loading}>
           {loading ? "Importing…" : "Upload & import"}
         </Button>

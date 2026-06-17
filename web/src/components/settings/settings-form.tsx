@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneWhatsappFields } from "@/components/settings/phone-whatsapp-fields";
 import { saveAcademySettings } from "@/app/actions";
 import type { AcademySettings } from "@/types";
 
@@ -32,14 +33,10 @@ export function SettingsForm({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="text-xs font-medium uppercase text-muted">Contact</label>
-          <Input name="contact_number" defaultValue={settings?.contact_number ?? ""} className="mt-1" />
-        </div>
-        <div>
-          <label className="text-xs font-medium uppercase text-muted">WhatsApp</label>
-          <Input name="whatsapp_number" defaultValue={settings?.whatsapp_number ?? ""} className="mt-1" />
-        </div>
+        <PhoneWhatsappFields
+          defaultPhone={settings?.contact_number ?? ""}
+          defaultWhatsapp={settings?.whatsapp_number ?? ""}
+        />
         <div className="sm:col-span-2">
           <label className="text-xs font-medium uppercase text-muted">Address</label>
           <Input name="address" defaultValue={settings?.address ?? ""} className="mt-1" />
