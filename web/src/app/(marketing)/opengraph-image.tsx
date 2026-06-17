@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Academy Ops — QR attendance for sports academies";
+export const alt = "Academy Ops — Renewal control for sports academies";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -47,7 +47,7 @@ export default function OgImage() {
         </div>
         <div
           style={{
-            fontSize: 56,
+            fontSize: 52,
             fontWeight: 700,
             color: "#111111",
             lineHeight: 1.15,
@@ -55,7 +55,7 @@ export default function OgImage() {
             maxWidth: 900,
           }}
         >
-          Scan at the gate. Collect fees. Run your academy.
+          Know who paid. Who expired. Who attended.
         </div>
         <p
           style={{
@@ -66,7 +66,8 @@ export default function OgImage() {
             lineHeight: 1.4,
           }}
         >
-          QR attendance, fee collection, and WhatsApp receipts for Indian sports academies.
+          Renewal control, payment proof, attendance visibility, and WhatsApp follow-up for Indian
+          sports academies.
         </p>
       </div>
     ),

@@ -11,11 +11,11 @@ export function DayTimelineSection() {
         <AnimateOnScroll className="max-w-2xl">
           <p className="text-sm font-medium uppercase tracking-wider text-brand">A day at the academy</p>
           <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Gate to parent proof — before sunset
+            Renewal morning to owner digest — before sunset
           </h2>
           <p className="mt-4 text-body">
-            How a typical morning and evening look when attendance, fees, and owner updates run on
-            one platform instead of WhatsApp threads and Excel.
+            How a typical day looks when overdue fees, attendance proof, receipts, and parent follow-up
+            run on one platform instead of WhatsApp threads and Excel.
           </p>
         </AnimateOnScroll>
 

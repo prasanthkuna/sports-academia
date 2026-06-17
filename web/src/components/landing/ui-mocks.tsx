@@ -111,7 +111,60 @@ function ScreenBody({ className, children }: { className?: string; children: Rea
 
 /* ── Product flow mocks (Flow Map) ─────────────────────────────── */
 
-function FlowQrContent() {
+function FlowDashboardContent() {
+  return (
+    <ScreenBody className="gap-2">
+      <p className="text-xs font-semibold text-ink">Renewal snapshot</p>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-lg bg-brand-soft p-3">
+          <p className="text-[9px] text-muted">Collected today</p>
+          <p className="font-mono-amount text-lg font-semibold tabular-nums text-brand">
+            ₹<CountUp value={8240} duration={1} />
+          </p>
+        </div>
+        <div className="rounded-lg bg-warning-soft/80 p-3">
+          <p className="text-[9px] text-muted">Pending renewal</p>
+          <p className="font-mono-amount text-lg font-semibold tabular-nums text-ink">5</p>
+        </div>
+      </div>
+      <div className="rounded-lg bg-error-soft/50 px-3 py-2">
+        <p className="text-[10px] font-medium text-error">Overdue · 2 students</p>
+        <p className="text-xs text-ink">Rohan S. ₹2,500 · Priya M. ₹3,000</p>
+      </div>
+      <div className="rounded-lg border border-hairline px-3 py-2 text-[10px] text-body">
+        42 present today · 34 QR · 8 manual
+      </div>
+      <p className="mt-auto text-center text-[10px] text-muted">2 trials attended today</p>
+    </ScreenBody>
+  );
+}
+
+function FlowRenewalsContent() {
+  return (
+    <ScreenBody>
+      <p className="text-xs text-muted">July renewal</p>
+      <p className="mt-1 text-sm font-medium text-ink">Arjun Kumar</p>
+      <p className="font-mono-amount mt-2 text-3xl font-semibold text-ink">₹3,000</p>
+      <p className="text-xs text-body">Monthly · U12 Morning · Due 5 Jul</p>
+      <div className="mt-3 space-y-2">
+        <div className="flex justify-between rounded-lg bg-surface-soft px-3 py-2 text-xs">
+          <span className="text-muted">Paid now</span>
+          <span className="font-semibold text-ink">₹3,000</span>
+        </div>
+        <div className="flex justify-between rounded-lg border border-hairline px-3 py-2 text-xs">
+          <span className="text-muted">Status</span>
+          <span className="font-semibold text-success">Paid</span>
+        </div>
+      </div>
+      <div className="mt-auto rounded-lg bg-ink py-2.5 text-center text-xs font-semibold text-white">
+        Collect &amp; Receipt
+      </div>
+      <p className="mt-2 text-center text-[10px] text-muted">RCP-2026-0042 · UPI</p>
+    </ScreenBody>
+  );
+}
+
+function FlowAttendanceContent() {
   return (
     <ScreenBody className="items-center justify-center gap-3 text-center">
       <div className="rounded-xl border border-brand/30 bg-brand-soft/40 p-4">
@@ -120,37 +173,27 @@ function FlowQrContent() {
       <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
       <p className="text-xs text-muted">U12 Morning Cricket</p>
       <div className="w-full rounded-lg bg-success py-2.5 text-xs font-semibold text-white">
-        Present · QR scan
+        Present · attendance proof
       </div>
       <p className="flex items-center gap-1 text-[10px] text-muted">
         <MapPin className="h-3 w-3 text-brand" />
-        Geofence OK · PIN verified
+        Pro QR · geofence OK
       </p>
     </ScreenBody>
   );
 }
 
-function FlowFeesContent() {
+function FlowReceiptsContent() {
   return (
-    <ScreenBody>
-      <p className="text-xs text-muted">Collect fee</p>
-      <p className="mt-1 text-sm font-medium text-ink">Arjun Kumar</p>
-      <p className="font-mono-amount mt-2 text-3xl font-semibold text-ink">₹2,500</p>
-      <p className="text-xs text-body">Monthly · U12 Morning</p>
-      <div className="mt-3 space-y-2">
-        <div className="flex justify-between rounded-lg bg-surface-soft px-3 py-2 text-xs">
-          <span className="text-muted">Paid now</span>
-          <span className="font-semibold text-ink">₹1,500</span>
-        </div>
-        <div className="flex justify-between rounded-lg border border-hairline px-3 py-2 text-xs">
-          <span className="text-muted">Balance</span>
-          <span className="font-semibold text-warning">₹1,000</span>
-        </div>
+    <ScreenBody className="justify-center gap-3">
+      <div className="rounded-lg border border-hairline bg-canvas p-4 text-center">
+        <p className="text-[10px] font-medium text-muted">Receipt verified</p>
+        <p className="mt-1 font-mono-amount text-lg font-semibold text-ink">RCP-2026-0042</p>
+        <p className="mt-2 text-sm text-ink">₹3,000 paid</p>
+        <p className="text-xs text-body">Arjun Kumar · KCA Hyderabad</p>
+        <p className="mt-2 text-[10px] text-success">Payment confirmed</p>
       </div>
-      <div className="mt-auto rounded-lg bg-ink py-2.5 text-center text-xs font-semibold text-white">
-        Collect &amp; Receipt
-      </div>
-      <p className="mt-2 text-center text-[10px] text-muted">RCP-2026-0042</p>
+      <p className="text-center text-[10px] text-muted">Public link — ends UPI disputes</p>
     </ScreenBody>
   );
 }
@@ -208,59 +251,6 @@ function FlowLeadsContent() {
   );
 }
 
-function FlowDashboardContent() {
-  return (
-    <ScreenBody className="gap-3">
-      <p className="text-xs font-semibold text-ink">Today&apos;s snapshot</p>
-      <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-lg bg-success-soft p-3">
-          <p className="text-[9px] text-muted">QR check-ins</p>
-          <p className="font-mono-amount text-xl font-semibold tabular-nums text-ink">
-            <CountUp value={42} duration={0.8} />
-          </p>
-        </div>
-        <div className="rounded-lg bg-brand-soft p-3">
-          <p className="text-[9px] text-muted">Collected</p>
-          <p className="font-mono-amount text-xl font-semibold tabular-nums text-brand">
-            ₹<CountUp value={8240} duration={1} />
-          </p>
-        </div>
-      </div>
-      <div className="rounded-lg border border-hairline px-3 py-2 text-center text-[10px] text-body">
-        8 manual · 3 absent · 2 trials today
-      </div>
-      <div className="mt-auto rounded-lg bg-error-soft/50 px-3 py-2">
-        <p className="text-[10px] font-medium text-error">Overdue</p>
-        <p className="text-xs text-ink">Rohan S. · ₹2,500</p>
-      </div>
-    </ScreenBody>
-  );
-}
-
-function FlowIdCardsContent() {
-  return (
-    <ScreenBody className="items-center justify-center gap-3">
-      <div className="w-full max-w-[200px] rounded-lg border border-hairline bg-canvas p-3 shadow-sm">
-        <p className="text-[9px] font-bold uppercase tracking-wider text-brand">KCA Hyderabad</p>
-        <div className="mt-2 flex gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-xs font-semibold text-brand">
-            AK
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-ink">Arjun Kumar</p>
-            <p className="text-[9px] text-muted">U12 Morning</p>
-          </div>
-        </div>
-        <div className="mt-2 flex justify-center rounded bg-surface-soft p-2">
-          <QrCode className="h-10 w-10 text-brand" strokeWidth={1.25} />
-        </div>
-      </div>
-      <p className="text-xs font-medium text-ink">Bulk PDF · all students</p>
-      <p className="text-[10px] text-muted">Same QR powers gate check-in</p>
-    </ScreenBody>
-  );
-}
-
 function FlowReportsContent() {
   return (
     <ScreenBody>
@@ -286,9 +276,9 @@ function FlowReportsContent() {
 
 function FlowRemindersContent() {
   const items = [
-    "Priya M. · ₹2,500 overdue",
-    "Rohan S. · session tomorrow",
-    "Vikram T. · ₹1,200 due",
+    "Priya M. · July renewal overdue",
+    "Rohan S. · ₹2,500 pending",
+    "Vikram T. · renewal due Friday",
   ];
   return (
     <ScreenBody>
@@ -317,14 +307,14 @@ function FlowRemindersContent() {
 }
 
 const flowContent: Record<ProductFlowId, React.ComponentType> = {
-  qr: FlowQrContent,
-  fees: FlowFeesContent,
-  whatsapp: FlowWhatsappContent,
-  leads: FlowLeadsContent,
   dashboard: FlowDashboardContent,
-  id_cards: FlowIdCardsContent,
-  reports: FlowReportsContent,
+  renewals: FlowRenewalsContent,
+  leads: FlowLeadsContent,
+  whatsapp: FlowWhatsappContent,
   reminders: FlowRemindersContent,
+  attendance: FlowAttendanceContent,
+  reports: FlowReportsContent,
+  receipts: FlowReceiptsContent,
 };
 
 export function ProductFlowPhone({ flowId }: { flowId: ProductFlowId }) {
@@ -338,7 +328,7 @@ export function ProductFlowPhone({ flowId }: { flowId: ProductFlowId }) {
 
 /* ── Hero phone (auto-cycle, fixed shell) ──────────────────────── */
 
-const HERO_FLOWS: ProductFlowId[] = ["qr", "dashboard", "fees", "whatsapp"];
+const HERO_FLOWS: ProductFlowId[] = ["dashboard", "renewals", "reminders", "whatsapp"];
 
 export function HeroPhoneMock() {
   const reduced = useReducedMotion();
@@ -389,7 +379,7 @@ function QrSuccessContent() {
         <Check className="h-7 w-7" strokeWidth={2.5} />
       </div>
       <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
-      <p className="text-xs text-muted">Present · QR scan</p>
+      <p className="text-xs text-muted">Present · attendance proof</p>
       <div className="w-full max-w-[220px] rounded-lg bg-success py-2.5 text-center text-xs font-semibold text-white">
         Check-in complete
       </div>
@@ -508,14 +498,33 @@ function MiniScreenBody({ children, className }: { children: React.ReactNode; cl
   );
 }
 
-function MiniFlowQr() {
+function MiniDashboard() {
+  return (
+    <MiniScreenBody className="justify-center gap-1">
+      <p className="text-[9px] font-semibold text-ink">Renewal snapshot</p>
+      <p className="font-mono-amount text-sm font-semibold text-brand">₹8,240</p>
+      <p className="text-[8px] text-error">2 overdue · 5 pending</p>
+    </MiniScreenBody>
+  );
+}
+
+function MiniAttendance() {
   return (
     <MiniScreenBody className="items-center justify-center gap-1 text-center">
       <QrCode className="h-8 w-8 text-brand" strokeWidth={1.25} />
       <p className="text-[10px] font-semibold text-ink">Arjun Kumar</p>
       <span className="rounded-full bg-success-soft px-2 py-0.5 text-[8px] font-semibold text-success">
-        Present · QR
+        Present
       </span>
+    </MiniScreenBody>
+  );
+}
+
+function MiniRenewals() {
+  return (
+    <MiniScreenBody className="justify-center">
+      <p className="font-mono-amount text-lg font-semibold text-ink">₹3,000</p>
+      <p className="text-[9px] text-muted">July renewal · RCP-0042</p>
     </MiniScreenBody>
   );
 }
@@ -535,24 +544,9 @@ function MiniDigest() {
 }
 
 const dayMocks: Record<DayTimelineMockId, React.ComponentType> = {
-  qr: MiniFlowQr,
-  attendance: () => (
-    <MiniScreenBody>
-      <p className="text-[9px] text-muted">U12 Morning</p>
-      {["Arjun K.", "Rohan S."].map((n, i) => (
-        <div key={n} className="mt-1 flex justify-between text-[9px]">
-          <span>{n}</span>
-          <span className={i === 1 ? "text-error" : "text-success"}>{i === 1 ? "Absent" : "Present"}</span>
-        </div>
-      ))}
-    </MiniScreenBody>
-  ),
-  fees: () => (
-    <MiniScreenBody className="justify-center">
-      <p className="font-mono-amount text-lg font-semibold text-ink">₹2,500</p>
-      <p className="text-[9px] text-muted">RCP-2026-0042</p>
-    </MiniScreenBody>
-  ),
+  dashboard: MiniDashboard,
+  attendance: MiniAttendance,
+  renewals: MiniRenewals,
   whatsapp: () => (
     <MiniScreenBody className="justify-center">
       <div className="rounded rounded-tr-none bg-[#DCF8C6] p-2 text-[8px]">Fee received. Thank you!</div>

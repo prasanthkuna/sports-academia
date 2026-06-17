@@ -7,10 +7,11 @@ import { FloatingWhatsApp } from "@/components/landing/floating-whatsapp";
 import { HeroSection } from "@/components/landing/hero-section";
 import { MarketingFooter } from "@/components/landing/marketing-footer";
 import { MarketingNav } from "@/components/landing/marketing-nav";
+import { OwnerQuestionsSection } from "@/components/landing/owner-questions-section";
 import { PlanComparisonSection } from "@/components/landing/plan-comparison-section";
 import { PricingSection } from "@/components/landing/pricing-section";
+import { ProblemSolutionSection } from "@/components/landing/problem-solution-section";
 import { QrPlatformSection } from "@/components/landing/qr-platform-section";
-import { RoleLanesSection } from "@/components/landing/role-lanes-section";
 import { StickyMobileCta } from "@/components/landing/sticky-mobile-cta";
 
 export default function HomePage() {
@@ -19,10 +20,11 @@ export default function HomePage() {
       <MarketingNav />
       <main>
         <HeroSection />
+        <OwnerQuestionsSection />
+        <ProblemSolutionSection />
         <FlowMapSection />
-        <QrPlatformSection />
-        <RoleLanesSection />
         <DayTimelineSection />
+        <QrPlatformSection />
         <DemoPlaygroundSection />
         <PlanComparisonSection />
         <PricingSection />

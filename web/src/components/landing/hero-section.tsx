@@ -36,10 +36,10 @@ export function HeroSection() {
                 Start free demo
               </Link>
               <a
-                href="#demo"
+                href="#owner-questions"
                 className="rounded-md border border-hairline bg-canvas px-6 py-3 text-sm font-semibold text-ink hover:bg-surface-soft"
               >
-                Try live flows
+                See owner questions
               </a>
             </div>
           </AnimateOnMount>

@@ -11,31 +11,32 @@ const display = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   metadataBase: new URL(landingConfig.siteUrl),
-  title: "Academy Ops — QR attendance, fees & WhatsApp for sports academies",
+  title: "Academy Ops — Renewal control for sports academies",
   description:
-    "QR gate check-in, fee collection, coach logins, leads, reports, and WhatsApp receipts for Indian sports academies. Try the live demo with real flows.",
+    "Know who paid, who expired, who attended, and who needs a WhatsApp reminder. Fee tracking, receipts, attendance proof, and leads for Indian sports academies.",
   keywords: [
     "sports academy software",
-    "QR attendance",
-    "fee collection",
-    "coach login",
-    "WhatsApp receipts",
-    "India cricket academy",
+    "fee renewal tracking",
+    "overdue fees",
     "academy management",
+    "WhatsApp receipts",
+    "QR attendance",
+    "India cricket academy",
+    "fee collection",
     "trial check-in",
   ],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Academy Ops — Your academy gate, fees, and parents",
+    title: "Academy Ops — Renewal control + payment proof",
     description:
-      "QR check-in, on-ground fees, coach roles, and owner digest — one platform for Indian sports academies. Live demo included.",
+      "Track renewals, collect fees on ground, prove attendance, and follow up on WhatsApp — one platform for Indian sports academies.",
     url: landingConfig.siteUrl,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Academy Ops — Your academy gate, fees, and parents",
+    title: "Academy Ops — Renewal control + payment proof",
     description:
-      "QR check-in, on-ground fees, coach roles, and owner digest — one platform for Indian sports academies.",
+      "Track renewals, collect fees, prove attendance, and follow up on WhatsApp for Indian sports academies.",
   },
 };
 

@@ -14,7 +14,8 @@ export function PlanComparisonSection() {
             Starter vs Pro at a glance
           </h2>
           <p className="mt-2 text-sm text-body">
-            Three reasons academies upgrade: QR at gate, coach logins, and reports export.
+            Both plans track renewals and receipts. Pro adds reminder queue, digest, QR attendance proof,
+            and month-end exports.
           </p>
         </AnimateOnScroll>
 
@@ -36,16 +37,27 @@ export function PlanComparisonSection() {
                     row.highlight && "bg-brand-soft/20",
                   )}
                 >
-                  <td className="px-4 py-3 text-body">{row.feature}</td>
+                  <td className="px-4 py-3 text-body">
+                    {row.feature}
+                    {"soon" in row && row.soon && (
+                      <span className="ml-2 rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-semibold text-warning">
+                        Soon
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-center">
-                    {row.starter ? (
+                    {"soon" in row && row.soon ? (
+                      <span className="text-xs text-muted">—</span>
+                    ) : row.starter ? (
                       <Check className="mx-auto h-4 w-4 text-success" />
                     ) : (
                       <X className="mx-auto h-4 w-4 text-muted/50" />
                     )}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    {row.pro ? (
+                    {"soon" in row && row.soon ? (
+                      <span className="text-xs text-muted">—</span>
+                    ) : row.pro ? (
                       <Check className="mx-auto h-4 w-4 text-success" />
                     ) : (
                       <X className="mx-auto h-4 w-4 text-muted/50" />

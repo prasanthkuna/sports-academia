@@ -12,11 +12,11 @@ export function CtaSection() {
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(15,118,110,0.35),transparent_55%)]" />
             <div className="relative">
               <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Run your academy like a pro
+                Stop renewal leakage before the next batch
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#a1a1aa] sm:text-base">
-                Log in with demo credentials, scan a live QR check-in, or explore the full product
-                tour above.
+                Log in with demo credentials — see overdue fees, collect a renewal, verify a receipt,
+                or try live attendance flows above.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link

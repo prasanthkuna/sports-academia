@@ -7,7 +7,7 @@ import { landingConfig, type ProductFlowId } from "@/lib/landing-config";
 import { cn } from "@/lib/utils";
 
 export function FlowMapSection() {
-  const [active, setActive] = useState<ProductFlowId>("qr");
+  const [active, setActive] = useState<ProductFlowId>("dashboard");
   const flow = landingConfig.productFlows.find((f) => f.id === active)!;
 
   return (
@@ -16,10 +16,11 @@ export function FlowMapSection() {
         <AnimateOnScroll className="max-w-2xl">
           <p className="text-sm font-medium uppercase tracking-wider text-brand">Product</p>
           <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Every core flow — one platform
+            Renewal control — every flow in one app
           </h2>
           <p className="mt-4 text-body">
-            Tap a module to see how it works on a phone. No app install for parents or students.
+            Tap a module to see how owners and staff handle fees, reminders, attendance proof, and
+            receipts on a phone. No parent app install.
           </p>
         </AnimateOnScroll>
 

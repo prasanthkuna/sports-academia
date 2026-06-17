@@ -8,17 +8,17 @@ import { landingConfig } from "@/lib/landing-config";
 
 export function QrPlatformSection() {
   return (
-    <section id="qr-platform" className="border-b border-hairline bg-surface-soft py-20">
+    <section id="attendance-proof" className="border-b border-hairline bg-surface-soft py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <AnimateOnScroll>
-            <p className="text-sm font-medium uppercase tracking-wider text-brand">QR platform</p>
+            <p className="text-sm font-medium uppercase tracking-wider text-brand">Attendance proof</p>
             <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              One QR identity layer — five actions
+              QR supports renewal control — it&apos;s not the headline
             </h2>
             <p className="mt-4 text-body">
-              QR is not just ID cards. It powers gate attendance, trial check-ins, receipt trust, and
-              coach shortcuts — all academy-scoped and auditable.
+              On Pro, students scan at the gate so owners know who actually showed up — alongside who
+              paid and who is overdue. QR is proof, not a separate register to chase.
             </p>
             <div className="mt-8 flex shrink-0 justify-center lg:justify-start">
               <div className="w-[280px] shrink-0">
