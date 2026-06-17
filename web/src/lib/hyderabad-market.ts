@@ -1,22 +1,13 @@
 /**
- * Hyderabad sports-academy market reference (early 2026).
- * Used for landing page copy and demo DB seed — not live customer data.
- *
- * Sources (public listings & guides):
- * - Cricket monthly ₹1,800–₹5,500 typical; ₹3,000 common (CricJosh, SportsCafe, local academies)
- * - Cricket quarterly ≈ 3× monthly with ~5–15% discount → ₹8,000–₹9,000
- * - Personal coaching ₹5,000/month (Galaxy Cricket Academy, Hyderabad)
- * - Badminton beginner ₹1,500–₹3,000/month (Playgloba Hyderabad)
- * - Swimming with coaching ₹2,500–₹3,600/month (Gopichand pool / Playgloba)
- * - Summer camp 4-week cricket ₹3,500–₹5,000 (Gamepoint Academy Hyderabad)
- * - Admission / registration ₹2,000–₹5,100 (varies by academy)
+ * Academy market reference for demo seed and landing mocks (early 2026).
+ * Internal research notes only — no city names in user-facing UI.
  */
 
-/** Illustrative mid-size academy in Hyderabad (Kukatpally / LB Nagar / Uppal tier). */
+/** Illustrative mid-size academy profile for marketing copy. */
 export const hyderabadDemoAcademy = {
-  activeStudents: 94,
-  batches: 6,
-  sports: ["Cricket", "Badminton", "Football"] as const,
+  activeStudents: 12,
+  batches: 5,
+  sports: ["Cricket", "Badminton", "Football", "Swimming"] as const,
 } as const;
 
 /** Typical parent-facing fee amounts (INR). */
@@ -35,12 +26,12 @@ export const hyderabadFees = {
   partialBalance: 1500,
 } as const;
 
-/** One busy morning (e.g. 5th of month — due day) at a ~94-student academy. */
+/** Day-level stats aligned with the live demo seed (12 students). */
 export const hyderabadDemoDay = {
-  presentTotal: 72,
-  qrCheckIns: 54,
-  manualCheckIns: 18,
-  absentToday: 9,
+  presentTotal: 10,
+  qrCheckIns: 4,
+  manualCheckIns: 3,
+  absentToday: 2,
   trialsToday: 2,
   leadsAwaitingFollowUp: 3,
   remindersInQueue: 4,
@@ -63,30 +54,45 @@ export const hyderabadDemoDay = {
   expiredButAttendedToday: 1,
 } as const;
 
+/** Morning vs end-of-day views for the landing day-timeline section. */
+export const demoDayTimeline = {
+  morning: {
+    overdueStudents: hyderabadDemoDay.overdueStudents,
+    overdueTotal: hyderabadDemoDay.overdueTotal,
+    dueThisWeek: hyderabadDemoDay.dueThisWeek,
+    pendingRenewals: hyderabadDemoDay.pendingRenewals,
+  },
+  endOfDay: {
+    presentToday: hyderabadDemoDay.presentTotal,
+    studentCount: hyderabadDemoAcademy.activeStudents,
+    qrCheckIns: hyderabadDemoDay.qrCheckIns,
+    manualCheckIns: hyderabadDemoDay.manualCheckIns,
+    collectedToday: hyderabadDemoDay.collectedToday,
+    overdueTotal: hyderabadDemoDay.overdueTotal,
+    overdueStudents: hyderabadDemoDay.overdueStudents,
+  },
+} as const;
+
 export const hyderabadFeePlanExamples = [
   {
     name: "U12 Cricket Monthly",
     amount: hyderabadFees.cricketMonthly,
     type: "Monthly",
-    note: "Typical HITEC City / Uppal range",
   },
   {
     name: "8-Session Badminton",
     amount: hyderabadFees.badminton8SessionPackage,
     type: "Package",
-    note: "Beginner batch · Gachibowli tier",
   },
   {
     name: "4-Week Summer Cricket Camp",
     amount: hyderabadFees.summerCamp4WeekCricket,
     type: "Camp",
-    note: "May–Jun camp · 5 days/week",
   },
   {
     name: "Personal Coaching",
     amount: hyderabadFees.personalCoachingMonthly,
     type: "1:1 Monthly",
-    note: "Common Hyderabad 1:1 rate",
   },
 ] as const;
 

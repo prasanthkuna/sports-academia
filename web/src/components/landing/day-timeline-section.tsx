@@ -14,8 +14,8 @@ export function DayTimelineSection() {
             Renewal morning to owner digest — before sunset
           </h2>
           <p className="mt-4 text-body">
-            How a typical day looks when overdue fees, attendance proof, receipts, and parent follow-up
-            run on one platform instead of WhatsApp threads and Excel.
+            From the owner&apos;s morning check to the evening digest — overdue fees, roll-call warnings,
+            on-ground collection, receipt proof, and parent follow-up on one platform.
           </p>
         </AnimateOnScroll>
 

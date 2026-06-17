@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { CountUp } from "@/components/landing/motion/count-up";
 import {
+  demoDayTimeline,
   hyderabadDemoDay,
   hyderabadFees,
   hyderabadFeePlanExamples,
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 const fmt = formatHyderabadInr;
 const day = hyderabadDemoDay;
 const fees = hyderabadFees;
+const timeline = demoDayTimeline;
 
 /** Fixed iPhone 16 Pro mock dimensions — shell never resizes; only screen content crossfades. */
 export const PHONE_WIDTH_PX = 280;
@@ -203,7 +205,7 @@ function FlowFeePlansContent() {
   return (
     <ScreenBody>
       <p className="text-xs font-semibold text-ink">Fee plans</p>
-      <p className="text-[10px] text-muted">Hyderabad market · assign once</p>
+      <p className="text-[10px] text-muted">Assign once · demands follow</p>
       <div className="mt-3 space-y-2">
         {hyderabadFeePlanExamples.slice(0, 3).map((p) => (
           <div key={p.name} className="rounded-lg border border-hairline px-3 py-2.5">
@@ -257,7 +259,7 @@ function FlowReceiptsContent() {
         <p className="text-[10px] font-medium text-muted">Receipt verified</p>
         <p className="mt-1 font-mono-amount text-lg font-semibold text-ink">RCP-2026-0042</p>
         <p className="mt-2 text-sm text-ink">{fmt(fees.cricketMonthly)} paid</p>
-        <p className="text-xs text-body">Arjun Kumar · KCA Hyderabad</p>
+        <p className="text-xs text-body">Arjun Kumar · Kohinoor Cricket Academy</p>
         <p className="mt-2 text-[10px] text-success">Payment confirmed</p>
       </div>
       <p className="text-center text-[10px] text-muted">Public link — ends UPI disputes</p>
@@ -563,42 +565,58 @@ function MiniScreenBody({ children, className }: { children: React.ReactNode; cl
 }
 
 function MiniDashboard() {
+  const m = timeline.morning;
   return (
     <MiniScreenBody className="justify-center gap-1">
-      <p className="text-[9px] font-semibold text-ink">Renewal snapshot</p>
-      <p className="font-mono-amount text-sm font-semibold text-brand">{fmt(day.collectedToday)}</p>
-      <p className="text-[8px] text-error">{day.overdueStudents} overdue · {fmt(day.overdueTotal)}</p>
+      <p className="text-[9px] font-semibold text-ink">Renewal snapshot · 07:30</p>
+      <p className="text-[8px] text-error">
+        {m.overdueStudents} overdue · {fmt(m.overdueTotal)}
+      </p>
+      <p className="text-[8px] text-muted">{m.dueThisWeek} due this week</p>
     </MiniScreenBody>
   );
 }
 
 function MiniAttendance() {
   return (
-    <MiniScreenBody className="items-center justify-center gap-1 text-center">
-      <QrCode className="h-8 w-8 text-brand" strokeWidth={1.25} />
-      <p className="text-[10px] font-semibold text-ink">Arjun Kumar</p>
-      <span className="rounded-full bg-success-soft px-2 py-0.5 text-[8px] font-semibold text-success">
-        Present
-      </span>
+    <MiniScreenBody className="gap-1.5">
+      <p className="text-[9px] font-medium text-muted">U12 Morning · roll call</p>
+      <div className="rounded border border-hairline px-2 py-1.5">
+        <p className="text-[9px] font-semibold text-ink">{day.sessionsRemainingStudent}</p>
+        <span className="mt-0.5 inline-block rounded-full bg-warning-soft px-1.5 py-0.5 text-[7px] font-semibold text-warning">
+          {day.sessionsRemaining} sessions left
+        </span>
+      </div>
+      <div className="rounded border border-hairline px-2 py-1.5">
+        <p className="text-[9px] font-semibold text-ink">Arjun Kumar</p>
+        <span className="mt-0.5 inline-block rounded-full bg-success-soft px-1.5 py-0.5 text-[7px] font-semibold text-success">
+          Present
+        </span>
+      </div>
     </MiniScreenBody>
   );
 }
 
 function MiniRenewals() {
   return (
-    <MiniScreenBody className="justify-center">
+    <MiniScreenBody className="justify-center gap-1.5">
+      <p className="text-[9px] font-medium text-ink">Arjun Kumar · July renewal</p>
       <p className="font-mono-amount text-lg font-semibold text-ink">{fmt(fees.cricketMonthly)}</p>
-      <p className="text-[9px] text-muted">July renewal · RCP-0042</p>
+      <div className="rounded bg-ink py-1.5 text-center text-[8px] font-semibold text-white">
+        Collect &amp; receipt
+      </div>
     </MiniScreenBody>
   );
 }
 
 function MiniDigest() {
+  const e = timeline.endOfDay;
   return (
     <MiniScreenBody className="justify-center gap-2">
-      <p className="text-[10px] font-semibold text-ink">Daily digest</p>
+      <p className="text-[10px] font-semibold text-ink">Daily digest · 20:00</p>
       <div className="rounded border border-[#25D366]/30 bg-[#25D366]/5 p-2 text-[8px] leading-relaxed text-body">
-        {day.presentTotal} present · {fmt(day.collectedToday)} collected · {fmt(day.overdueTotal)} overdue
+        {e.presentToday}/{e.studentCount} present · {fmt(e.collectedToday)} collected · {fmt(e.overdueTotal)}{" "}
+        overdue
       </div>
       <div className="rounded bg-[#128C7E] py-1.5 text-center text-[8px] font-semibold text-white">
         Send on WhatsApp
@@ -612,8 +630,14 @@ const dayMocks: Record<DayTimelineMockId, React.ComponentType> = {
   attendance: MiniAttendance,
   renewals: MiniRenewals,
   whatsapp: () => (
-    <MiniScreenBody className="justify-center">
-      <div className="rounded rounded-tr-none bg-[#DCF8C6] p-2 text-[8px]">Fee received. Thank you!</div>
+    <MiniScreenBody className="justify-center gap-1.5">
+      <div className="rounded border border-hairline bg-canvas p-2 text-[8px]">
+        <p className="font-semibold text-ink">Receipt KCA-2026-0001</p>
+        <p className="text-body">{fmt(fees.cricketMonthly)} · Arjun Kumar</p>
+      </div>
+      <div className="self-end rounded rounded-tr-none bg-[#DCF8C6] p-2 text-[8px] text-body">
+        Fee received. Thank you!
+      </div>
     </MiniScreenBody>
   ),
   digest: MiniDigest,

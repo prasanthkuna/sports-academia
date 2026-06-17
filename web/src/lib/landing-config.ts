@@ -40,6 +40,7 @@ import {
 } from "./hyderabad-market";
 
 const fmt = formatHyderabadInr;
+const DAY = hyderabadDemoDay;
 
 export const landingConfig = {
   siteUrl: "https://sports-academia.vercel.app",
@@ -95,12 +96,12 @@ export const landingConfig = {
     ] as const,
   },
   hero: {
-    badge: "Built for Hyderabad sports academies",
+    badge: "Built for sports academy owners",
     headline:
       "Know who paid, who expired, who attended, and who needs a WhatsApp reminder — before the next batch.",
     subhead:
       "Renewal control, payment proof, and attendance visibility in one phone-first app. QR check-in on Pro gives owners proof — not another register to chase.",
-    trustLine: `Demo mirrors a ${hyderabadDemoAcademy.activeStudents}-student Hyderabad academy · local cricket fees typically ${fmt(2500)}–${fmt(5000)}/month`,
+    trustLine: `Live demo · ${hyderabadDemoAcademy.activeStudents} students · cricket fees from ${fmt(hyderabadFees.cricketMonthly)}/month`,
     chips: ["Fee plans & auto demands", "Sessions remaining", "Renewal dashboard", "Receipt verify"],
   },
   ownerQuestions: [
@@ -173,7 +174,7 @@ export const landingConfig = {
   feePlanTypes: [
     {
       type: "Monthly",
-      example: `${fmt(hyderabadFees.cricketMonthly)}/month cricket · Uppal / HITEC City norm`,
+      example: `${fmt(hyderabadFees.cricketMonthly)}/month cricket · U12 batch`,
     },
     {
       type: "Quarterly",
@@ -181,7 +182,7 @@ export const landingConfig = {
     },
     {
       type: "Admission",
-      example: `${fmt(hyderabadFees.admission)} one-time · common registration band`,
+      example: `${fmt(hyderabadFees.admission)} one-time registration`,
     },
     {
       type: "Session package",
@@ -189,7 +190,7 @@ export const landingConfig = {
     },
     {
       type: "Personal coaching",
-      example: `${fmt(hyderabadFees.personalCoachingMonthly)}/month · 1:1 cricket (Galaxy-tier)`,
+      example: `${fmt(hyderabadFees.personalCoachingMonthly)}/month · 1:1 cricket`,
     },
     {
       type: "Summer camp",
@@ -353,32 +354,32 @@ export const landingConfig = {
   dayTimeline: [
     {
       time: "07:30",
-      title: "Owner checks renewal snapshot",
-      body: "Dashboard shows overdue, pending, and today's collection before batches start.",
+      title: "Owner opens renewal snapshot",
+      body: `${DAY.overdueStudents} overdue · ${fmt(DAY.overdueTotal)} pending · ${DAY.dueThisWeek} due this week — before the first batch.`,
       mock: "dashboard" as DayTimelineMockId,
     },
     {
       time: "08:00",
-      title: "Students check in",
-      body: "Coach roll call shows overdue fee and sessions-remaining warnings — present still allowed.",
+      title: "Coach marks roll call",
+      body: `${DAY.sessionsRemainingStudent} shows ${DAY.sessionsRemaining} sessions left. Overdue fees flagged — present still allowed.`,
       mock: "attendance" as DayTimelineMockId,
     },
     {
       time: "08:15",
-      title: "Fee collected on ground",
-      body: `${fmt(hyderabadFees.cricketMonthly)} July renewal collected — UPI or cash. Balance and receipt updated.`,
+      title: "Staff collects renewal at desk",
+      body: `${fmt(hyderabadFees.cricketMonthly)} July renewal — UPI or cash. Balance and receipt updated on the spot.`,
       mock: "renewals" as DayTimelineMockId,
     },
     {
       time: "08:20",
       title: "WhatsApp receipt sent",
-      body: "Parent gets PDF proof. Logged — no duplicate reminders later.",
+      body: `Parent gets PDF proof for ${fmt(hyderabadFees.cricketMonthly)}. Logged — no duplicate reminders later.`,
       mock: "whatsapp" as DayTimelineMockId,
     },
     {
       time: "20:00",
       title: "Owner sends daily digest",
-      body: "Attendance, collection, and overdue summary — one tap to WhatsApp.",
+      body: `${DAY.presentTotal}/${hyderabadDemoAcademy.activeStudents} present · ${fmt(DAY.collectedToday)} collected · ${fmt(DAY.overdueTotal)} overdue — one tap to WhatsApp.`,
       mock: "digest" as DayTimelineMockId,
     },
   ],
@@ -469,8 +470,8 @@ export const landingConfig = {
       a: "Both — but the point is renewal control. You see who paid, who is overdue, who got a receipt, and who needs a WhatsApp reminder. Collecting on the ground is one step in that loop, not the whole product.",
     },
     {
-      q: "What fee amounts should I use for Hyderabad?",
-      a: `Most cricket academies charge ${fmt(2500)}–${fmt(5000)}/month (community to mid-tier). Quarterly plans run ${fmt(8000)}–${fmt(9000)}. Swimming with coaching is often ${fmt(2500)}–${fmt(3600)}/month. Summer cricket camps are typically ${fmt(3500)}–${fmt(5000)} for 4 weeks. You set your own plans — these are the local norms our demo uses.`,
+      q: "What fee amounts should I set?",
+      a: `Most cricket academies charge ${fmt(2500)}–${fmt(5000)}/month. Quarterly plans run ${fmt(8000)}–${fmt(9000)}. Swimming with coaching is often ${fmt(2500)}–${fmt(3600)}/month. Summer cricket camps are typically ${fmt(3500)}–${fmt(5000)} for 4 weeks. You configure your own plans — the demo uses common mid-tier amounts.`,
     },
     {
       q: "Do you support swimming session packages or summer camps?",

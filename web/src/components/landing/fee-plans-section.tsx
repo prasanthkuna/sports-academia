@@ -10,7 +10,7 @@ export function FeePlansSection() {
           <AnimateOnScroll>
             <p className="text-sm font-medium uppercase tracking-wider text-brand">Fee Plan Engine</p>
             <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Not just monthly — every Hyderabad academy billing model
+              Every billing model your academy runs
             </h2>
             <p className="mt-4 text-body">
               Create plans once, assign to students, and let the system generate renewal demands,
@@ -64,10 +64,6 @@ export function FeePlansSection() {
             </MotionCard>
           ))}
         </div>
-
-        <p className="mt-8 text-center text-xs text-muted">
-          Fee examples reflect Hyderabad academy listings (cricket, badminton, swimming, camps) — early 2026.
-        </p>
       </div>
     </section>
   );

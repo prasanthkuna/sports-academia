@@ -76,7 +76,7 @@ export default async function PublicAcademyPage({ params }: PageProps) {
     <div className={`${display.variable} min-h-screen bg-canvas font-sans`} style={brandStyle}>
       <AcademyHero
         name={academy.name}
-        tagline="Structured coaching · Professional batches · Hyderabad"
+        tagline="Structured coaching · Professional batches · Trial welcome"
       />
       <AcademyCtaBar
         slug={slug}
