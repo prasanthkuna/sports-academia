@@ -75,6 +75,19 @@ Trial expiry → `/upgrade` → Pay (setup + month 1) → auto-activates academy
 
 **Ops fallback:** `bun scripts/activate-academy.ts <slug> pro`
 
+### Razorpay MCP (Cursor AI tools)
+
+Configured in `~/.cursor/mcp.json` as `razorpay` — connects to `https://mcp.razorpay.com/mcp`.
+
+To refresh credentials after key rotation:
+
+```powershell
+# PowerShell — replace with your key_id:key_secret
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("rzp_test_XXXX:your_secret"))
+```
+
+Set `AUTH_HEADER` to `Basic <that-base64-string>` in Cursor MCP settings, then restart Cursor.
+
 ## Public pages
 
 - Academy page: `/a/kca-hyderabad`
