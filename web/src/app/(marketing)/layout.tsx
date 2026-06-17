@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(landingConfig.siteUrl),
   title: "Academy Ops — Renewal control for sports academies",
   description:
-    "Know who paid, who expired, who attended, and who needs a WhatsApp reminder. Fee tracking, receipts, attendance proof, and leads for Indian sports academies.",
+    "Fee plans, renewal dashboard, session packages, receipts, and attendance proof for Indian sports academies.",
   keywords: [
     "sports academy software",
     "fee renewal tracking",
@@ -22,14 +22,16 @@ export const metadata: Metadata = {
     "WhatsApp receipts",
     "QR attendance",
     "India cricket academy",
-    "fee collection",
+    "session package fees",
+    "summer camp billing",
+    "fee plan engine",
     "trial check-in",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     title: "Academy Ops — Renewal control + payment proof",
     description:
-      "Track renewals, collect fees on ground, prove attendance, and follow up on WhatsApp — one platform for Indian sports academies.",
+      "Fee plans, auto demands, renewal dashboard, session tracking, and WhatsApp follow-up for Indian sports academies.",
     url: landingConfig.siteUrl,
   },
   twitter: {

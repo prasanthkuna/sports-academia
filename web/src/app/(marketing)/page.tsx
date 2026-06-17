@@ -2,6 +2,7 @@ import { CtaSection } from "@/components/landing/cta-section";
 import { DayTimelineSection } from "@/components/landing/day-timeline-section";
 import { DemoPlaygroundSection } from "@/components/landing/demo-playground-section";
 import { FaqSection } from "@/components/landing/faq-section";
+import { FeePlansSection } from "@/components/landing/fee-plans-section";
 import { FlowMapSection } from "@/components/landing/flow-map-section";
 import { FloatingWhatsApp } from "@/components/landing/floating-whatsapp";
 import { HeroSection } from "@/components/landing/hero-section";
@@ -22,6 +23,7 @@ export default function HomePage() {
         <HeroSection />
         <OwnerQuestionsSection />
         <ProblemSolutionSection />
+        <FeePlansSection />
         <FlowMapSection />
         <DayTimelineSection />
         <QrPlatformSection />

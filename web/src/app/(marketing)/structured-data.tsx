@@ -19,7 +19,7 @@ export function StructuredData() {
     name: "Academy Ops",
     url: landingConfig.siteUrl,
     description:
-      "Renewal control, fee tracking, attendance proof, and WhatsApp receipts for Indian sports academies.",
+      "Fee plans, renewal dashboard, session packages, receipts, and attendance proof for Indian sports academies.",
   };
 
   const appSchema = {

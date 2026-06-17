@@ -141,44 +141,88 @@ function FlowDashboardContent() {
 
 function FlowRenewalsContent() {
   return (
+    <ScreenBody className="gap-2">
+      <p className="text-xs font-semibold text-ink">Renewal dashboard</p>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-lg bg-brand-soft p-2.5">
+          <p className="text-[9px] text-muted">Paid today</p>
+          <p className="font-mono-amount text-base font-semibold text-brand">₹8,240</p>
+        </div>
+        <div className="rounded-lg bg-error-soft/50 p-2.5">
+          <p className="text-[9px] text-muted">Overdue</p>
+          <p className="font-mono-amount text-base font-semibold text-error">2</p>
+        </div>
+      </div>
+      <div className="rounded-lg border border-warning/30 bg-warning-soft/40 px-3 py-2">
+        <p className="text-[10px] font-medium text-warning">Due this week · 5 renewals</p>
+      </div>
+      <div className="space-y-1.5">
+        <div className="flex justify-between rounded-md bg-canvas px-2 py-1.5 text-[10px]">
+          <span className="text-ink">Kavya · sessions left</span>
+          <span className="font-semibold text-warning">2</span>
+        </div>
+        <div className="flex justify-between rounded-md bg-error-soft/30 px-2 py-1.5 text-[10px]">
+          <span className="text-ink">Manoj · expired · attended</span>
+          <span className="font-semibold text-error">!</span>
+        </div>
+      </div>
+      <p className="mt-auto text-center text-[10px] text-muted">Owner opens this before every batch</p>
+    </ScreenBody>
+  );
+}
+
+function FlowFeePlansContent() {
+  const plans = [
+    { name: "Monthly Cricket", amount: "₹3,000", type: "Monthly" },
+    { name: "8 Session Swimming", amount: "₹6,000", type: "Package" },
+    { name: "Summer Camp 2026", amount: "₹12,000", type: "Camp" },
+  ];
+  return (
     <ScreenBody>
-      <p className="text-xs text-muted">July renewal</p>
-      <p className="mt-1 text-sm font-medium text-ink">Arjun Kumar</p>
-      <p className="font-mono-amount mt-2 text-3xl font-semibold text-ink">₹3,000</p>
-      <p className="text-xs text-body">Monthly · U12 Morning · Due 5 Jul</p>
+      <p className="text-xs font-semibold text-ink">Fee plans</p>
+      <p className="text-[10px] text-muted">Assign once · demands follow</p>
       <div className="mt-3 space-y-2">
-        <div className="flex justify-between rounded-lg bg-surface-soft px-3 py-2 text-xs">
-          <span className="text-muted">Paid now</span>
-          <span className="font-semibold text-ink">₹3,000</span>
-        </div>
-        <div className="flex justify-between rounded-lg border border-hairline px-3 py-2 text-xs">
-          <span className="text-muted">Status</span>
-          <span className="font-semibold text-success">Paid</span>
-        </div>
+        {plans.map((p) => (
+          <div key={p.name} className="rounded-lg border border-hairline px-3 py-2.5">
+            <p className="text-xs font-medium text-ink">{p.name}</p>
+            <p className="text-[10px] text-muted">
+              {p.type} · {p.amount}
+            </p>
+          </div>
+        ))}
       </div>
-      <div className="mt-auto rounded-lg bg-ink py-2.5 text-center text-xs font-semibold text-white">
-        Collect &amp; Receipt
+      <div className="mt-auto rounded-lg bg-ink py-2 text-center text-[10px] font-semibold text-white">
+        Assign to student
       </div>
-      <p className="mt-2 text-center text-[10px] text-muted">RCP-2026-0042 · UPI</p>
     </ScreenBody>
   );
 }
 
 function FlowAttendanceContent() {
   return (
-    <ScreenBody className="items-center justify-center gap-3 text-center">
-      <div className="rounded-xl border border-brand/30 bg-brand-soft/40 p-4">
-        <QrCode className="mx-auto h-14 w-14 text-brand" strokeWidth={1.25} />
+    <ScreenBody className="gap-2">
+      <p className="text-xs font-medium text-muted">U12 Morning · roll call</p>
+      <div className="rounded-lg border border-hairline p-3">
+        <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
+        <p className="text-xs text-muted">KCA-0001</p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          <span className="rounded-full bg-success-soft px-2 py-0.5 text-[9px] font-semibold text-success">
+            Present
+          </span>
+        </div>
       </div>
-      <p className="text-sm font-semibold text-ink">Arjun Kumar</p>
-      <p className="text-xs text-muted">U12 Morning Cricket</p>
-      <div className="w-full rounded-lg bg-success py-2.5 text-xs font-semibold text-white">
-        Present · attendance proof
+      <div className="rounded-lg border border-hairline p-3">
+        <p className="text-sm font-semibold text-ink">Kavya Iyer</p>
+        <span className="mt-1 inline-block rounded-full bg-warning-soft px-2 py-0.5 text-[9px] font-semibold text-warning">
+          2 sessions remaining
+        </span>
+        <div className="mt-2 flex gap-1">
+          <span className="rounded-full bg-success-soft px-2 py-0.5 text-[9px] font-semibold text-success">
+            Present
+          </span>
+        </div>
       </div>
-      <p className="flex items-center gap-1 text-[10px] text-muted">
-        <MapPin className="h-3 w-3 text-brand" />
-        Pro QR · geofence OK
-      </p>
+      <p className="mt-auto text-center text-[10px] text-muted">Warnings only · not blocked</p>
     </ScreenBody>
   );
 }
@@ -308,6 +352,7 @@ function FlowRemindersContent() {
 
 const flowContent: Record<ProductFlowId, React.ComponentType> = {
   dashboard: FlowDashboardContent,
+  fee_plans: FlowFeePlansContent,
   renewals: FlowRenewalsContent,
   leads: FlowLeadsContent,
   whatsapp: FlowWhatsappContent,
@@ -328,7 +373,7 @@ export function ProductFlowPhone({ flowId }: { flowId: ProductFlowId }) {
 
 /* ── Hero phone (auto-cycle, fixed shell) ──────────────────────── */
 
-const HERO_FLOWS: ProductFlowId[] = ["dashboard", "renewals", "reminders", "whatsapp"];
+const HERO_FLOWS: ProductFlowId[] = ["dashboard", "fee_plans", "renewals", "reminders"];
 
 export function HeroPhoneMock() {
   const reduced = useReducedMotion();

@@ -26,8 +26,8 @@ export function DemoPlaygroundSection() {
             Try it in 60 seconds
           </h2>
           <p className="mt-4 text-body">
-            Real flows with sample data — log in as owner to see overdue fees, verify a receipt, collect
-            a renewal, or try attendance check-in.
+            Log in as owner for the renewal dashboard, or staff for fee plans and collection. Verify
+            receipts and try live QR flows — all with real demo data.
           </p>
         </AnimateOnScroll>
 

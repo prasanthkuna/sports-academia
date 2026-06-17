@@ -14,8 +14,8 @@ export function PlanComparisonSection() {
             Starter vs Pro at a glance
           </h2>
           <p className="mt-2 text-sm text-body">
-            Both plans track renewals and receipts. Pro adds reminder queue, digest, QR attendance proof,
-            and month-end exports.
+            Both plans include fee plans and renewal dashboard. Pro adds QR attendance proof, coach logins,
+            reminder queue, digest, and month-end Excel exports.
           </p>
         </AnimateOnScroll>
 

@@ -12,6 +12,7 @@ export type LandingFeatureIcon =
 
 export type ProductFlowId =
   | "dashboard"
+  | "fee_plans"
   | "renewals"
   | "leads"
   | "whatsapp"
@@ -53,9 +54,14 @@ export const landingConfig = {
     password: "Demo@123456",
     tryLinks: [
       {
+        label: "Owner renewal dashboard",
+        href: "/login",
+        hint: "owner@demo.academy — overdue, sessions left, expired-but-attended",
+      },
+      {
         label: "Open demo dashboard",
         href: "/login",
-        hint: "owner@demo.academy — see overdue & today's collection",
+        hint: "staff@demo.academy — fee plans, collect fees, reminders",
       },
       {
         label: "Verify a receipt",
@@ -85,8 +91,8 @@ export const landingConfig = {
       "Know who paid, who expired, who attended, and who needs a WhatsApp reminder — before the next batch.",
     subhead:
       "Renewal control, payment proof, and attendance visibility in one phone-first app. QR check-in on Pro gives owners proof — not another register to chase.",
-    trustLine: "Live demo with overdue fees, trials & receipts · No parent app required",
-    chips: ["Overdue & pending fees", "Receipt verify", "Tap-to-send WhatsApp"],
+    trustLine: "Live demo with fee plans, renewal dashboard, trials & receipts · No parent app",
+    chips: ["Fee plans & auto demands", "Sessions remaining", "Renewal dashboard", "Receipt verify"],
   },
   ownerQuestions: [
     {
@@ -96,12 +102,20 @@ export const landingConfig = {
     },
     {
       question: "Who is overdue or due for renewal?",
-      answer: "Pending and overdue fees on one screen. Partial payments tracked. Reminder queue for follow-up.",
+      answer:
+        "Renewal dashboard shows overdue, due this week, paid today, and renewal pending. Monthly and quarterly plans auto-generate demands.",
       flowId: "renewals" as ProductFlowId,
     },
     {
+      question: "How many sessions are left on the package?",
+      answer:
+        "Session packages and personal coaching track sessions used vs remaining. Attendance marks consume a session — coaches see warnings, not blocked yet.",
+      flowId: "fee_plans" as ProductFlowId,
+    },
+    {
       question: "Who actually attended today?",
-      answer: "Batch attendance plus QR check-in on Pro. Owner sees QR vs manual split on the dashboard.",
+      answer:
+        "Batch attendance plus QR check-in on Pro. Fee overdue and package expiry warnings show at roll call — attendance proof linked to renewal control.",
       flowId: "attendance" as ProductFlowId,
     },
     {
@@ -137,12 +151,36 @@ export const landingConfig = {
       solution: "Public page · lead pipeline · trial check-in QR",
     },
     {
+      problem: "Package expiry invisible",
+      solution: "Sessions remaining · expired-but-attended alerts · summer camp validity",
+    },
+    {
       problem: "Excel & register chaos",
-      solution: "Smart Excel import · audit logs · one dashboard",
+      solution: "Fee plan assignments · smart Excel import · audit logs",
     },
   ],
   roadmapNote:
-    "Coming next: fee plans for monthly, quarterly, session packages & summer camps — with expiry alerts and sessions remaining.",
+    "Coming next: online payment gateway, UPI auto-match, and configurable attendance blocking for expired packages.",
+  feePlanTypes: [
+    { type: "Monthly", example: "₹3,000/month · auto demand on due day" },
+    { type: "Quarterly", example: "₹8,000/quarter · Q demand generated" },
+    { type: "Admission", example: "₹2,000 one-time on enrolment" },
+    { type: "Session package", example: "8 sessions · consumed on attendance" },
+    { type: "Personal coaching", example: "12 sessions · expiry date tracked" },
+    { type: "Summer camp", example: "20-day camp · fixed validity window" },
+  ],
+  feePlanBullets: [
+    "Assign a plan once — demands generate for monthly & quarterly",
+    "Session packages decrement when student is marked present",
+    "Owner renewal dashboard: paid today, overdue, expiring, sessions left",
+    "Expired package + still attending — flagged before you lose money",
+  ],
+  renewalDashboardWidgets: [
+    { label: "Paid today", value: "₹8,240", hint: "3 UPI · 2 cash" },
+    { label: "Overdue", value: "2 students", hint: "₹5,500 pending" },
+    { label: "Due this week", value: "5 renewals", hint: "July monthly cycle" },
+    { label: "Sessions left", value: "2 remaining", hint: "Kavya · swimming pack" },
+  ],
   productFlows: [
     {
       id: "dashboard" as ProductFlowId,
@@ -152,11 +190,18 @@ export const landingConfig = {
         "Today's collection, overdue fees, pending renewals, attendance split, and trials — one screen before you call staff.",
     },
     {
+      id: "fee_plans" as ProductFlowId,
+      label: "Fee plans",
+      title: "Plan engine for every billing model",
+      description:
+        "Monthly, quarterly, admission, session packages, personal coaching, and summer camps. Assign to a student — demands and session tracking follow.",
+    },
+    {
       id: "renewals" as ProductFlowId,
       label: "Renewals",
-      title: "Track who owes what",
+      title: "Owner renewal dashboard",
       description:
-        "Pending, overdue, and partially paid fees with due dates. Collect on ground, generate receipt, balance updates instantly.",
+        "Paid today, overdue, due this week, sessions remaining, expired-but-attended, and renewal pending — the money screen owners open first.",
     },
     {
       id: "leads" as ProductFlowId,
@@ -180,7 +225,7 @@ export const landingConfig = {
       id: "attendance" as ProductFlowId,
       label: "Attendance",
       title: "Proof students showed up",
-      description: "Manual batch roll call on Starter. Pro adds QR self check-in at the gate with geofence and PIN.",
+      description: "Manual batch roll call on Starter. Pro adds QR gate check-in plus fee and package warnings at roll call.",
     },
     {
       id: "reports" as ProductFlowId,
@@ -233,10 +278,10 @@ export const landingConfig = {
       title: "Owner",
       subtitle: "Renewal & visibility",
       bullets: [
-        "Overdue fees and today's collection at a glance",
+        "Renewal dashboard — overdue, expiring, sessions remaining",
         "One-tap daily digest for WhatsApp",
+        "Expired-but-attended alerts before money leaks",
         "QR vs manual attendance split on Pro",
-        "Reports, audit logs, and trial conversions",
       ],
     },
     {
@@ -244,10 +289,10 @@ export const landingConfig = {
       title: "Staff",
       subtitle: "Front desk ops",
       bullets: [
+        "Create fee plans and assign to students",
         "Collect fees, partial pay, and send receipts",
         "Build and send renewal reminder queue",
         "Manage leads and Excel import",
-        "Cannot change team or academy settings",
       ],
     },
     {
@@ -256,9 +301,9 @@ export const landingConfig = {
       subtitle: "Batches only",
       bullets: [
         "Mark attendance for assigned batches only",
-        "See student roster — no fee data",
+        "See fee & package warnings — not full fee data",
+        "Session packages auto-consume on present mark",
         "QR check-in reduces manual roll call",
-        "Owner still sees the full picture",
       ],
     },
   ],
@@ -272,7 +317,7 @@ export const landingConfig = {
     {
       time: "08:00",
       title: "Students check in",
-      body: "QR scan or coach roll call — attendance proof, not a separate register.",
+      body: "Coach roll call shows overdue fee and sessions-remaining warnings — present still allowed.",
       mock: "attendance" as DayTimelineMockId,
     },
     {
@@ -295,8 +340,12 @@ export const landingConfig = {
     },
   ],
   planMatrix: [
-    { feature: "Overdue & pending fee tracking", starter: true, pro: true, highlight: true },
-    { feature: "Partial payments + receipts", starter: true, pro: true, highlight: true },
+    { feature: "Fee plans (monthly, quarterly, camp)", starter: true, pro: true, highlight: true },
+    { feature: "Auto recurring fee demands", starter: true, pro: true, highlight: true },
+    { feature: "Renewal dashboard (owner view)", starter: true, pro: true, highlight: true },
+    { feature: "Session packages + sessions remaining", starter: true, pro: true, highlight: true },
+    { feature: "Attendance fee/package warnings", starter: true, pro: true, highlight: false },
+    { feature: "Partial payments + receipts", starter: true, pro: true, highlight: false },
     { feature: "Renewal reminder queue (WhatsApp)", starter: false, pro: true, highlight: true },
     { feature: "Owner daily digest", starter: false, pro: true, highlight: false },
     { feature: "Receipt verify link", starter: true, pro: true, highlight: false },
@@ -305,7 +354,7 @@ export const landingConfig = {
     { feature: "Coach logins (scoped)", starter: false, pro: true, highlight: false },
     { feature: "Reports + Excel export", starter: false, pro: true, highlight: false },
     { feature: "Audit logs", starter: false, pro: true, highlight: false },
-    { feature: "Session packages & camp plans", starter: false, pro: false, highlight: false, soon: true },
+    { feature: "Online payment gateway", starter: false, pro: false, highlight: false, soon: true },
   ],
   pricing: {
     setup: {
@@ -332,12 +381,14 @@ export const landingConfig = {
           "Up to 150 students",
           "Up to 3 staff users (no coach login)",
           "Up to 6 batches · 1 sport",
-          "Pending, overdue & partial fee tracking",
+          "Fee plans — monthly, quarterly, packages, camps",
+          "Auto recurring demands + renewal dashboard",
+          "Session packages with sessions remaining",
+          "Attendance fee & package warnings",
           "Fee collection + PDF receipts",
           "WhatsApp receipt (tap-to-send)",
           "Public academy page + lead pipeline",
           "Manual attendance",
-          "Owner dashboard (today's snapshot)",
           "Standard email & chat support",
         ],
       },
@@ -350,12 +401,13 @@ export const landingConfig = {
         idealFor: "3+ staff · QR attendance proof · month-end reporting",
         popular: true,
         features: [
+          "Everything in Starter",
           "Unlimited students, staff & batches",
           "Multi-sport academy setup",
           "QR attendance — proof at the gate",
           "Coach logins (assigned batches only)",
-          "Owner dashboard + one-tap daily digest",
-          "Renewal reminder queue (tap-to-send)",
+          "Owner digest + renewal reminder queue",
+          "Expired-but-attended alerts",
           "Financial, attendance & lead reports",
           "Export reports to Excel",
           "Receipt verify + audit logs",
@@ -366,7 +418,7 @@ export const landingConfig = {
       },
     ],
     footnote:
-      "All plans include secure cloud hosting per academy. WhatsApp is tap-to-send — you stay in control. Session packages & camp billing rolling out next.",
+      "All plans include fee plans, renewal dashboard, and secure cloud hosting per academy. WhatsApp is tap-to-send — you stay in control. Online payment gateway coming next.",
   },
   faqs: [
     {
@@ -375,7 +427,15 @@ export const landingConfig = {
     },
     {
       q: "Do you support swimming session packages or summer camps?",
-      a: "Not yet as dedicated plan types. Today you track fees with due dates, partial payments, and overdue status. Session packages, quarterly plans, and camp billing are next on our roadmap with expiry alerts and sessions remaining.",
+      a: "Yes. Create fee plans for monthly, quarterly, session packages, personal coaching, and summer camps. Assign to students — the system tracks sessions remaining, package expiry, and auto-generates monthly demands. Attendance shows warnings when a package is low or expired.",
+    },
+    {
+      q: "What is the renewal dashboard?",
+      a: "Owners open /renewals to see paid today, overdue fees, renewals due this week, sessions remaining on packages, and students who attended today on an expired package. Staff use /fees to collect on the ground.",
+    },
+    {
+      q: "How do session packages work?",
+      a: "Create an 8-session or 12-session plan, assign to the student. Each present attendance mark consumes one session. The renewal dashboard shows sessions remaining. Coaches see a warning at roll call — attendance is not blocked yet.",
     },
     {
       q: "How do fee reminders work?",
@@ -391,7 +451,7 @@ export const landingConfig = {
     },
     {
       q: "What's the difference between Starter and Pro?",
-      a: "Starter covers renewal tracking, fees, receipts, leads, and manual attendance for smaller academies. Pro adds QR attendance proof, coach logins, owner digest, reminder queue, reports export, audit logs, and trial check-in.",
+      a: "Both include fee plans, renewal dashboard, session packages, and attendance warnings. Pro adds QR gate check-in, coach logins, owner digest, reminder queue, reports export, audit logs, and trial check-in QR.",
     },
     {
       q: "How does the owner daily digest work?",
@@ -420,6 +480,7 @@ export const landingConfig = {
   ],
   navSections: [
     { id: "owner-questions", label: "Why" },
+    { id: "fee-plans", label: "Fee plans" },
     { id: "product", label: "Product" },
     { id: "day-timeline", label: "A day" },
     { id: "attendance-proof", label: "Attendance" },

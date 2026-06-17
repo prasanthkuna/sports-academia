@@ -66,8 +66,7 @@ export default function OgImage() {
             lineHeight: 1.4,
           }}
         >
-          Renewal control, payment proof, attendance visibility, and WhatsApp follow-up for Indian
-          sports academies.
+          Renewal control, fee plans, payment proof, and attendance visibility for Indian sports academies.
         </p>
       </div>
     ),
