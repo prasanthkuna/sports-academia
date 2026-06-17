@@ -8,6 +8,7 @@ export default async function MorePage() {
   const role = ctx?.role ?? "staff";
 
   const links: AppLinkItem[] = [];
+  if (canAccess(role, "fee_plans")) links.push({ href: "/fee-plans", label: "Fee plans", icon: "fees" });
   if (canAccess(role, "leads")) links.push({ href: "/leads", label: "Leads", icon: "users" });
   if (canAccess(role, "batches")) links.push({ href: "/batches", label: "Batches", icon: "batches" });
   if (canAccess(role, "receipts")) links.push({ href: "/receipts", label: "Receipts", icon: "receipt" });

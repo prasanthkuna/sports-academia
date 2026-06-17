@@ -18,6 +18,7 @@ const iconMap: Record<string, typeof Home> = {
   Students: Users,
   Attendance: ClipboardCheck,
   Fees: IndianRupee,
+  Renewals: IndianRupee,
   More: LayoutGrid,
 };
 

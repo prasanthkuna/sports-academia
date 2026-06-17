@@ -7,27 +7,30 @@ import { AppLinkGrid } from "@/components/layout/app-link-grid";
 import type { AppLinkItem } from "@/lib/app-icons";
 import { formatCurrency, rel, waLink } from "@/lib/utils";
 import { DigestBanner } from "@/components/dashboard/digest-banner";
+import { canMutateFees, canViewRenewals } from "@/lib/permissions";
 
 export default async function DashboardPage() {
   const ctx = await getAcademyContext();
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
+  const weekAhead = new Date();
+  weekAhead.setDate(weekAhead.getDate() + 7);
+  const weekStr = weekAhead.toISOString().slice(0, 10);
 
+  await supabase.rpc("sync_assignment_status", { p_academy_id: ctx?.academyId });
   await supabase.rpc("mark_overdue_fees");
+  if (ctx?.academyId) {
+    await supabase.rpc("generate_recurring_demands", { p_academy_id: ctx.academyId });
+  }
 
   const [
-    { count: studentCount },
     { data: attendanceToday },
     { data: paymentsToday },
     { data: overdueFees },
     { data: pendingFees },
     { data: digest },
-    { count: trialToday },
+    { count: expiringCount },
   ] = await Promise.all([
-    supabase
-      .from("students")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "active"),
     supabase.from("attendance").select("status, source").eq("attendance_date", today),
     supabase.from("payments").select("amount").eq("payment_date", today).eq("status", "active"),
     supabase
@@ -45,10 +48,12 @@ export default async function DashboardPage() {
       .eq("digest_date", today)
       .maybeSingle(),
     supabase
-      .from("leads")
+      .from("student_fees")
       .select("*", { count: "exact", head: true })
-      .eq("status", "trial_attended")
-      .eq("trial_date", today),
+      .in("status", ["pending", "partially_paid"])
+      .gte("due_date", today)
+      .lte("due_date", weekStr)
+      .gt("pending_amount", 0),
   ]);
 
   const present = attendanceToday?.filter((a) => a.status === "present").length ?? 0;
@@ -61,7 +66,10 @@ export default async function DashboardPage() {
 
   const quick: AppLinkItem[] = [
     { href: "/attendance", label: "Mark Attend", icon: "attendance" },
-    ...(ctx?.role !== "coach"
+    ...(ctx?.role !== "coach" && canViewRenewals(ctx?.role ?? "staff")
+      ? [{ href: "/renewals", label: "Renewals", icon: "fees" as const }]
+      : []),
+    ...(ctx?.role !== "coach" && canMutateFees(ctx?.role ?? "staff")
       ? [{ href: "/fees", label: "Collect Fee", icon: "fees" as const }]
       : []),
     { href: "/students", label: "Students", icon: "userPlus" },
@@ -72,9 +80,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">Dashboard</h1>
-        <p className="text-sm text-muted">Today&apos;s academy snapshot</p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Dashboard</h1>
+          <p className="text-sm text-muted">Renewal snapshot · today&apos;s academy</p>
+        </div>
+        {canViewRenewals(ctx?.role ?? "staff") && (
+          <Link
+            href="/renewals"
+            className="text-sm font-semibold text-brand hover:underline"
+          >
+            Full renewal view →
+          </Link>
+        )}
       </div>
 
       {digest?.whatsapp_body && whatsapp && (ctx?.role === "admin" || ctx?.role === "owner") && (
@@ -93,8 +111,23 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Card>
-          <p className="text-xs font-medium uppercase text-muted">Active students</p>
-          <p className="mt-2 font-mono-amount text-2xl font-semibold text-ink">{studentCount ?? 0}</p>
+          <p className="text-xs font-medium uppercase text-muted">Collected today</p>
+          <p className="mt-2 font-mono-amount text-2xl font-semibold text-brand">
+            {formatCurrency(todayCollection)}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium uppercase text-muted">Overdue</p>
+          <p className="mt-2 font-mono-amount text-2xl font-semibold text-error">
+            {overdueFees?.length ?? 0}
+          </p>
+          <p className="mt-1 text-xs text-muted">students</p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium uppercase text-muted">Due this week</p>
+          <p className="mt-2 font-mono-amount text-2xl font-semibold text-warning">
+            {expiringCount ?? 0}
+          </p>
         </Card>
         <Card>
           <p className="text-xs font-medium uppercase text-muted">Present today</p>
@@ -104,16 +137,6 @@ export default async function DashboardPage() {
               {qrCheckIns} QR · {manualCheckIns} manual
             </p>
           )}
-        </Card>
-        <Card>
-          <p className="text-xs font-medium uppercase text-muted">Today&apos;s collection</p>
-          <p className="mt-2 font-mono-amount text-2xl font-semibold text-ink">
-            {formatCurrency(todayCollection)}
-          </p>
-        </Card>
-        <Card>
-          <p className="text-xs font-medium uppercase text-muted">Trials today</p>
-          <p className="mt-2 font-mono-amount text-2xl font-semibold text-ink">{trialToday ?? 0}</p>
         </Card>
       </div>
 
@@ -144,9 +167,9 @@ export default async function DashboardPage() {
             ))
           )}
         </div>
-        {ctx?.role !== "coach" && (
-          <Link href="/fees" className="mt-3 inline-block text-sm font-medium text-ink underline">
-            View all fees →
+        {canViewRenewals(ctx?.role ?? "staff") && (
+          <Link href="/renewals" className="mt-3 inline-block text-sm font-medium text-ink underline">
+            Renewal dashboard →
           </Link>
         )}
       </Card>

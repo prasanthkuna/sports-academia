@@ -2,6 +2,20 @@ export type { AcademyPlan } from "@/lib/plans";
 
 export type UserRole = "admin" | "staff" | "coach" | "owner";
 export type FeeStatus = "pending" | "partially_paid" | "paid" | "overdue" | "cancelled";
+export type FeePlanType =
+  | "monthly"
+  | "quarterly"
+  | "admission"
+  | "session_package"
+  | "personal_coaching"
+  | "summer_camp";
+export type AssignmentStatus = "active" | "expired" | "cancelled" | "completed" | "paused";
+export type RenewalEventType =
+  | "demand_generated"
+  | "renewal_paid"
+  | "assignment_expired"
+  | "session_consumed"
+  | "reminder_sent";
 export type AttendanceStatus = "present" | "absent" | "late";
 export type AttendanceSource = "manual" | "qr_scan" | "coach";
 export type LeadStatus =
@@ -81,7 +95,10 @@ export type Batch = {
 export type StudentFee = {
   id: string;
   student_id: string;
-  fee_type_id: string;
+  fee_type_id: string | null;
+  fee_plan_id: string | null;
+  assignment_id: string | null;
+  period_label: string | null;
   amount: number;
   discount: number;
   paid_amount: number;
@@ -90,6 +107,38 @@ export type StudentFee = {
   status: FeeStatus;
   students?: Student | null;
   fee_types?: { name: string } | null;
+  fee_plans?: FeePlan | null;
+};
+
+export type FeePlan = {
+  id: string;
+  academy_id: string;
+  name: string;
+  plan_type: FeePlanType;
+  amount: number;
+  billing_cycle_months: number | null;
+  total_sessions: number | null;
+  validity_days: number | null;
+  due_day: number | null;
+  sport_id: string | null;
+  batch_id: string | null;
+  fee_type_id: string | null;
+  is_active: boolean;
+  sports?: { name: string } | null;
+  batches?: { name: string } | null;
+};
+
+export type StudentFeeAssignment = {
+  id: string;
+  student_id: string;
+  fee_plan_id: string;
+  start_date: string;
+  end_date: string | null;
+  status: AssignmentStatus;
+  sessions_total: number | null;
+  sessions_used: number;
+  fee_plans?: FeePlan | null;
+  students?: Student | null;
 };
 
 export type Lead = {

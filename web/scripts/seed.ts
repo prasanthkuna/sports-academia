@@ -211,6 +211,62 @@ async function main() {
     .select();
   const feeMonthly = feeTypes!.find((f) => f.name === "Monthly fee")!;
   const feeAdmission = feeTypes!.find((f) => f.name === "Admission fee")!;
+  const feeCamp = feeTypes!.find((f) => f.name === "Summer camp")!;
+
+  const { data: feePlans } = await admin
+    .from("fee_plans")
+    .insert([
+      {
+        academy_id: academy.id,
+        name: "Monthly Cricket",
+        plan_type: "monthly",
+        amount: 3000,
+        billing_cycle_months: 1,
+        due_day: 5,
+        fee_type_id: feeMonthly.id,
+        sport_id: sport.Cricket.id,
+        batch_id: batchByName["Morning Cricket U12"].id,
+      },
+      {
+        academy_id: academy.id,
+        name: "Quarterly Cricket",
+        plan_type: "quarterly",
+        amount: 8000,
+        billing_cycle_months: 3,
+        due_day: 5,
+        fee_type_id: feeMonthly.id,
+        sport_id: sport.Cricket.id,
+      },
+      {
+        academy_id: academy.id,
+        name: "8 Session Package",
+        plan_type: "session_package",
+        amount: 6000,
+        total_sessions: 8,
+        validity_days: 60,
+        fee_type_id: feeMonthly.id,
+        sport_id: sport.Badminton.id,
+      },
+      {
+        academy_id: academy.id,
+        name: "Summer Camp 2026",
+        plan_type: "summer_camp",
+        amount: 12000,
+        validity_days: 20,
+        fee_type_id: feeCamp.id,
+      },
+      {
+        academy_id: academy.id,
+        name: "Admission",
+        plan_type: "admission",
+        amount: 5000,
+        fee_type_id: feeAdmission.id,
+      },
+    ])
+    .select();
+
+  const planMonthly = feePlans!.find((p) => p.plan_type === "monthly")!;
+  const planSession = feePlans!.find((p) => p.plan_type === "session_package")!;
 
   const { data: adminUser } = await admin
     .from("academy_users")
@@ -443,6 +499,39 @@ async function main() {
       });
     }
   }
+
+  const assignStart = isoDate(daysAgo(30));
+  for (let i = 0; i < 6; i++) {
+    await admin.from("student_fee_assignments").insert({
+      academy_id: academy.id,
+      student_id: studentIds[i]!,
+      fee_plan_id: planMonthly.id,
+      start_date: assignStart,
+      status: "active",
+    });
+  }
+
+  await admin.from("student_fee_assignments").insert({
+    academy_id: academy.id,
+    student_id: studentIds[5]!,
+    fee_plan_id: planSession.id,
+    start_date: assignStart,
+    end_date: isoDate(daysAgo(-45)),
+    sessions_total: 8,
+    sessions_used: 6,
+    status: "active",
+  });
+
+  await admin.from("student_fee_assignments").insert({
+    academy_id: academy.id,
+    student_id: studentIds[10]!,
+    fee_plan_id: planMonthly.id,
+    start_date: isoDate(daysAgo(90)),
+    end_date: isoDate(daysAgo(3)),
+    status: "expired",
+  });
+
+  await admin.rpc("generate_recurring_demands", { p_academy_id: academy.id });
 
   await admin.from("receipt_sequences").upsert({
     academy_id: academy.id,

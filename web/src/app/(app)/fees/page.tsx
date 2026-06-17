@@ -21,7 +21,7 @@ export default async function FeesPage({
 
   let query = supabase
     .from("student_fees")
-    .select("*, students(name, mobile, student_code), fee_types(name)")
+    .select("*, students(name, mobile, student_code), fee_types(name), fee_plans(name)")
     .order("due_date", { ascending: true });
 
   if (status === "overdue") query = query.eq("status", "overdue");
@@ -71,7 +71,10 @@ export default async function FeesPage({
                   {rel<{ name: string }>(fee.students)?.name}
                 </p>
                 <p className="text-xs text-muted">
-                  {rel<{ name: string }>(fee.fee_types)?.name} · Due {formatDate(fee.due_date)}
+                  {fee.period_label ??
+                    rel<{ name: string }>(fee.fee_plans)?.name ??
+                    rel<{ name: string }>(fee.fee_types)?.name}{" "}
+                  · Due {formatDate(fee.due_date)}
                 </p>
                 <Badge status={fee.status} className="mt-1" />
               </div>

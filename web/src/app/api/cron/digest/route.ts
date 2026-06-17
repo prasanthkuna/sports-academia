@@ -17,6 +17,8 @@ export async function GET(req: Request) {
   const today = new Date().toISOString().slice(0, 10);
 
   await admin.rpc("mark_overdue_fees");
+  await admin.rpc("sync_assignment_status");
+  await admin.rpc("generate_recurring_demands");
 
   const { data: academies } = await admin.from("academies").select("id, name, slug").eq("is_active", true);
 

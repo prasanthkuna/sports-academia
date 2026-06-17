@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveAttendance } from "@/app/actions";
 import { cn } from "@/lib/utils";
+import type { StudentFeeAlert } from "@/lib/student-fee-alerts";
+import { alertsForStudent } from "@/lib/student-fee-alerts";
 
 type RosterRow = {
   batch_id: string;
@@ -17,12 +19,14 @@ export function AttendanceMark({
   existing,
   defaultDate,
   defaultBatchId,
+  alerts = [],
 }: {
   batches: { id: string; name: string }[];
   roster: RosterRow[];
   existing: { batch_id: string; student_id: string; status: string }[];
   defaultDate: string;
   defaultBatchId?: string;
+  alerts?: StudentFeeAlert[];
 }) {
   const [batchId, setBatchId] = useState(defaultBatchId ?? batches[0]?.id ?? "");
   const [date, setDate] = useState(defaultDate);
@@ -96,38 +100,58 @@ export function AttendanceMark({
       </Button>
 
       <div className="space-y-2">
-        {students.map((s) => (
-          <div
-            key={s.id}
-            className="flex flex-col gap-2 rounded-lg border border-hairline-soft bg-canvas p-3 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div>
-              <p className="text-sm font-semibold text-ink">{s.name}</p>
-              <p className="text-xs text-muted">{s.student_code}</p>
+        {students.map((s) => {
+          const studentAlerts = alertsForStudent(alerts, s.id);
+          return (
+            <div
+              key={s.id}
+              className="flex flex-col gap-2 rounded-lg border border-hairline-soft bg-canvas p-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-ink">{s.name}</p>
+                <p className="text-xs text-muted">{s.student_code}</p>
+                {studentAlerts.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {studentAlerts.map((a) => (
+                      <span
+                        key={a.message}
+                        className={cn(
+                          "rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                          a.level === "error" && "bg-error-soft text-error",
+                          a.level === "warning" && "bg-warning-soft text-warning",
+                          a.level === "info" && "bg-surface-soft text-muted",
+                        )}
+                      >
+                        {a.message}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-1 rounded-full bg-surface-soft p-1">
+                {(["present", "absent", "late"] as const).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setStatus(s.id, st)}
+                    className={cn(
+                      "min-h-[44px] flex-1 rounded-md px-3 text-xs font-semibold capitalize sm:min-h-[36px]",
+                      statusMap[s.id] === st
+                        ? st === "present"
+                          ? "bg-success-soft text-success"
+                          : st === "absent"
+                            ? "bg-error-soft text-error"
+                            : "bg-warning-soft text-warning"
+                        : "text-muted",
+                    )}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex gap-1 rounded-full bg-surface-soft p-1">
-              {(["present", "absent", "late"] as const).map((st) => (
-                <button
-                  key={st}
-                  type="button"
-                  onClick={() => setStatus(s.id, st)}
-                  className={cn(
-                    "min-h-[44px] flex-1 rounded-md px-3 text-xs font-semibold capitalize sm:min-h-[36px]",
-                    statusMap[s.id] === st
-                      ? st === "present"
-                        ? "bg-success-soft text-success"
-                        : st === "absent"
-                          ? "bg-error-soft text-error"
-                          : "bg-warning-soft text-warning"
-                      : "text-muted",
-                  )}
-                >
-                  {st}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <Button type="button" className="w-full" onClick={onSave} disabled={saving || !batchId}>

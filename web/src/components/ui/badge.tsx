@@ -11,6 +11,8 @@ const styles: Record<string, string> = {
   late: "bg-warning-soft text-warning",
   active: "bg-success-soft text-success",
   inactive: "bg-surface-card text-muted",
+  expired: "bg-error-soft text-error",
+  completed: "bg-surface-card text-muted",
   cancelled: "text-muted line-through",
 };
 

@@ -3,7 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { writeAuditLog } from "@/lib/audit";
 import { requireAcademyContext } from "@/lib/auth";
-import { canManageTeam, canMutateFees } from "@/lib/permissions";
+import { canManageFeePlans, canManageTeam, canMutateFees } from "@/lib/permissions";
+import {
+  computeEndDate,
+  defaultBillingCycleMonths,
+  isFixedTermPlan,
+  isRecurringPlan,
+  isSessionPlan,
+} from "@/lib/fee-plans";
 import { checkPlanLimit } from "@/lib/plan-limits";
 import { generateReceiptPdf, generateIdCardPdf } from "@/lib/pdf";
 import { receiptVerifyUrl } from "@/lib/qr-urls";
@@ -17,7 +24,7 @@ import {
   exportErrorsWorkbook,
 } from "@/lib/import/excel";
 import { canSelfServeImport } from "@/lib/plans";
-import type { LeadStatus } from "@/types";
+import type { FeePlanType, LeadStatus } from "@/types";
 import * as XLSX from "xlsx";
 import { rel } from "@/lib/utils";
 
@@ -114,6 +121,17 @@ export async function collectPayment(formData: FormData) {
     /* PDF optional if storage not configured */
   }
 
+  if (newPending <= 0 && fee.assignment_id) {
+    await supabase.from("renewal_events").insert({
+      academy_id: ctx.academyId,
+      student_id: fee.student_id,
+      assignment_id: fee.assignment_id,
+      student_fee_id: feeId,
+      event_type: "renewal_paid",
+      notes: `Paid ${amount} via ${mode}`,
+    });
+  }
+
   await writeAuditLog({
     academyId: ctx.academyId,
     userId: ctx.user.id,
@@ -124,6 +142,7 @@ export async function collectPayment(formData: FormData) {
   });
 
   revalidatePath("/fees");
+  revalidatePath("/renewals");
   revalidatePath("/dashboard");
   revalidatePath("/receipts");
   return { ...receipt, verify_token: verifyToken };
@@ -186,8 +205,41 @@ export async function saveAttendance(
   });
 
   if (error) throw error;
+
+  const presentIds = records.filter((r) => r.status === "present").map((r) => r.student_id);
+  if (presentIds.length > 0) {
+    const { data: assignments } = await supabase
+      .from("student_fee_assignments")
+      .select("id, student_id")
+      .in("student_id", presentIds)
+      .eq("status", "active")
+      .not("sessions_total", "is", null);
+
+    if (assignments?.length) {
+      const { data: attRows } = await supabase
+        .from("attendance")
+        .select("id, student_id")
+        .eq("batch_id", batchId)
+        .eq("attendance_date", date)
+        .in("student_id", presentIds);
+
+      for (const assignment of assignments) {
+        const att = attRows?.find((x) => x.student_id === assignment.student_id);
+        if (!att) continue;
+        await supabase.rpc("consume_package_session", {
+          p_assignment_id: assignment.id,
+          p_student_id: assignment.student_id,
+          p_attendance_id: att.id,
+          p_session_date: date,
+          p_created_by: academyUser?.id ?? undefined,
+        });
+      }
+    }
+  }
+
   revalidatePath("/attendance");
   revalidatePath("/dashboard");
+  revalidatePath("/renewals");
 }
 
 export async function createStudent(formData: FormData) {
@@ -645,12 +697,15 @@ export async function buildFeeReminders() {
   const supabase = await createClient();
   const { data: fees } = await supabase
     .from("student_fees")
-    .select("pending_amount, due_date, students(name, mobile, whatsapp)")
+    .select("pending_amount, due_date, status, students(name, mobile, whatsapp)")
     .in("status", ["overdue", "pending"])
     .gt("pending_amount", 0);
 
   const { feeReminderMessage } = await import("@/lib/whatsapp-messages");
   const today = new Date().toISOString().slice(0, 10);
+  const weekAhead = new Date();
+  weekAhead.setDate(weekAhead.getDate() + 7);
+  const weekStr = weekAhead.toISOString().slice(0, 10);
 
   for (const fee of fees ?? []) {
     const student = rel<{ name: string; mobile: string; whatsapp: string | null }>(fee.students);
@@ -661,13 +716,15 @@ export async function buildFeeReminders() {
       pendingAmount: Number(fee.pending_amount),
       dueDate: fee.due_date,
     });
+    const reminderType =
+      fee.status === "overdue" || fee.due_date < today ? "fee_overdue" : "fee_due";
     await supabase.from("reminder_queue").insert({
       academy_id: ctx.academyId,
-      reminder_type: "fee_overdue",
+      reminder_type: reminderType,
       recipient_mobile: student.whatsapp || student.mobile,
       recipient_name: student.name,
       whatsapp_body: body,
-      due_date: today,
+      due_date: fee.due_date <= weekStr ? today : fee.due_date,
     });
   }
 
@@ -812,4 +869,128 @@ export async function exportReportExcel(reportType: string, from: string, to: st
   XLSX.utils.book_append_sheet(wb, ws, reportType);
   const buf = XLSX.write(wb, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
   return Buffer.from(buf).toString("base64");
+}
+
+export async function saveFeePlan(formData: FormData) {
+  const ctx = await requireAcademyContext();
+  if (!canManageFeePlans(ctx.role)) throw new Error("Forbidden");
+
+  const supabase = await createClient();
+  const id = formData.get("id") as string | null;
+  const planType = formData.get("plan_type") as FeePlanType;
+  const amount = Number(formData.get("amount"));
+  const billingCycle = formData.get("billing_cycle_months");
+  const totalSessions = formData.get("total_sessions");
+  const validityDays = formData.get("validity_days");
+  const dueDay = formData.get("due_day");
+
+  const payload = {
+    academy_id: ctx.academyId,
+    name: formData.get("name") as string,
+    plan_type: planType,
+    amount,
+    billing_cycle_months: billingCycle ? Number(billingCycle) : defaultBillingCycleMonths(planType),
+    total_sessions: totalSessions ? Number(totalSessions) : isSessionPlan(planType) ? 8 : null,
+    validity_days: validityDays ? Number(validityDays) : planType === "summer_camp" ? 20 : null,
+    due_day: dueDay ? Number(dueDay) : isRecurringPlan(planType) ? 5 : null,
+    sport_id: (formData.get("sport_id") as string) || null,
+    batch_id: (formData.get("batch_id") as string) || null,
+    fee_type_id: (formData.get("fee_type_id") as string) || null,
+    is_active: formData.get("is_active") !== "false",
+  };
+
+  if (id) {
+    const { error } = await supabase.from("fee_plans").update(payload).eq("id", id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("fee_plans").insert(payload);
+    if (error) throw error;
+  }
+
+  revalidatePath("/fee-plans");
+}
+
+export async function assignFeePlan(formData: FormData) {
+  const ctx = await requireAcademyContext();
+  if (!canManageFeePlans(ctx.role)) throw new Error("Forbidden");
+
+  const supabase = await createClient();
+  const studentId = formData.get("student_id") as string;
+  const feePlanId = formData.get("fee_plan_id") as string;
+  const startDate = formData.get("start_date") as string;
+
+  const { data: plan } = await supabase
+    .from("fee_plans")
+    .select("*")
+    .eq("id", feePlanId)
+    .single();
+  if (!plan) throw new Error("Plan not found");
+
+  const endDate = computeEndDate(
+    startDate,
+    plan.plan_type as FeePlanType,
+    plan.validity_days,
+    plan.total_sessions,
+  );
+
+  const { data: assignment, error: assignErr } = await supabase
+    .from("student_fee_assignments")
+    .insert({
+      academy_id: ctx.academyId,
+      student_id: studentId,
+      fee_plan_id: feePlanId,
+      start_date: startDate,
+      end_date: endDate,
+      sessions_total: plan.total_sessions,
+      created_by: ctx.user.id,
+    })
+    .select()
+    .single();
+
+  if (assignErr) throw assignErr;
+
+  if (isRecurringPlan(plan.plan_type as FeePlanType)) {
+    await supabase.rpc("generate_recurring_demands", { p_academy_id: ctx.academyId });
+  } else if (isFixedTermPlan(plan.plan_type as FeePlanType) || isSessionPlan(plan.plan_type as FeePlanType)) {
+    const dueDate = endDate ?? startDate;
+    await supabase.from("student_fees").insert({
+      academy_id: ctx.academyId,
+      student_id: studentId,
+      fee_type_id: plan.fee_type_id,
+      fee_plan_id: feePlanId,
+      assignment_id: assignment.id,
+      amount: plan.amount,
+      pending_amount: plan.amount,
+      due_date: dueDate,
+      period_label: plan.name,
+      created_by: ctx.user.id,
+    });
+    await supabase.from("renewal_events").insert({
+      academy_id: ctx.academyId,
+      student_id: studentId,
+      assignment_id: assignment.id,
+      event_type: "demand_generated",
+      notes: `Initial demand for ${plan.name}`,
+    });
+  }
+
+  revalidatePath("/students");
+  revalidatePath("/renewals");
+  revalidatePath("/fees");
+}
+
+export async function generateRecurringDemands() {
+  const ctx = await requireAcademyContext();
+  if (!canManageFeePlans(ctx.role)) throw new Error("Forbidden");
+
+  const supabase = await createClient();
+  await supabase.rpc("sync_assignment_status", { p_academy_id: ctx.academyId });
+  const { data } = await supabase.rpc("generate_recurring_demands", {
+    p_academy_id: ctx.academyId,
+  });
+
+  revalidatePath("/renewals");
+  revalidatePath("/fees");
+  revalidatePath("/dashboard");
+  return { created: data as number };
 }

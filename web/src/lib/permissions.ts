@@ -6,6 +6,8 @@ export type AppModule =
   | "students"
   | "attendance"
   | "fees"
+  | "fee_plans"
+  | "renewals"
   | "leads"
   | "batches"
   | "receipts"
@@ -23,6 +25,8 @@ const ROLE_ACCESS: Record<AppModule, UserRole[]> = {
   students: ["admin", "staff", "coach", "owner"],
   attendance: ["admin", "staff", "coach", "owner"],
   fees: ["admin", "staff", "owner"],
+  fee_plans: ["admin", "staff"],
+  renewals: ["admin", "staff", "owner"],
   leads: ["admin", "staff", "owner"],
   batches: ["admin", "staff", "coach", "owner"],
   receipts: ["admin", "staff", "owner"],
@@ -38,6 +42,14 @@ const ROLE_ACCESS: Record<AppModule, UserRole[]> = {
 
 export function canAccess(role: UserRole, module: AppModule) {
   return ROLE_ACCESS[module].includes(role);
+}
+
+export function canViewRenewals(role: UserRole) {
+  return canAccess(role, "renewals");
+}
+
+export function canManageFeePlans(role: UserRole) {
+  return role === "admin" || role === "staff";
 }
 
 export function canMutateFees(role: UserRole) {
@@ -58,10 +70,12 @@ export function navItemsForRole(role: UserRole) {
     { href: "/students", label: "Students", module: "students" as const },
     { href: "/attendance", label: "Attendance", module: "attendance" as const },
   ];
+  const renewals = { href: "/renewals", label: "Renewals", module: "renewals" as const };
   const fees = { href: "/fees", label: "Fees", module: "fees" as const };
   const more = { href: "/more", label: "More", module: "dashboard" as const };
 
   if (role === "coach") return [...base, more];
-  if (role === "owner") return [...base, fees, more];
-  return [...base, fees, more];
+  if (role === "owner") return [...base, renewals, more];
+  if (role === "staff") return [...base, renewals, fees, more];
+  return [...base, renewals, fees, more];
 }

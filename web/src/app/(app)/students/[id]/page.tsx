@@ -7,8 +7,12 @@ import { formatCurrency, formatDate, rel } from "@/lib/utils";
 import { getAcademyContext } from "@/lib/auth";
 import { studentCheckInUrl } from "@/lib/qr-urls";
 import { CollectFeeButton } from "@/components/fees/collect-fee-button";
+import { AssignFeePlanForm } from "@/components/fees/assign-fee-plan-form";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { RegenerateQrButton } from "@/components/students/regenerate-qr-button";
+import { canManageFeePlans } from "@/lib/permissions";
+import { FEE_PLAN_TYPE_LABELS } from "@/lib/fee-plans";
+import type { FeePlanType, FeePlan } from "@/types";
 
 export default async function StudentProfilePage({
   params,
@@ -32,10 +36,11 @@ export default async function StudentProfilePage({
       ? studentCheckInUrl(ctx.academySlug, student.qr_token)
       : null;
 
-  const [{ data: fees }, { data: receipts }, { data: attendance }] = await Promise.all([
+  const [{ data: fees }, { data: receipts }, { data: attendance }, { data: assignments }, { data: plans }] =
+    await Promise.all([
     supabase
       .from("student_fees")
-      .select("*, fee_types(name)")
+      .select("*, fee_types(name), fee_plans(name)")
       .eq("student_id", id)
       .order("due_date", { ascending: false }),
     supabase
@@ -48,6 +53,12 @@ export default async function StudentProfilePage({
       .eq("student_id", id)
       .order("attendance_date", { ascending: false })
       .limit(10),
+    supabase
+      .from("student_fee_assignments")
+      .select("*, fee_plans(name, plan_type, amount)")
+      .eq("student_id", id)
+      .order("start_date", { ascending: false }),
+    supabase.from("fee_plans").select("*").eq("is_active", true).order("name"),
   ]);
 
   const studentReceipts =
@@ -106,12 +117,51 @@ export default async function StudentProfilePage({
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <h2 className="mb-3 font-semibold text-ink">Fees</h2>
+          <h2 className="mb-3 font-semibold text-ink">Fee plans</h2>
+          <div className="space-y-2">
+            {(assignments ?? []).map((a) => {
+              const plan = rel<{ name: string; plan_type: FeePlanType; amount: number }>(a.fee_plans);
+              const remaining =
+                a.sessions_total != null ? a.sessions_total - a.sessions_used : null;
+              return (
+                <div key={a.id} className="rounded-md bg-canvas px-3 py-2 text-sm">
+                  <div className="flex justify-between">
+                    <p className="font-medium">{plan?.name}</p>
+                    <Badge status={a.status} label={a.status} />
+                  </div>
+                  <p className="text-xs text-muted">
+                    {plan ? FEE_PLAN_TYPE_LABELS[plan.plan_type] : ""} · from{" "}
+                    {formatDate(a.start_date)}
+                    {a.end_date ? ` · ends ${formatDate(a.end_date)}` : ""}
+                  </p>
+                  {remaining != null && (
+                    <p className="mt-1 text-xs font-medium text-ink">
+                      {remaining} sessions remaining ({a.sessions_used}/{a.sessions_total})
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+            {(assignments ?? []).length === 0 && (
+              <p className="text-sm text-muted">No fee plan assigned.</p>
+            )}
+          </div>
+          {ctx && canManageFeePlans(ctx.role) && (
+            <AssignFeePlanForm studentId={id} plans={(plans ?? []) as FeePlan[]} />
+          )}
+        </Card>
+
+        <Card>
+          <h2 className="mb-3 font-semibold text-ink">Fees & demands</h2>
           <div className="space-y-2">
             {(fees ?? []).map((fee) => (
               <div key={fee.id} className="flex justify-between rounded-md bg-canvas px-3 py-2 text-sm">
                 <div>
-                  <p className="font-medium">{rel<{ name: string }>(fee.fee_types)?.name}</p>
+                  <p className="font-medium">
+                    {fee.period_label ??
+                      rel<{ name: string }>(fee.fee_plans)?.name ??
+                      rel<{ name: string }>(fee.fee_types)?.name}
+                  </p>
                   <p className="text-xs text-muted">Due {formatDate(fee.due_date)}</p>
                 </div>
                 <div className="text-right">

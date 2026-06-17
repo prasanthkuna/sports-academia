@@ -20,6 +20,7 @@ const iconMap = {
   Students: Users,
   Attendance: ClipboardCheck,
   Fees: IndianRupee,
+  Renewals: IndianRupee,
   More: LayoutGrid,
 };
 
