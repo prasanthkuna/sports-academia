@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { provisionAcademy, checkSlugAvailable } from "@/app/auth-actions";
+import { signUpAndProvisionAcademy, checkSlugAvailable } from "@/app/auth-actions";
 import { slugifyAcademyName } from "@/lib/academy-slug";
 import { TRIAL_DAYS } from "@/lib/subscription";
 import { AuthCard } from "@/components/auth/auth-shell";
@@ -55,20 +54,14 @@ export function SignupForm() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (signUpError) throw new Error(signUpError.message);
-      if (!signUpData.user) throw new Error("Sign up failed");
-
       const fd = new FormData();
+      fd.set("email", email);
+      fd.set("password", password);
       fd.set("owner_name", ownerName);
       fd.set("academy_name", academyName);
       fd.set("slug", slug);
       fd.set("sport_name", sport);
-      await provisionAcademy(fd);
+      await signUpAndProvisionAcademy(fd);
 
       router.push("/onboarding");
       router.refresh();
