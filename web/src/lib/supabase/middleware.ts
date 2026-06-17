@@ -41,7 +41,8 @@ export async function updateSession(request: NextRequest) {
     path === "/" ||
     path.startsWith("/a/") ||
     path.startsWith("/verify/") ||
-    path.startsWith("/api/import-template");
+    path.startsWith("/api/import-template") ||
+    path.startsWith("/api/razorpay/webhook");
 
   if (!isAuth && !isLogin && !isSignup && !isPublic && !isOnboarding && !isUpgrade) {
     const url = request.nextUrl.clone();
@@ -106,8 +107,10 @@ export async function updateSession(request: NextRequest) {
 
   if (isUpgrade && routing.hasAcademy && !routing.subscriptionExpired) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    url.pathname = path.startsWith("/upgrade/success") ? path : "/dashboard";
+    if (!path.startsWith("/upgrade/success")) {
+      return NextResponse.redirect(url);
+    }
   }
 
   if (path === "/" && isAuth) {

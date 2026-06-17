@@ -57,6 +57,24 @@ bun --env-file=.env.local scripts/activate-academy.ts <slug> pro
 
 Apply DB migration `supabase/migrations/20260617150000_signup_trial_provisioning.sql` before signup works in production.
 
+## Razorpay (subscription checkout)
+
+Add to `.env.local` and **Vercel → Environment Variables**:
+
+| Variable | Where in Razorpay |
+|----------|-------------------|
+| `RAZORPAY_KEY_ID` | Dashboard → API Keys → Key Id |
+| `RAZORPAY_KEY_SECRET` | API Keys → Key Secret |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Same as Key Id |
+| `RAZORPAY_WEBHOOK_SECRET` | Webhooks → your webhook → Secret |
+
+**Webhook URL (test & live):** `https://sports-academia.vercel.app/api/razorpay/webhook`  
+Events: `payment.captured`, `order.paid`
+
+Trial expiry → `/upgrade` → Pay (setup + month 1) → auto-activates academy.
+
+**Ops fallback:** `bun scripts/activate-academy.ts <slug> pro`
+
 ## Public pages
 
 - Academy page: `/a/kca-hyderabad`

@@ -397,7 +397,7 @@ export const landingConfig = {
     { feature: "Coach logins (scoped)", starter: false, pro: true, highlight: false },
     { feature: "Reports + Excel export", starter: false, pro: true, highlight: false },
     { feature: "Audit logs", starter: false, pro: true, highlight: false },
-    { feature: "Online payment gateway", starter: false, pro: false, highlight: false, soon: true },
+    { feature: "Online payment gateway", starter: true, pro: true, highlight: false, soon: false },
   ],
   pricing: {
     setup: {
