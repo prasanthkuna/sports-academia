@@ -1,9 +1,17 @@
 /**
  * Rich demo seed — run: cd web && bun run seed
  * Requires SUPABASE_SERVICE_ROLE_KEY in web/.env.local
+ *
+ * Fee amounts and day-level stats align with Hyderabad market data in
+ * src/lib/hyderabad-market.ts (same source as the landing page).
  */
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes } from "crypto";
+import {
+  hyderabadDemoDay,
+  hyderabadFees,
+  formatHyderabadInr,
+} from "../src/lib/hyderabad-market";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -19,6 +27,10 @@ const admin = createClient(url, serviceKey, {
 
 const SLUG = "kca-hyderabad";
 const DEMO_PASSWORD = "Demo@123456";
+
+const FEES = hyderabadFees;
+const DAY = hyderabadDemoDay;
+const fmt = formatHyderabadInr;
 
 const USERS = {
   admin: { email: "admin@demo.academy", role: "admin" as const, name: "Demo Admin" },
@@ -60,8 +72,43 @@ async function ensureAuthUser(email: string) {
   return userId!;
 }
 
+async function insertPaymentWithReceipt(opts: {
+  academyId: string;
+  studentFeeId: string;
+  amount: number;
+  mode: "upi" | "cash";
+  paymentDate: string;
+  collectedBy: string;
+  receiptNumber: string;
+  verifyToken?: string;
+}) {
+  const { data: payment } = await admin
+    .from("payments")
+    .insert({
+      academy_id: opts.academyId,
+      student_fee_id: opts.studentFeeId,
+      amount: opts.amount,
+      payment_mode: opts.mode,
+      payment_date: opts.paymentDate,
+      collected_by: opts.collectedBy,
+    })
+    .select()
+    .single();
+
+  if (opts.verifyToken) {
+    await admin.from("receipts").insert({
+      academy_id: opts.academyId,
+      payment_id: payment!.id,
+      receipt_number: opts.receiptNumber,
+      verify_token: opts.verifyToken,
+    });
+  }
+
+  return payment!;
+}
+
 async function main() {
-  console.log("🌱 Seeding rich Pro demo data…\n");
+  console.log("🌱 Seeding Hyderabad-aligned Pro demo data…\n");
 
   const authIds: Record<string, string> = {};
   for (const [key, u] of Object.entries(USERS)) {
@@ -111,6 +158,7 @@ async function main() {
       { academy_id: academy.id, name: "Cricket" },
       { academy_id: academy.id, name: "Football" },
       { academy_id: academy.id, name: "Badminton" },
+      { academy_id: academy.id, name: "Swimming" },
     ])
     .select();
   const sport = Object.fromEntries(sports!.map((s) => [s.name, s]));
@@ -129,7 +177,7 @@ async function main() {
         academy_id: academy.id,
         name: "Coach Priya",
         mobile: "9876505678",
-        designation: "Football Coach",
+        designation: "Football & Swimming",
       },
     ])
     .select();
@@ -196,6 +244,17 @@ async function main() {
         session_type: "evening",
         days_of_week: weekday,
       },
+      {
+        academy_id: academy.id,
+        name: "Swimming Beginners",
+        sport_id: sport.Swimming.id,
+        coach_id: coachPriya.id,
+        capacity: 10,
+        start_time: "06:30",
+        end_time: "07:30",
+        session_type: "morning",
+        days_of_week: weekday,
+      },
     ])
     .select();
 
@@ -218,9 +277,9 @@ async function main() {
     .insert([
       {
         academy_id: academy.id,
-        name: "Monthly Cricket",
+        name: "U12 Cricket Monthly",
         plan_type: "monthly",
-        amount: 3000,
+        amount: FEES.cricketMonthly,
         billing_cycle_months: 1,
         due_day: 5,
         fee_type_id: feeMonthly.id,
@@ -231,7 +290,7 @@ async function main() {
         academy_id: academy.id,
         name: "Quarterly Cricket",
         plan_type: "quarterly",
-        amount: 8000,
+        amount: FEES.cricketQuarterly,
         billing_cycle_months: 3,
         due_day: 5,
         fee_type_id: feeMonthly.id,
@@ -239,9 +298,9 @@ async function main() {
       },
       {
         academy_id: academy.id,
-        name: "8 Session Package",
+        name: "8-Session Badminton",
         plan_type: "session_package",
-        amount: 6000,
+        amount: FEES.badminton8SessionPackage,
         total_sessions: 8,
         validity_days: 60,
         fee_type_id: feeMonthly.id,
@@ -249,24 +308,45 @@ async function main() {
       },
       {
         academy_id: academy.id,
-        name: "Summer Camp 2026",
+        name: "8-Session Swimming",
+        plan_type: "session_package",
+        amount: FEES.badminton8SessionPackage,
+        total_sessions: 8,
+        validity_days: 60,
+        fee_type_id: feeMonthly.id,
+        sport_id: sport.Swimming.id,
+      },
+      {
+        academy_id: academy.id,
+        name: "4-Week Summer Cricket Camp",
         plan_type: "summer_camp",
-        amount: 12000,
-        validity_days: 20,
+        amount: FEES.summerCamp4WeekCricket,
+        validity_days: 28,
         fee_type_id: feeCamp.id,
+        sport_id: sport.Cricket.id,
       },
       {
         academy_id: academy.id,
         name: "Admission",
         plan_type: "admission",
-        amount: 5000,
+        amount: FEES.admission,
         fee_type_id: feeAdmission.id,
+      },
+      {
+        academy_id: academy.id,
+        name: "Personal Coaching 1:1",
+        plan_type: "personal_coaching",
+        amount: FEES.personalCoachingMonthly,
+        billing_cycle_months: 1,
+        due_day: 1,
+        fee_type_id: feeMonthly.id,
+        sport_id: sport.Cricket.id,
       },
     ])
     .select();
 
   const planMonthly = feePlans!.find((p) => p.plan_type === "monthly")!;
-  const planSession = feePlans!.find((p) => p.plan_type === "session_package")!;
+  const planSwimmingSession = feePlans!.find((p) => p.name === "8-Session Swimming")!;
 
   const { data: adminUser } = await admin
     .from("academy_users")
@@ -307,7 +387,7 @@ async function main() {
     { name: "Rohan Reddy", parent: "Suresh Reddy", mobile: "9988776633", batch: "Morning Cricket U12", sport: "Cricket" },
     { name: "Sneha Patel", parent: "Meena Patel", mobile: "9988776622", batch: "Evening Cricket U14", sport: "Cricket" },
     { name: "Vikram Singh", parent: "Raj Singh", mobile: "9988776611", batch: "Morning Cricket U12", sport: "Cricket" },
-    { name: "Kavya Iyer", parent: "Lakshmi Iyer", mobile: "9988776600", batch: "Badminton Beginners", sport: "Badminton" },
+    { name: "Kavya Iyer", parent: "Lakshmi Iyer", mobile: "9988776600", batch: "Swimming Beginners", sport: "Swimming" },
     { name: "Aditya Rao", parent: "Venkat Rao", mobile: "9988776599", batch: "Weekend Football U10", sport: "Football" },
     { name: "Isha Gupta", parent: "Sunil Gupta", mobile: "9988776588", batch: "Evening Cricket U14", sport: "Cricket" },
     { name: "Manoj Naidu", parent: "Rama Naidu", mobile: "9988776577", batch: "Morning Cricket U12", sport: "Cricket" },
@@ -323,9 +403,13 @@ async function main() {
 
   const studentIds: string[] = [];
   let seq = 0;
+  let receiptSeq = 0;
+
+  const overdueDate = isoDate(daysAgo(12));
+  const dueSoonDate = isoDate(daysAgo(-7));
 
   for (let i = 0; i < studentsData.length; i++) {
-    const s = studentsData[i];
+    const s = studentsData[i]!;
     seq++;
     const code = `KCA-${String(seq).padStart(4, "0")}`;
     const { data: student } = await admin
@@ -348,7 +432,7 @@ async function main() {
       .single();
 
     studentIds.push(student!.id);
-    const batch = batchByName[s.batch];
+    const batch = batchByName[s.batch]!;
 
     await admin.from("batch_students").insert({
       academy_id: academy.id,
@@ -356,124 +440,200 @@ async function main() {
       student_id: student!.id,
     });
 
-    const overdue = isoDate(daysAgo(12));
-    const pending = isoDate(daysAgo(-7));
-    const paidDue = isoDate(daysAgo(30));
-
+    // Fee scenarios — amounts match Hyderabad market + landing overdue examples
     if (i === 0) {
+      // Arjun: full July cricket renewal collected today (landing verify link)
       const { data: fee } = await admin
         .from("student_fees")
         .insert({
           academy_id: academy.id,
           student_id: student!.id,
           fee_type_id: feeMonthly.id,
-          amount: 2500,
-          paid_amount: 1500,
-          pending_amount: 1000,
-          due_date: overdue,
-          status: "partially_paid",
+          amount: FEES.cricketMonthly,
+          paid_amount: FEES.cricketMonthly,
+          pending_amount: 0,
+          due_date: overdueDate,
+          status: "paid",
+          period_label: "July 2026",
         })
         .select()
         .single();
 
-      const { data: payment } = await admin
-        .from("payments")
-        .insert({
-          academy_id: academy.id,
-          student_fee_id: fee!.id,
-          amount: 1500,
-          payment_mode: "upi",
-          payment_date: isoDate(daysAgo(2)),
-          collected_by: adminUser!.id,
-        })
-        .select()
-        .single();
-
-      const verifyToken = "demo_receipt_verify_0001";
-      await admin.from("receipts").insert({
-        academy_id: academy.id,
-        payment_id: payment!.id,
-        receipt_number: "KCA-2026-0001",
-        verify_token: verifyToken,
+      receiptSeq++;
+      await insertPaymentWithReceipt({
+        academyId: academy.id,
+        studentFeeId: fee!.id,
+        amount: FEES.cricketMonthly,
+        mode: "upi",
+        paymentDate: todayStr,
+        collectedBy: adminUser!.id,
+        receiptNumber: `KCA-2026-${String(receiptSeq).padStart(4, "0")}`,
+        verifyToken: "demo_receipt_verify_0001",
       });
-    } else if (i < 3) {
+    } else if (i === 1) {
       await admin.from("student_fees").insert({
         academy_id: academy.id,
         student_id: student!.id,
         fee_type_id: feeMonthly.id,
-        amount: 2500,
-        pending_amount: 2500,
-        due_date: overdue,
+        amount: FEES.cricketMonthly,
+        pending_amount: FEES.cricketMonthly,
+        due_date: overdueDate,
         status: "overdue",
+        period_label: "July 2026",
       });
-    } else if (i < 6) {
+    } else if (i === 2) {
       await admin.from("student_fees").insert({
         academy_id: academy.id,
         student_id: student!.id,
         fee_type_id: feeMonthly.id,
-        amount: 2500,
-        pending_amount: 2500,
-        due_date: pending,
-        status: "pending",
+        amount: FEES.cricketMonthly,
+        pending_amount: FEES.cricketMonthly,
+        due_date: overdueDate,
+        status: "overdue",
+        period_label: "July 2026",
       });
-    } else if (i === 6) {
-      await admin.from("student_fees").insert({
-        academy_id: academy.id,
-        student_id: student!.id,
-        fee_type_id: feeAdmission.id,
-        amount: 5000,
-        paid_amount: 5000,
-        pending_amount: 0,
-        due_date: paidDue,
-        status: "paid",
-      });
+    } else if (i === 3) {
+      // Sneha: partial catch-up — ₹1,500 collected today, ₹1,500 still overdue
       const { data: fee } = await admin
         .from("student_fees")
-        .select("id")
-        .eq("student_id", student!.id)
-        .single();
-      const { data: payment } = await admin
-        .from("payments")
         .insert({
           academy_id: academy.id,
-          student_fee_id: fee!.id,
-          amount: 5000,
-          payment_mode: "cash",
-          payment_date: isoDate(daysAgo(5)),
-          collected_by: adminUser!.id,
+          student_id: student!.id,
+          fee_type_id: feeMonthly.id,
+          amount: FEES.cricketMonthly,
+          paid_amount: FEES.partialBalance,
+          pending_amount: FEES.partialBalance,
+          due_date: overdueDate,
+          status: "partially_paid",
+          period_label: "July 2026",
         })
         .select()
         .single();
-      await admin.from("receipts").insert({
+
+      await insertPaymentWithReceipt({
+        academyId: academy.id,
+        studentFeeId: fee!.id,
+        amount: FEES.partialBalance,
+        mode: "cash",
+        paymentDate: todayStr,
+        collectedBy: adminUser!.id,
+        receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
+      });
+    } else if (i === 4) {
+      await admin.from("student_fees").insert({
         academy_id: academy.id,
-        payment_id: payment!.id,
-        receipt_number: "KCA-2026-0002",
-        verify_token: "demo_receipt_verify_0002",
+        student_id: student!.id,
+        fee_type_id: feeMonthly.id,
+        amount: FEES.cricketMonthly,
+        pending_amount: FEES.cricketMonthly,
+        due_date: overdueDate,
+        status: "overdue",
+        period_label: "July 2026",
+      });
+    } else if (i === 6) {
+      const { data: fee } = await admin
+        .from("student_fees")
+        .insert({
+          academy_id: academy.id,
+          student_id: student!.id,
+          fee_type_id: feeAdmission.id,
+          amount: FEES.admission,
+          paid_amount: FEES.admission,
+          pending_amount: 0,
+          due_date: isoDate(daysAgo(5)),
+          status: "paid",
+        })
+        .select()
+        .single();
+
+      await insertPaymentWithReceipt({
+        academyId: academy.id,
+        studentFeeId: fee!.id,
+        amount: FEES.admission,
+        mode: "cash",
+        paymentDate: isoDate(daysAgo(5)),
+        collectedBy: adminUser!.id,
+        receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
+        verifyToken: "demo_receipt_verify_0002",
+      });
+    } else if (i === 7) {
+      const { data: fee } = await admin
+        .from("student_fees")
+        .insert({
+          academy_id: academy.id,
+          student_id: student!.id,
+          fee_type_id: feeMonthly.id,
+          amount: FEES.cricketMonthly,
+          paid_amount: FEES.cricketMonthly,
+          pending_amount: 0,
+          due_date: todayStr,
+          status: "paid",
+          period_label: "July 2026",
+        })
+        .select()
+        .single();
+
+      await insertPaymentWithReceipt({
+        academyId: academy.id,
+        studentFeeId: fee!.id,
+        amount: FEES.cricketMonthly,
+        mode: "upi",
+        paymentDate: todayStr,
+        collectedBy: adminUser!.id,
+        receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
+      });
+    } else if (i === 10) {
+      const { data: fee } = await admin
+        .from("student_fees")
+        .insert({
+          academy_id: academy.id,
+          student_id: student!.id,
+          fee_type_id: feeMonthly.id,
+          amount: FEES.cricketMonthly,
+          paid_amount: FEES.cricketMonthly,
+          pending_amount: 0,
+          due_date: todayStr,
+          status: "paid",
+          period_label: "July 2026",
+        })
+        .select()
+        .single();
+
+      await insertPaymentWithReceipt({
+        academyId: academy.id,
+        studentFeeId: fee!.id,
+        amount: FEES.cricketMonthly,
+        mode: "cash",
+        paymentDate: todayStr,
+        collectedBy: adminUser!.id,
+        receiptNumber: `KCA-2026-${String(++receiptSeq).padStart(4, "0")}`,
       });
     } else {
       await admin.from("student_fees").insert({
         academy_id: academy.id,
         student_id: student!.id,
         fee_type_id: feeMonthly.id,
-        amount: 3000,
-        pending_amount: 3000,
-        due_date: pending,
+        amount: FEES.cricketMonthly,
+        pending_amount: FEES.cricketMonthly,
+        due_date: dueSoonDate,
         status: "pending",
+        period_label: "August 2026",
       });
     }
 
     const attSource = i < 4 ? "qr_scan" : i < 8 ? "manual" : "coach";
+    const isAbsent = i === 4 || i === 10;
     await admin.from("attendance").insert({
       academy_id: academy.id,
       batch_id: batch.id,
       student_id: student!.id,
       attendance_date: todayStr,
-      status: i === 4 || i === 10 ? "absent" : "present",
+      status: isAbsent ? "absent" : "present",
       source: attSource,
       marked_by: attSource === "coach" ? adminUser!.id : null,
     });
 
-    if (attSource === "qr_scan" && i < 4) {
+    if (attSource === "qr_scan" && !isAbsent) {
       await admin.from("qr_scan_logs").insert({
         academy_id: academy.id,
         student_id: student!.id,
@@ -511,20 +671,22 @@ async function main() {
     });
   }
 
+  // Kavya: 8-session swimming package — 2 sessions remaining (Hyderabad demo)
   await admin.from("student_fee_assignments").insert({
     academy_id: academy.id,
     student_id: studentIds[5]!,
-    fee_plan_id: planSession.id,
+    fee_plan_id: planSwimmingSession.id,
     start_date: assignStart,
     end_date: isoDate(daysAgo(-45)),
     sessions_total: 8,
-    sessions_used: 6,
+    sessions_used: 8 - DAY.sessionsRemaining,
     status: "active",
   });
 
+  // Manoj: expired monthly plan but attended today — renewal alert scenario
   await admin.from("student_fee_assignments").insert({
     academy_id: academy.id,
-    student_id: studentIds[10]!,
+    student_id: studentIds[8]!,
     fee_plan_id: planMonthly.id,
     start_date: isoDate(daysAgo(90)),
     end_date: isoDate(daysAgo(3)),
@@ -536,7 +698,7 @@ async function main() {
   await admin.from("receipt_sequences").upsert({
     academy_id: academy.id,
     financial_year: 2026,
-    last_sequence: 2,
+    last_sequence: receiptSeq,
   });
 
   const trialToken = "demo_trial_ayaan_khan";
@@ -619,13 +781,17 @@ async function main() {
     },
   ]);
 
+  const presentToday = studentsData.length - 2;
+  const qrToday = 4;
+  const manualToday = 3;
+
   await admin.from("whatsapp_logs").insert([
     {
       academy_id: academy.id,
       student_id: studentIds[0],
       recipient: "9988776655",
       message_type: "receipt",
-      body: "Receipt KCA-2026-0001 — ₹1,500 collected via UPI",
+      body: `Receipt KCA-2026-0001 — ${fmt(FEES.cricketMonthly)} collected via UPI`,
       channel: "click_to_send",
       status: "manual_sent",
       triggered_by: authIds.admin,
@@ -634,7 +800,7 @@ async function main() {
       academy_id: academy.id,
       recipient: "9876512345",
       message_type: "trial_link",
-      body: `Trial check-in link for Ayaan`,
+      body: "Trial check-in link for Ayaan",
       channel: "click_to_send",
       status: "manual_sent",
       triggered_by: authIds.staff,
@@ -657,21 +823,23 @@ async function main() {
   ]);
 
   const digestBody = `Kohinoor Cricket Academy — ${todayStr}
-Collected: ₹6,500 | Present: 10/12
-QR check-ins: 4 | Manual: 6
-Overdue: ₹7,500 (2 students)
-New leads: 2 | Trials attended: 1`;
+Collected: ${fmt(DAY.collectedToday)} | Present: ${presentToday}/${studentsData.length}
+QR check-ins: ${qrToday} | Manual: ${manualToday}
+Overdue: ${fmt(DAY.overdueTotal)} (${DAY.overdueStudents} students)
+New leads: ${DAY.leadsAwaitingFollowUp} | Trials attended: ${DAY.trialsToday}`;
 
   await admin.from("owner_digest_snapshots").insert({
     academy_id: academy.id,
     digest_date: todayStr,
     payload: {
-      collected: 6500,
-      present: 10,
-      qrCheckIns: 4,
-      manualCheckIns: 6,
-      overdueAmount: 7500,
-      newLeads: 2,
+      collected: DAY.collectedToday,
+      present: presentToday,
+      qrCheckIns: qrToday,
+      manualCheckIns: manualToday,
+      overdueAmount: DAY.overdueTotal,
+      overdueStudents: DAY.overdueStudents,
+      newLeads: DAY.leadsAwaitingFollowUp,
+      trialsToday: DAY.trialsToday,
     },
     whatsapp_body: digestBody,
   });
@@ -683,8 +851,7 @@ New leads: 2 | Trials attended: 1`;
       recipient_mobile: "9988776644",
       recipient_name: "Priya Sharma",
       student_id: studentIds[1],
-      whatsapp_body:
-        "Fee reminder from Kohinoor Cricket Academy\n\nStudent: Priya Sharma\nPending: ₹2,500\nDue: overdue\n\nPlease contact us to complete payment.",
+      whatsapp_body: `Fee reminder from Kohinoor Cricket Academy\n\nStudent: Priya Sharma\nPending: ${fmt(FEES.cricketMonthly)}\nDue: overdue\n\nPlease contact us to complete payment.`,
       due_date: todayStr,
     },
     {
@@ -693,8 +860,25 @@ New leads: 2 | Trials attended: 1`;
       recipient_mobile: "9988776633",
       recipient_name: "Rohan Reddy",
       student_id: studentIds[2],
-      whatsapp_body:
-        "Fee reminder from Kohinoor Cricket Academy\n\nStudent: Rohan Reddy\nPending: ₹2,500\nDue: overdue",
+      whatsapp_body: `Fee reminder from Kohinoor Cricket Academy\n\nStudent: Rohan Reddy\nPending: ${fmt(FEES.cricketMonthly)}\nDue: overdue`,
+      due_date: todayStr,
+    },
+    {
+      academy_id: academy.id,
+      reminder_type: "fee_overdue",
+      recipient_mobile: "9988776611",
+      recipient_name: "Vikram Singh",
+      student_id: studentIds[4],
+      whatsapp_body: `Fee reminder from Kohinoor Cricket Academy\n\nStudent: Vikram Singh\nPending: ${fmt(FEES.cricketMonthly)}\nDue: overdue`,
+      due_date: todayStr,
+    },
+    {
+      academy_id: academy.id,
+      reminder_type: "fee_overdue",
+      recipient_mobile: "9988776622",
+      recipient_name: "Sneha Patel",
+      student_id: studentIds[3],
+      whatsapp_body: `Fee reminder from Kohinoor Cricket Academy\n\nStudent: Sneha Patel\nPending: ${fmt(FEES.partialBalance)}\nBalance remaining on July renewal`,
       due_date: todayStr,
     },
     {
@@ -714,7 +898,7 @@ New leads: 2 | Trials attended: 1`;
       user_id: authIds.admin,
       action: "payment_collected",
       entity_type: "payment",
-      new_value: { amount: 1500, receipt_number: "KCA-2026-0001" },
+      new_value: { amount: FEES.cricketMonthly, receipt_number: "KCA-2026-0001" },
     },
     {
       academy_id: academy.id,
@@ -752,8 +936,14 @@ New leads: 2 | Trials attended: 1`;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://sports-academia.vercel.app";
 
-  console.log("✅ Rich demo seed complete!\n");
-  console.log("── Logins (password for all: Demo@123456) ──");
+  console.log("✅ Hyderabad-aligned demo seed complete!\n");
+  console.log("── Fee reference (Hyderabad market) ──");
+  console.log(`   Cricket monthly:  ${fmt(FEES.cricketMonthly)}`);
+  console.log(`   Quarterly:        ${fmt(FEES.cricketQuarterly)}`);
+  console.log(`   8-session pack:   ${fmt(FEES.badminton8SessionPackage)}`);
+  console.log(`   Summer camp:      ${fmt(FEES.summerCamp4WeekCricket)}`);
+  console.log(`   Collected today:  ${fmt(DAY.collectedToday)}`);
+  console.log("\n── Logins (password for all: Demo@123456) ──");
   for (const u of Object.values(USERS)) {
     console.log(`   ${u.role.padEnd(6)} ${u.email}`);
   }
@@ -764,14 +954,14 @@ New leads: 2 | Trials attended: 1`;
   console.log("\n── QR & check-in (use at academy coords 17.4486, 78.3908) ──");
   console.log(`   Arjun QR:  ${appUrl}/a/${SLUG}/check-in/${demoQrTokens["KCA-0001"]}`);
   console.log(`   PIN: last 4 of 9988776655 → 6655`);
-  console.log(`   Kiosk:     ${appUrl}/a/${SLUG}/kiosk/${batchByName["Morning Cricket U12"].id}`);
+  console.log(`   Kiosk:     ${appUrl}/a/${SLUG}/kiosk/${batchByName["Morning Cricket U12"]!.id}`);
   console.log(`   Trial:     ${appUrl}/a/${SLUG}/trial/${trialToken}`);
   console.log("\n── Receipt verify ──");
-  console.log(`   ${appUrl}/verify/receipt/demo_receipt_verify_0001`);
+  console.log(`   ${appUrl}/verify/receipt/demo_receipt_verify_0001 (${fmt(FEES.cricketMonthly)} · Arjun Kumar)`);
   console.log("\n── Flows to test ──");
-  console.log("   Dashboard digest · Fees collect + WhatsApp · Reports export");
-  console.log("   Leads pipeline · Reminders queue · Audit logs · Excel import");
-  console.log("   ID cards · Team/coaches · Settings geofence · Coach login\n");
+  console.log("   Renewal dashboard · Fee plans · Collect + WhatsApp receipt");
+  console.log("   Kavya sessions remaining · Manoj expired-but-attended");
+  console.log("   Leads pipeline · Reminders queue · Reports export\n");
 }
 
 main().catch((e) => {

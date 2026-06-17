@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CountUp } from "@/components/landing/motion/count-up";
+import {
+  hyderabadDemoDay,
+  hyderabadFees,
+  hyderabadFeePlanExamples,
+  formatHyderabadInr,
+} from "@/lib/hyderabad-market";
 import type {
   DayTimelineMockId,
   ProductFlowId,
@@ -20,6 +26,10 @@ import type {
   RoleLaneId,
 } from "@/lib/landing-config";
 import { cn } from "@/lib/utils";
+
+const fmt = formatHyderabadInr;
+const day = hyderabadDemoDay;
+const fees = hyderabadFees;
 
 /** Fixed iPhone 16 Pro mock dimensions — shell never resizes; only screen content crossfades. */
 export const PHONE_WIDTH_PX = 280;
@@ -112,6 +122,10 @@ function ScreenBody({ className, children }: { className?: string; children: Rea
 /* ── Product flow mocks (Flow Map) ─────────────────────────────── */
 
 function FlowDashboardContent() {
+  const overdueLine = day.overdueExamples
+    .slice(0, 2)
+    .map((o) => `${o.name} ${fmt(o.amount)}`)
+    .join(" · ");
   return (
     <ScreenBody className="gap-2">
       <p className="text-xs font-semibold text-ink">Renewal snapshot</p>
@@ -119,22 +133,28 @@ function FlowDashboardContent() {
         <div className="rounded-lg bg-brand-soft p-3">
           <p className="text-[9px] text-muted">Collected today</p>
           <p className="font-mono-amount text-lg font-semibold tabular-nums text-brand">
-            ₹<CountUp value={8240} duration={1} />
+            ₹<CountUp value={day.collectedToday} duration={1} />
           </p>
         </div>
         <div className="rounded-lg bg-warning-soft/80 p-3">
           <p className="text-[9px] text-muted">Pending renewal</p>
-          <p className="font-mono-amount text-lg font-semibold tabular-nums text-ink">5</p>
+          <p className="font-mono-amount text-lg font-semibold tabular-nums text-ink">
+            {day.pendingRenewals}
+          </p>
         </div>
       </div>
       <div className="rounded-lg bg-error-soft/50 px-3 py-2">
-        <p className="text-[10px] font-medium text-error">Overdue · 2 students</p>
-        <p className="text-xs text-ink">Rohan S. ₹2,500 · Priya M. ₹3,000</p>
+        <p className="text-[10px] font-medium text-error">
+          Overdue · {day.overdueStudents} students
+        </p>
+        <p className="text-xs text-ink">{overdueLine}</p>
       </div>
       <div className="rounded-lg border border-hairline px-3 py-2 text-[10px] text-body">
-        42 present today · 34 QR · 8 manual
+        {day.presentTotal} present · {day.qrCheckIns} QR · {day.manualCheckIns} manual
       </div>
-      <p className="mt-auto text-center text-[10px] text-muted">2 trials attended today</p>
+      <p className="mt-auto text-center text-[10px] text-muted">
+        {day.trialsToday} trials attended today
+      </p>
     </ScreenBody>
   );
 }
@@ -146,25 +166,33 @@ function FlowRenewalsContent() {
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg bg-brand-soft p-2.5">
           <p className="text-[9px] text-muted">Paid today</p>
-          <p className="font-mono-amount text-base font-semibold text-brand">₹8,240</p>
+          <p className="font-mono-amount text-base font-semibold text-brand">
+            {fmt(day.collectedToday)}
+          </p>
         </div>
         <div className="rounded-lg bg-error-soft/50 p-2.5">
           <p className="text-[9px] text-muted">Overdue</p>
-          <p className="font-mono-amount text-base font-semibold text-error">2</p>
+          <p className="font-mono-amount text-base font-semibold text-error">
+            {day.overdueStudents}
+          </p>
         </div>
       </div>
       <div className="rounded-lg border border-warning/30 bg-warning-soft/40 px-3 py-2">
-        <p className="text-[10px] font-medium text-warning">Due this week · 5 renewals</p>
+        <p className="text-[10px] font-medium text-warning">
+          Due this week · {day.dueThisWeek} renewals
+        </p>
       </div>
       <div className="space-y-1.5">
         <div className="flex justify-between rounded-md bg-canvas px-2 py-1.5 text-[10px]">
-          <span className="text-ink">Kavya · sessions left</span>
-          <span className="font-semibold text-warning">2</span>
+          <span className="text-ink">{day.sessionsRemainingStudent} · sessions left</span>
+          <span className="font-semibold text-warning">{day.sessionsRemaining}</span>
         </div>
-        <div className="flex justify-between rounded-md bg-error-soft/30 px-2 py-1.5 text-[10px]">
-          <span className="text-ink">Manoj · expired · attended</span>
-          <span className="font-semibold text-error">!</span>
-        </div>
+        {day.expiredButAttendedToday > 0 && (
+          <div className="flex justify-between rounded-md bg-error-soft/30 px-2 py-1.5 text-[10px]">
+            <span className="text-ink">Manoj N. · expired · attended</span>
+            <span className="font-semibold text-error">!</span>
+          </div>
+        )}
       </div>
       <p className="mt-auto text-center text-[10px] text-muted">Owner opens this before every batch</p>
     </ScreenBody>
@@ -172,21 +200,16 @@ function FlowRenewalsContent() {
 }
 
 function FlowFeePlansContent() {
-  const plans = [
-    { name: "Monthly Cricket", amount: "₹3,000", type: "Monthly" },
-    { name: "8 Session Swimming", amount: "₹6,000", type: "Package" },
-    { name: "Summer Camp 2026", amount: "₹12,000", type: "Camp" },
-  ];
   return (
     <ScreenBody>
       <p className="text-xs font-semibold text-ink">Fee plans</p>
-      <p className="text-[10px] text-muted">Assign once · demands follow</p>
+      <p className="text-[10px] text-muted">Hyderabad market · assign once</p>
       <div className="mt-3 space-y-2">
-        {plans.map((p) => (
+        {hyderabadFeePlanExamples.slice(0, 3).map((p) => (
           <div key={p.name} className="rounded-lg border border-hairline px-3 py-2.5">
             <p className="text-xs font-medium text-ink">{p.name}</p>
             <p className="text-[10px] text-muted">
-              {p.type} · {p.amount}
+              {p.type} · {fmt(p.amount)}
             </p>
           </div>
         ))}
@@ -212,9 +235,9 @@ function FlowAttendanceContent() {
         </div>
       </div>
       <div className="rounded-lg border border-hairline p-3">
-        <p className="text-sm font-semibold text-ink">Kavya Iyer</p>
+        <p className="text-sm font-semibold text-ink">{day.sessionsRemainingStudent}</p>
         <span className="mt-1 inline-block rounded-full bg-warning-soft px-2 py-0.5 text-[9px] font-semibold text-warning">
-          2 sessions remaining
+          {day.sessionsRemaining} sessions remaining
         </span>
         <div className="mt-2 flex gap-1">
           <span className="rounded-full bg-success-soft px-2 py-0.5 text-[9px] font-semibold text-success">
@@ -233,7 +256,7 @@ function FlowReceiptsContent() {
       <div className="rounded-lg border border-hairline bg-canvas p-4 text-center">
         <p className="text-[10px] font-medium text-muted">Receipt verified</p>
         <p className="mt-1 font-mono-amount text-lg font-semibold text-ink">RCP-2026-0042</p>
-        <p className="mt-2 text-sm text-ink">₹3,000 paid</p>
+        <p className="mt-2 text-sm text-ink">{fmt(fees.cricketMonthly)} paid</p>
         <p className="text-xs text-body">Arjun Kumar · KCA Hyderabad</p>
         <p className="mt-2 text-[10px] text-success">Payment confirmed</p>
       </div>
@@ -247,7 +270,7 @@ function FlowWhatsappContent() {
     <ScreenBody className="justify-center gap-3">
       <div className="rounded-lg border border-hairline bg-canvas p-3 text-xs">
         <p className="font-semibold text-ink">Receipt RCP-2026-0042</p>
-        <p className="mt-0.5 text-body">₹2,500 · Arjun Kumar</p>
+        <p className="mt-0.5 text-body">{fmt(fees.cricketMonthly)} · Arjun Kumar</p>
       </div>
       <div className="self-end rounded-lg rounded-tr-none bg-[#DCF8C6] p-3 text-xs text-body">
         Fee received for U12 Morning Cricket. Thank you!
@@ -319,11 +342,7 @@ function FlowReportsContent() {
 }
 
 function FlowRemindersContent() {
-  const items = [
-    "Priya M. · July renewal overdue",
-    "Rohan S. · ₹2,500 pending",
-    "Vikram T. · renewal due Friday",
-  ];
+  const items = day.overdueExamples.slice(0, 3).map((o) => `${o.name} · ${fmt(o.amount)} overdue`);
   return (
     <ScreenBody>
       <div className="flex items-center gap-2">
@@ -468,8 +487,8 @@ function RoleStaffContent() {
       <div className="grid grid-cols-2 gap-2">
         {[
           { label: "Collect fee", icon: "₹" },
-          { label: "Leads", icon: "3" },
-          { label: "Reminders", icon: "5" },
+          { label: "Leads", icon: String(day.leadsAwaitingFollowUp) },
+          { label: "Reminders", icon: String(day.remindersInQueue) },
           { label: "ID cards", icon: "PDF" },
         ].map((item) => (
           <div key={item.label} className="rounded-lg border border-hairline p-3 text-center">
@@ -479,7 +498,7 @@ function RoleStaffContent() {
         ))}
       </div>
       <div className="mt-auto rounded-lg border border-hairline p-3">
-        <p className="text-xs font-medium text-ink">Arjun Kumar · ₹2,500 due</p>
+        <p className="text-xs font-medium text-ink">Arjun Kumar · {fmt(fees.cricketMonthly)} due</p>
         <div className="mt-2 rounded-md bg-ink py-2 text-center text-[10px] font-semibold text-white">
           Collect &amp; Receipt
         </div>
@@ -547,8 +566,8 @@ function MiniDashboard() {
   return (
     <MiniScreenBody className="justify-center gap-1">
       <p className="text-[9px] font-semibold text-ink">Renewal snapshot</p>
-      <p className="font-mono-amount text-sm font-semibold text-brand">₹8,240</p>
-      <p className="text-[8px] text-error">2 overdue · 5 pending</p>
+      <p className="font-mono-amount text-sm font-semibold text-brand">{fmt(day.collectedToday)}</p>
+      <p className="text-[8px] text-error">{day.overdueStudents} overdue · {fmt(day.overdueTotal)}</p>
     </MiniScreenBody>
   );
 }
@@ -568,7 +587,7 @@ function MiniAttendance() {
 function MiniRenewals() {
   return (
     <MiniScreenBody className="justify-center">
-      <p className="font-mono-amount text-lg font-semibold text-ink">₹3,000</p>
+      <p className="font-mono-amount text-lg font-semibold text-ink">{fmt(fees.cricketMonthly)}</p>
       <p className="text-[9px] text-muted">July renewal · RCP-0042</p>
     </MiniScreenBody>
   );
@@ -579,7 +598,7 @@ function MiniDigest() {
     <MiniScreenBody className="justify-center gap-2">
       <p className="text-[10px] font-semibold text-ink">Daily digest</p>
       <div className="rounded border border-[#25D366]/30 bg-[#25D366]/5 p-2 text-[8px] leading-relaxed text-body">
-        42 present · ₹8,240 collected · ₹5,000 overdue
+        {day.presentTotal} present · {fmt(day.collectedToday)} collected · {fmt(day.overdueTotal)} overdue
       </div>
       <div className="rounded bg-[#128C7E] py-1.5 text-center text-[8px] font-semibold text-white">
         Send on WhatsApp

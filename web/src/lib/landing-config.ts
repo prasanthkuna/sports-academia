@@ -32,6 +32,15 @@ export type DayTimelineMockId =
   | "whatsapp"
   | "digest";
 
+import {
+  hyderabadDemoAcademy,
+  hyderabadDemoDay,
+  hyderabadFees,
+  formatHyderabadInr,
+} from "./hyderabad-market";
+
+const fmt = formatHyderabadInr;
+
 export const landingConfig = {
   siteUrl: "https://sports-academia.vercel.app",
   contact: {
@@ -91,7 +100,7 @@ export const landingConfig = {
       "Know who paid, who expired, who attended, and who needs a WhatsApp reminder — before the next batch.",
     subhead:
       "Renewal control, payment proof, and attendance visibility in one phone-first app. QR check-in on Pro gives owners proof — not another register to chase.",
-    trustLine: "Live demo with fee plans, renewal dashboard, trials & receipts · No parent app",
+    trustLine: `Demo mirrors a ${hyderabadDemoAcademy.activeStudents}-student Hyderabad academy · local cricket fees typically ${fmt(2500)}–${fmt(5000)}/month`,
     chips: ["Fee plans & auto demands", "Sessions remaining", "Renewal dashboard", "Receipt verify"],
   },
   ownerQuestions: [
@@ -162,12 +171,30 @@ export const landingConfig = {
   roadmapNote:
     "Coming next: online payment gateway, UPI auto-match, and configurable attendance blocking for expired packages.",
   feePlanTypes: [
-    { type: "Monthly", example: "₹3,000/month · auto demand on due day" },
-    { type: "Quarterly", example: "₹8,000/quarter · Q demand generated" },
-    { type: "Admission", example: "₹2,000 one-time on enrolment" },
-    { type: "Session package", example: "8 sessions · consumed on attendance" },
-    { type: "Personal coaching", example: "12 sessions · expiry date tracked" },
-    { type: "Summer camp", example: "20-day camp · fixed validity window" },
+    {
+      type: "Monthly",
+      example: `${fmt(hyderabadFees.cricketMonthly)}/month cricket · Uppal / HITEC City norm`,
+    },
+    {
+      type: "Quarterly",
+      example: `${fmt(hyderabadFees.cricketQuarterly)}/quarter · ~5% off 3× monthly`,
+    },
+    {
+      type: "Admission",
+      example: `${fmt(hyderabadFees.admission)} one-time · common registration band`,
+    },
+    {
+      type: "Session package",
+      example: `8 sessions ${fmt(hyderabadFees.badminton8SessionPackage)} · beginner badminton`,
+    },
+    {
+      type: "Personal coaching",
+      example: `${fmt(hyderabadFees.personalCoachingMonthly)}/month · 1:1 cricket (Galaxy-tier)`,
+    },
+    {
+      type: "Summer camp",
+      example: `4-week cricket ${fmt(hyderabadFees.summerCamp4WeekCricket)} · May–Jun camp`,
+    },
   ],
   feePlanBullets: [
     "Assign a plan once — demands generate for monthly & quarterly",
@@ -176,10 +203,26 @@ export const landingConfig = {
     "Expired package + still attending — flagged before you lose money",
   ],
   renewalDashboardWidgets: [
-    { label: "Paid today", value: "₹8,240", hint: "3 UPI · 2 cash" },
-    { label: "Overdue", value: "2 students", hint: "₹5,500 pending" },
-    { label: "Due this week", value: "5 renewals", hint: "July monthly cycle" },
-    { label: "Sessions left", value: "2 remaining", hint: "Kavya · swimming pack" },
+    {
+      label: "Paid today",
+      value: fmt(hyderabadDemoDay.collectedToday),
+      hint: `${hyderabadDemoDay.paymentsToday.upi} UPI · ${hyderabadDemoDay.paymentsToday.cash} cash`,
+    },
+    {
+      label: "Overdue",
+      value: `${hyderabadDemoDay.overdueStudents} students`,
+      hint: `${fmt(hyderabadDemoDay.overdueTotal)} pending`,
+    },
+    {
+      label: "Due this week",
+      value: `${hyderabadDemoDay.dueThisWeek} renewals`,
+      hint: "5th-of-month cricket cycle",
+    },
+    {
+      label: "Sessions left",
+      value: `${hyderabadDemoDay.sessionsRemaining} remaining`,
+      hint: `${hyderabadDemoDay.sessionsRemainingStudent} · ${hyderabadDemoDay.sessionsRemainingSport}`,
+    },
   ],
   productFlows: [
     {
@@ -323,7 +366,7 @@ export const landingConfig = {
     {
       time: "08:15",
       title: "Fee collected on ground",
-      body: "₹3,000 July renewal recorded — UPI or cash. Balance and receipt updated.",
+      body: `${fmt(hyderabadFees.cricketMonthly)} July renewal collected — UPI or cash. Balance and receipt updated.`,
       mock: "renewals" as DayTimelineMockId,
     },
     {
@@ -426,8 +469,12 @@ export const landingConfig = {
       a: "Both — but the point is renewal control. You see who paid, who is overdue, who got a receipt, and who needs a WhatsApp reminder. Collecting on the ground is one step in that loop, not the whole product.",
     },
     {
+      q: "What fee amounts should I use for Hyderabad?",
+      a: `Most cricket academies charge ${fmt(2500)}–${fmt(5000)}/month (community to mid-tier). Quarterly plans run ${fmt(8000)}–${fmt(9000)}. Swimming with coaching is often ${fmt(2500)}–${fmt(3600)}/month. Summer cricket camps are typically ${fmt(3500)}–${fmt(5000)} for 4 weeks. You set your own plans — these are the local norms our demo uses.`,
+    },
+    {
       q: "Do you support swimming session packages or summer camps?",
-      a: "Yes. Create fee plans for monthly, quarterly, session packages, personal coaching, and summer camps. Assign to students — the system tracks sessions remaining, package expiry, and auto-generates monthly demands. Attendance shows warnings when a package is low or expired.",
+      a: `Yes. For example: 8-session badminton at ${fmt(hyderabadFees.badminton8SessionPackage)}, swimming monthly at ${fmt(hyderabadFees.swimmingMonthlyWithCoach)}, or a 4-week summer cricket camp at ${fmt(hyderabadFees.summerCamp4WeekCricket)}. Assign any plan — sessions remaining, expiry, and auto-demands follow.`,
     },
     {
       q: "What is the renewal dashboard?",

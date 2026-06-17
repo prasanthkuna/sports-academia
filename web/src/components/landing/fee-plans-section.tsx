@@ -64,6 +64,10 @@ export function FeePlansSection() {
             </MotionCard>
           ))}
         </div>
+
+        <p className="mt-8 text-center text-xs text-muted">
+          Fee examples reflect Hyderabad academy listings (cricket, badminton, swimming, camps) — early 2026.
+        </p>
       </div>
     </section>
   );
